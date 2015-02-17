@@ -1,0 +1,11 @@
+ssh mb -X -f -N -L 52842:localhost:52842;
+ssh mb -X -f -N -L 52844:localhost:52844;
+ssh mb -X -f -N -L 52840:localhost:52840;
+ssh mb -X -f -N -L 52841:localhost:52841;
+ssh mb -X -f -N -L 52843:localhost:52843;
+/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Volumes/mb/Users/admin/.ipython/profile_nbserver/security/kernel-d36b706e-72a8-4c10-9214-ca194fa7dfa9.json;
+kill `ps -A | grep 52842:localhost:52842 | grep -v grep | awk '{print $1}'`; 
+kill `ps -A | grep 52844:localhost:52844 | grep -v grep | awk '{print $1}'`; 
+kill `ps -A | grep 52840:localhost:52840 | grep -v grep | awk '{print $1}'`; 
+kill `ps -A | grep 52841:localhost:52841 | grep -v grep | awk '{print $1}'`; 
+kill `ps -A | grep 52843:localhost:52843 | grep -v grep | awk '{print $1}'`; 
