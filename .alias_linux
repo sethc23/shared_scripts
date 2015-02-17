@@ -1,0 +1,122 @@
+function f_kill_by() { sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
+function newalias_linux() { echo "alias "$1 >> $HOME/.alias_linux; source_bash; push_linux_aliases; }
+function ap_remove() { sudo apt-get purge $1 && sudo apt-get --purge autoremove; }
+function ib_konnect() { sudo $IPY/ENV/bin/ipython console --existing $HOME/.ipython/profile_default/security/kernel-$1.json; kill $1;}
+
+alias aprinto='cd $APRINTO; source ENV/bin/activate;'
+
+alias BT_off='sudo /etc/init.d/bluetooth stop'
+alias BT_on='sudo /etc/init.d/bluetooth start'
+alias BT_restart='sudo /etc/init.d/bluetooth restart'
+
+alias chk_filesystem_types='sudo blkid'
+alias chmod_num='stat -c "%a"'
+
+diff_check_files='diff -rq'
+diff_compare_files='colordiff -ry'
+
+alias kill_by='f_kill_by'
+
+alias mail_old='mail -f ~/mbox'
+
+alias locate_update='sudo /usr/bin/updatedb'
+alias ls='ls --color --almost-all --classify --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
+
+alias red_keys='redis-cli -h localhost -p 6379 -n 0 keys \*'
+
+alias rq_status='sudo rabbitmqctl status'
+alias cel_env='cd $HOME/$SERVER/aprinto; source ENV/bin/activate'
+alias rq_cel_run='cel_env; celery -A --app=sync_app --workdir=$HOME/$SERVER/aprinto/celery worker --loglevel=info'
+alias rq_cel_purge='cel_env; celery purge -f --broker=amqp://ub2:mq_money@localhost:5672//'
+alias rq_start='sudo service rabbitmq-server start'
+alias rq_stop='sudo service rabbitmq-server stop'
+alias rq_restart='sudo service rabbitmq-server restart'
+alias rq_config='sudo emacs /etc/rabbitmq/rabbitmq.config'
+alias rq_q='sudo rabbitmqctl list_queues'
+alias rq_x='sudo rabbitmqctl list_exchanges'
+alias rq_b='sudo rabbitmqctl list_bindings'
+alias rq_c='sudo rabbitmqctl list_consumers'
+alias rq_r='sudo rabbitmqctl report'
+alias rq_log_start_err='sudo tail -n 50 -f /var/log/rabbitmq/startup_err'
+alias rq_remaining='sudo rabbitmqctl list_queues name messages messages_ready messages_unacknowledged'
+
+alias ng_kill='sudo pkill -f nginx'
+alias ng_kill_2='sudo fuser -k 80/tcp'
+alias ng_push_config='$HOME/$SERVER/nginx/push_ng_config.bash'
+alias ng_log='sudo tail -f /var/log/nginx.log'
+
+# ------------------------------->>>
+# -----pgSQL--------------------->>>
+
+#alias pg_PUSH_CONFIG='sudo cp -R $HOME/$SERVER/pgsql93/postgresql93 /etc/rc.d/init.d/'
+#alias pg_RESET='sudo chkconfig postgresql93 reset'
+#alias pg_SHUTDOWN='sudo su postgres -c "pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart"'
+
+alias pg_tmp_start="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl stop -m fast -D /var/lib/postgresql/9.4/main -l /tmp/pgsql -o \"-i -E\"'"
+alias pg_tmp_stop="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl start -D /var/lib/postgresql/9.4/main -l /tmp/pgsql -o \"-i -E\"'"
+
+
+#alias pg_config='sudo emacs /opt/local/var/db/postgresql93/defaultdb/pg_hba.conf'
+#alias pg_config2='sudo emacs /opt/local/var/db/postgresql93/defaultdb/postgresql.conf'
+#alias pg_dump_rename='python $HOME/.scripts/api_pgsql.py rename_base_dump;'
+#alias pg_dump_put='/opt/local/lib/postgresql93/bin/pg_dump --dbname=routing --host=0.0.0.0 --port=8800 --username=postgres > ~/.pg_dump/db.sql'
+#alias pg_dump_all='/opt/local/lib/postgresql93/bin/pg_dump_put; pg_dump_rename'
+#alias pg_kill='sudo kill -KILL $(cat $HOME/postgres/pgsql93.pid); sudo rm /opt/local/var/db/postgresql93/defaultdb/postmaster.pid'
+#alias pg_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 routing'
+#alias pg_restore='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 -d routing -f db.sql'
+#alias pg_start='cd /tmp; sudo su postgres -c "/opt/local/lib/postgresql93/bin/pg_ctl start -D /opt/local/var/db/postgresql93/defaultdb"'
+#alias pg_stop='sudo su postgres -c "/opt/local/lib/postgresql93/bin/pg_ctl stop -D /opt/local/var/db/postgresql93/defaultdb -m smart"'
+#alias pg_stop_fast='sudo su postgres -c "/opt/local/lib/postgresql93/bin/pg_ctl stop -D /opt/local/var/db/postgresql93/defaultdb -m fast"'
+
+# -------------------------------<<<
+# -------------------------------<<<
+
+
+alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
+alias ports_listen_2='sudo netstat -ltnp'
+
+alias ps='ps -ef'
+
+alias pydoc='python -m pydoc'
+
+alias show_temp='sensors'
+
+alias syslog_start='syslog_push_config; sudo /usr/local/sbin/syslog-ng'
+alias syslog_stop='kill_by syslog-ng; sleep 1; ps -A | grep syslog'
+alias syslog_config='sudo emacs /usr/local/etc/syslog-ng.conf'
+alias syslog_reload='syslog_stop; syslog_push_config; syslog_start'
+alias syslog_debug='syslog_push_config; sudo /usr/local/sbin/syslog-ng -Fvvedt'
+alias syslog_kill='kill_by syslog-ng'
+
+alias svc_pgsql_load='sudo service postgresql start'
+alias svc_pgsql_unload='sudo service postgresql stop'
+alias svc_pgsql_restart='sudo service postgresql restart'
+
+alias svc_rsyslog_load='sudo service rsyslog start'
+alias svc_rsyslog_unload='sudo service rsyslog stop'
+alias svc_rsyslog_restart='sudo service rsyslog restart'
+
+alias syslog_push_config='sudo $HOME/$SERVER/syslog-ng/push_syslog_config.bash'
+
+#-- SUPERVISOR --#
+alias sv_sudo_push_config='syslog_push_config; sudo $HOME/$SERVER/supervisor_root/push_sv_config_root.bash'
+alias sv_load='sv_sudo_push_config; sudo service supervisord start'
+alias sv_unload='sudo service supervisord stop'
+alias sv_reload='sv_sudo_push_config; sudo service supervisord restart'
+alias sv_reset='sv_sudo_push_config && sv_ctl reread && sv_ctl update'
+alias sv_s='sv_ctl status'
+alias sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
+
+alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; syslog_push_config; sudo syslog-ng;'
+
+alias vi='vim'
+alias y_installed='yum list'
+alias y_update='sudo yum -y update'
+
+alias N='ng_push_config; ng_reload;'
+alias SK='syslog_kill'
+alias ap_update='sudo apt-get update'
+alias ap_install='sudo apt-get install -y'
+alias ap_upgrade='sudo apt-get upgrade -y'
+alias ap_search='apt search'
+alias chkconfig='sudo sysv-rc-conf'
