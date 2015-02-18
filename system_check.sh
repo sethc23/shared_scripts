@@ -15,7 +15,6 @@ echo ${yellow}${bold}$'\t\t\t'$1${default}
 source $SERV_HOME/ipython/ENV/bin/activate
 cd $HOME/.scripts
 a=$(python System_Control.py check_health $1)
-echo $a
 IFS='<>' read -a array <<< "$a"
 eval echo "${array[@]}" | tr " " "\n"
 $(`tput sgr0`)
