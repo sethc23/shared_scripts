@@ -47,10 +47,7 @@ function pyprofilewrite() { kernprof.py -l $1; }
 function pyprofileread() { python -m line_profiler $1.lprof; }
 function RD() { cd $BD/RD/src; python seamless.py; }
 function RDt() { cd $BD/RD/src; python seamless_test.py; }
-function g_add_commit_push() { git add --ignore-removal -- .; \
-    git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --; \
-    git commit -m "$1"; \
-    git push sub_dest master; }
+
 
 alias AP_android='cd $APORO/static/sencha/phonegap/platforms/android/'
 alias AP_phonegap_build_android='AP_android; sudo phonegap build android --release;'
@@ -278,6 +275,19 @@ alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/'
 alias to_log='syslog -s -l error -k Message'
 function dl_unzip() { wget $1; tar -xzvf $1; }
 
+function g-restore_local_f() { ln -s ~/.git/.gitignore ~/; \
+	 ln -s ~/.git/.gitignore_global ~/; \
+	 ln -s ~/$SERVER/local_config/.bashrc ~/ ; \
+	 ln -s ~/$SERVER/local_config/.iterm2 ~/ ; \
+	 ln -s ~/$SERVER/local_config/.profile ~/ ; \
+	 ln -s ~/$SERVER/local_config/.bash_profile ~/ ;}
+function g_add_commit_push() { git add --ignore-removal -- .; \
+    if [ $(git diff --stat --name-only | wc -l) -gt 0 ]; then \
+        git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --; \
+    fi;
+    git commit -m "$1"; \
+    git push sub_dest master; }
+
 alias g-s='git status'
 alias g-s-p='git status --porcelain'
 alias g-s-untracked='git status --porcelain | grep -E "\?\?" | awk '\''{print }'\'' | tr '\''??'\'' '\'' '\'''
@@ -311,14 +321,8 @@ alias g-psh_servs='g-psh_master; g-psh_local_serv;'
 alias g-sparse_update='git read-tree -mu HEAD'
 alias g-not_staged="git diff --name-status | awk \'{print $2}\'"
 alias g-r-unstaged="g-not_staged | awk '{print $2}' | xargs git update-index --assume-unchanged --"
-function g-restore_local_f() { ln -s ~/.git/.gitignore ~/; \
-	 ln -s ~/.git/.gitignore_global ~/; \
-	 ln -s ~/$SERVER/local_config/.bashrc ~/ ; \
-	 ln -s ~/$SERVER/local_config/.iterm2 ~/ ; \
-	 ln -s ~/$SERVER/local_config/.profile ~/ ; \
-	 ln -s ~/$SERVER/local_config/.bash_profile ~/ ;}
 alias g-restore_local='g-restore_local_f'
-alias g-acp='g_add_commit_push'
+alias g-X='g_add_commit_push'
 
 
 # cat tmp.txt | xargs -n 1 $HERE/chroot.sh
