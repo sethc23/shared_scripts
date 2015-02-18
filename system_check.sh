@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/.bash_profile
+source ~/.bashrc
 
 underline="`tput smul`"
 nounderline="`tput rmul`"
@@ -12,9 +12,10 @@ yellow=`tput setaf 3`
 default=`tput setaf 9`
 
 echo ${yellow}${bold}$'\t\t\t'$1${default}
-source /Users/admin/SERVER3/ipython/ENV/bin/activate
-cd /Users/admin/SERVER3/.scripts
+source $SERV_HOME/ipython/ENV/bin/activate
+cd $HOME/.scripts
 a=$(python System_Control.py check_health $1)
+echo $a
 IFS='<>' read -a array <<< "$a"
 eval echo "${array[@]}" | tr " " "\n"
 $(`tput sgr0`)
