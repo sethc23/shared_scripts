@@ -12,9 +12,6 @@ alias BT_restart='sudo /etc/init.d/bluetooth restart'
 alias chk_filesystem_types='sudo blkid'
 alias chmod_num='stat -c "%a"'
 
-diff_check_files='diff -rq'
-diff_compare_files='colordiff -ry'
-
 alias kill_by='f_kill_by'
 
 alias mail_old='mail -f ~/mbox'
