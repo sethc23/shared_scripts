@@ -22,8 +22,8 @@ alias ls='ls --color --almost-all --classify --human-readable --ignore-backups -
 alias red_keys='redis-cli -h localhost -p 6379 -n 0 keys \*'
 
 alias rq_status='sudo rabbitmqctl status'
-alias cel_env='cd $HOME/$SERVER/aprinto; source ENV/bin/activate'
-alias rq_cel_run='cel_env; celery -A --app=sync_app --workdir=$HOME/$SERVER/aprinto/celery worker --loglevel=info'
+alias cel_env='cd $SERV_HOME/aprinto; source ENV/bin/activate'
+alias rq_cel_run='cel_env; celery -A --app=sync_app --workdir=$SERV_HOME/aprinto/celery worker --loglevel=info'
 alias rq_cel_purge='cel_env; celery purge -f --broker=amqp://ub2:mq_money@localhost:5672//'
 alias rq_start='sudo service rabbitmq-server start'
 alias rq_stop='sudo service rabbitmq-server stop'
@@ -34,12 +34,12 @@ alias rq_x='sudo rabbitmqctl list_exchanges'
 alias rq_b='sudo rabbitmqctl list_bindings'
 alias rq_c='sudo rabbitmqctl list_consumers'
 alias rq_r='sudo rabbitmqctl report'
-alias rq_log_start_err='sudo tail -n 50 -f /var/log/rabbitmq/startup_err'
+alias rq_tail_start_err='sudo tail -n 50 -f /var/log/rabbitmq/startup_err'
 alias rq_remaining='sudo rabbitmqctl list_queues name messages messages_ready messages_unacknowledged'
 
 alias ng_kill='sudo pkill -f nginx'
 alias ng_kill_2='sudo fuser -k 80/tcp'
-alias ng_push_config='$HOME/$SERVER/nginx/push_ng_config.bash'
+alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
 alias ng_tail_t_access='sudo tail -f /var/log/syslogs/tmp_ngx_access.log'
 alias ng_tail_t_err='sudo tail -f /var/log/syslogs/tmp_ngx_error.log'
 alias ng_tail_t_err_w='sudo tail -f /var/log/syslogs/tmp_ngx_error_warn.log'
@@ -47,7 +47,7 @@ alias ng_tail_t_err_w='sudo tail -f /var/log/syslogs/tmp_ngx_error_warn.log'
 # ------------------------------->>>
 # -----pgSQL--------------------->>>
 
-#alias pg_PUSH_CONFIG='sudo cp -R $HOME/$SERVER/pgsql93/postgresql93 /etc/rc.d/init.d/'
+#alias pg_PUSH_CONFIG='sudo cp -R $SERV_HOME/pgsql93/postgresql93 /etc/rc.d/init.d/'
 #alias pg_RESET='sudo chkconfig postgresql93 reset'
 #alias pg_SHUTDOWN='sudo su postgres -c "pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart"'
 
@@ -103,7 +103,7 @@ alias svc_rsyslog_restart='sudo service rsyslog restart'
 
 
 #-- SUPERVISOR --#
-alias sv_sudo_push_config='sl_push_config; sudo $HOME/$SERVER/supervisor_root/push_sv_config_root.bash'
+alias sv_sudo_push_config='sl_push_config; sudo $SERV_HOME/supervisor_root/push_sv_config_root.bash'
 alias sv_load='sv_sudo_push_config; sudo service supervisord start'
 alias sv_unload='sudo service supervisord stop'
 alias sv_reload='sv_sudo_push_config; sudo service supervisord restart'

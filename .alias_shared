@@ -20,11 +20,11 @@ function push_shared_scripts() { cd $HOME/.scripts;\
     git add -- .alias_linux;\
     git commit -m "updating aliases";\
     git push sub_dest master; }
-function edit_this_bash() { $EDITOR $HOME/$SERVER/$ALIAS; source_bash; }
+function edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
 function edit_bash_share() { $EDITOR $HOME/.scripts/.alias_shared; source_bash; }
 function edit_linux_share() { $EDITOR $HOME/.scripts/.alias_linux; source_bash; }
 function edit_bash_prof() { $EDITOR "$HOME/$SHELL_CONFIG"; source_bash; }
-function newalias_here() { echo "alias "$1 >> $HOME/$SERVER/$ALIAS; source_bash; }
+function newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 function newalias_shared() { echo "alias "$1 >> $HOME/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
 function newalias_linux() { echo "alias "$1 >> $HOME/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 function f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
@@ -35,7 +35,7 @@ function f_kill_by() { sudo kill -9 `ps -A | grep $1 | grep -v grep | awk '{prin
 function f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
 function f_mp_py() { sudo port select python python$1; }
 function f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
-function f_sencha_build() { cd $HOME/$SERVER/aporo/static/sencha; sudo sencha app build production; }
+function f_sencha_build() { cd $SERV_HOME/aporo/static/sencha; sudo sencha app build production; }
 function ib_e() { cd $IPY; source ENV/bin/activate; }
 function ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}
 function link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 $IPY/ENV/lib/python2.7/site-packages/; }
@@ -70,7 +70,7 @@ alias aporo='cd $APORO'
 alias aporo_debug='$APORO/ENV/bin/python $APORO/manage.py runserver 0.0.0.0:8080'
 alias aporo_db_sync='$APORO/ENV/bin/python manage.py syncdb'
 alias aprinto='cd $APRINTO'
-alias aprinto_debug='$APRINTO/ENV/bin/python $HOME/$SERVER/aprinto/manage.py runserver 0.0.0.0:8088'
+alias aprinto_debug='$APRINTO/ENV/bin/python $SERV_HOME/aprinto/manage.py runserver 0.0.0.0:8088'
 alias aprinto_db_sync='$APRINTO/ENV/bin/python manage.py syncdb'
 alias aprinto_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 aprinto'
 
@@ -80,7 +80,7 @@ alias aws_attach_volume='aws ec2 attach-volume --volume-id vol-349bc67f --instan
 alias aws_config='cat $AWS_CONFIG_FILE'
 alias aws_create_snapshot='aws ec2 create-snapshot --volume-id vol-f4f5a9bc --description'
 alias aws_create_volume='aws ec2 create-volume --snapshot-id snap-97e0dc1a --availability-zone us-east-1a'
-alias aws_env='cd $HOME/$SERVER/aws; source ENV/bin/activate'
+alias aws_env='cd $SERV_HOME/aws; source ENV/bin/activate'
 function aws_info_f() { aws ec2 describe-instances --filters Name="tag-value",Values="$1"; }
 alias aws_info='aws_info_f'
 alias aws_ip_assoc='aws ec2 associate-address --instance-id i-40b143ba --allocation-id eipalloc-44289721'
@@ -140,7 +140,7 @@ alias ib='sudo $IPY/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 
 alias ib_load='sudo launchctl load -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
 alias ib_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
 alias ib_config='f_sudo_textedit ~/.ipython/profile_nbserver/ipython_config.py'
-alias ib_console='$HOME/$SERVER/ipython/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ib_console='$SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_js='f_sudo_xcode ~/.ipython/profile_nbserver/static/custom/custom.js'
 alias ib_js_folder='open $HOME/.ipython/profile_nbserver/static/custom/'
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
@@ -197,14 +197,14 @@ alias mysql_config2='echo "money" | sudo emacs /opt/local/etc/mysql55/my.cnf'
 alias mysql_load='echo "money" | sudo launchctl load -w /Library/LaunchDaemons/org.macports.mysql55-server.plist'
 alias mysql_unload='echo "money" | sudo launchctl unload -w /Library/LaunchDaemons/org.macports.mysql55-server.plist'
 
-alias ng_push_config='$HOME/$SERVER/nginx/push_ng_config.bash'
+alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
 alias ng_load='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
 alias ng_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
-#alias ng_reload='ng_push_config; sudo /usr/local/openresty/nginx/sbin/nginx -s reload -p $HOME/$SERVER/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; pid $HOME/$SERVER/run/pids/sv_nginx.pid; error_log $HOME/$SERVER/run/logs/error/sv_nginx.log info; daemon off;"'
+#alias ng_reload='ng_push_config; sudo /usr/local/openresty/nginx/sbin/nginx -s reload -p $SERV_HOME/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; pid $SERV_HOME/run/pids/sv_nginx.pid; error_log $SERV_HOME/run/logs/error/sv_nginx.log info; daemon off;"'
 
-alias ng_start='ng_push_config; sudo nginx -p $HOME/$SERVER/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; pid $HOME/$SERVER/run/pids/sv_nginx.pid; daemon on;"'
-alias ng_reload='ng_push_config; sudo nginx -s reload -p $HOME/$SERVER/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; pid $HOME/$SERVER/run/pids/sv_nginx.pid; daemon on;"'
-alias ng_stop='sudo nginx -s stop -p $HOME/$SERVER/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; error_log logs/error/sv_nginx.log info; pid $HOME/$SERVER/run/pids/sv_nginx.pid; daemon on;"'
+alias ng_start='ng_push_config; sudo nginx -p $SERV_HOME/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; pid $SERV_HOME/run/pids/sv_nginx.pid; daemon on;"'
+alias ng_reload='ng_push_config; sudo nginx -s reload -p $SERV_HOME/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; pid $SERV_HOME/run/pids/sv_nginx.pid; daemon on;"'
+alias ng_stop='sudo nginx -s stop -p $SERV_HOME/run -c /usr/local/openresty/nginx/conf/nginx.conf -g "user $ROOT $ROOT_GRP; error_log logs/error/sv_nginx.log info; pid $SERV_HOME/run/pids/sv_nginx.pid; daemon on;"'
 alias ng_kill='sudo pkill -f nginx'
 
 alias pip_upgrade='pip install -U pip'
