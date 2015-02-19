@@ -17,7 +17,7 @@ alias kill_by='f_kill_by'
 alias mail_old='mail -f ~/mbox'
 
 alias locate_update='sudo /usr/bin/updatedb'
-alias ls='ls --color --almost-all --classify --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
+alias ls='ls --color --almost-all --classify --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
 
 alias red_keys='redis-cli -h localhost -p 6379 -n 0 keys \*'
 
