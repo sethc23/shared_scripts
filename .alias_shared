@@ -286,6 +286,7 @@ function g_add_commit_push() { git add --ignore-removal -- .; \
         git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --; \
     fi;
     git commit -m "$1"; \
+    sleep 1; \
     git push sub_dest master; \
     git status; }
 
