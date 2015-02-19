@@ -300,7 +300,7 @@ class System_Admin:
 
     def get_cfg(self):
         base            = self.base_dir if self.worker=='ub2' else '/Volumes/ub2'+self.base_dir
-        cfg_fpath       = base + '/SERVER2/BD_Scripts/files_folders/rsync/backup_system_config.xlsx'
+        cfg_fpath       = base + '/BD_Scripts/files_folders/rsync/backup_system_config.xlsx'
         cfg             = pd.read_excel(cfg_fpath, na_values ='', keep_default_na=False, convert_float=False)
         cols            = cfg.columns.tolist()
         cols_lower      = [str(it).lower() for it in cols]
@@ -339,8 +339,8 @@ class System_Admin:
         self.process_start = dt.isoformat(dt.now())
         self.add_options()
         self.add_exclusions()
-        from_dir        = '/home/ub2/SERVER2/BD_Scripts/ipython'
-        to_dir          = '/home/ub2/SERVER2'
+        from_dir        = '/home/ub2/BD_Scripts/ipython'
+        to_dir          = '/home/ub2/'
         src             = from_dir if self.worker=='ub2' else '/Volumes/ub2'+from_dir
         dest            = to_dir   if self.worker=='ub2' else '/Volumes/ub2'+to_dir
         self.params.update( {'src_dir'      :   src,
