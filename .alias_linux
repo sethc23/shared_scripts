@@ -78,12 +78,14 @@ alias pydoc='python -m pydoc'
 
 alias show_temp='sensors'
 
-alias syslog_start='syslog_push_config; sudo /usr/local/sbin/syslog-ng'
-alias syslog_stop='kill_by syslog-ng; sleep 1; ps -A | grep syslog'
-alias syslog_config='sudo emacs /usr/local/etc/syslog-ng.conf'
-alias syslog_reload='syslog_stop; syslog_push_config; syslog_start'
-alias syslog_debug='syslog_push_config; sudo /usr/local/sbin/syslog-ng -Fvvedt'
-alias syslog_kill='kill_by syslog-ng'
+alias sl_push_config='sudo $SERV_HOME/syslog-ng/push_syslog_config.bash'
+alias sl_start='sl_push_config; sudo /usr/local/sbin/syslog-ng'
+alias sl_stop='kill_by syslog-ng; sleep 1; ps -A | grep syslog'
+alias sl_config='sudo emacs /usr/local/etc/syslog-ng.conf'
+alias sl_reload='sl_stop; sl_push_config; sl_start'
+alias sl_debug='sl_push_config; sudo /usr/local/sbin/syslog-ng -Fvvedt'
+alias sl_kill='kill_by syslog-ng'
+alias sl_tail_all='sudo tail -f /var/log/syslogs/all.log'
 
 alias svc_pgsql_load='sudo service postgresql start'
 alias svc_pgsql_unload='sudo service postgresql stop'
@@ -93,10 +95,10 @@ alias svc_rsyslog_load='sudo service rsyslog start'
 alias svc_rsyslog_unload='sudo service rsyslog stop'
 alias svc_rsyslog_restart='sudo service rsyslog restart'
 
-alias syslog_push_config='sudo $HOME/$SERVER/syslog-ng/push_syslog_config.bash'
+
 
 #-- SUPERVISOR --#
-alias sv_sudo_push_config='syslog_push_config; sudo $HOME/$SERVER/supervisor_root/push_sv_config_root.bash'
+alias sv_sudo_push_config='sl_push_config; sudo $HOME/$SERVER/supervisor_root/push_sv_config_root.bash'
 alias sv_load='sv_sudo_push_config; sudo service supervisord start'
 alias sv_unload='sudo service supervisord stop'
 alias sv_reload='sv_sudo_push_config; sudo service supervisord restart'
@@ -104,14 +106,14 @@ alias sv_reset='sv_sudo_push_config && sv_ctl reread && sv_ctl update'
 alias sv_s='sv_ctl status'
 alias sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
 
-alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; syslog_push_config; sudo syslog-ng;'
+alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; sl_push_config; sudo syslog-ng;'
 
 alias vi='vim'
 alias y_installed='yum list'
 alias y_update='sudo yum -y update'
 
 alias N='ng_push_config; ng_reload;'
-alias SK='syslog_kill'
+alias SK='sl_kill'
 alias ap_update='sudo apt-get update'
 alias ap_install='sudo apt-get install -y'
 alias ap_upgrade='sudo apt-get upgrade -y'
