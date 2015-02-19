@@ -14,7 +14,7 @@ function diff_files_left() { colordiff --side-by-side --suppress-common-lines --
 function diff_files_right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; }
 function source_bash() { source $HOME/$SHELL_CONFIG; }
-function pull_shared_scripts() { cd $HOME/.scripts; git pull sub_dest master; source_bash;}
+function pull_shared_scripts() { a=`pwd`; cd $HOME/.scripts; git pull sub_dest master; source_bash; cd $a;}
 function push_shared_scripts() { cd $HOME/.scripts;\
     git add -- .alias_shared;\
     git add -- .alias_linux;\
@@ -286,7 +286,8 @@ function g_add_commit_push() { git add --ignore-removal -- .; \
         git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --; \
     fi;
     git commit -m "$1"; \
-    git push sub_dest master; }
+    git push sub_dest master; \
+    git status; }
 
 alias g-s='git status'
 alias g-s-p='git status --porcelain'
