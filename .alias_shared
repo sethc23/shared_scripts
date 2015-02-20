@@ -2,16 +2,16 @@ function aporo_env() { cd $APORO; source ENV/bin/activate; }
 function aprinto_env() { cd $APRINTO; source ENV/bin/activate; }
 function djJSON() { f_getJSON http://0.0.0.0/api_view/$1/?format=json; }
 function mnt_up() { $IPY/ENV/bin/python $HOME/.scripts/mounted_shares.py; }
-function diff_dir_all() { colordiff --brief --recursive $1 $2; }
-function diff_dir_left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
-function diff_dir_right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
-function diff_dir_files() { colordiff --brief --recursive $1 $2 | grep -E '^Files'; }
-function diff_dir_same() { colordiff --brief --recursive --report-identical-files $1 $2 | grep 'are identical'; }
-function diff_files() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
+function diff-dir-all() { colordiff --brief --recursive $1 $2; }
+function diff-dir-left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
+function diff-dir-right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
+function diff-dir-files() { colordiff --brief --recursive $1 $2 | grep -E '^Files'; }
+function diff-dir-same() { colordiff --brief --recursive --report-identical-files $1 $2 | grep 'are identical'; }
+function diff-files() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines $1 $2; }
-function diff_files_left() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
+function diff-files-left() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]<[^a-zA-Z0-9]/ {print}'; }
-function diff_files_right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
+function diff-files-right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; }
 function source_bash() { source $HOME/$SHELL_CONFIG; }
 function pull_shared_scripts() { a=`pwd`; cd $HOME/.scripts; git pull sub_dest master; source_bash; cd $a;}
