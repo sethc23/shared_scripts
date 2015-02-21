@@ -419,11 +419,16 @@ class System_Admin:
             T.update(           {'stout'        :   t,
                                  'sterr'        :   err,
                                  'ended'        :   dt.isoformat(dt.now())} )
-            c               =   """insert into system_log values ('%(operation)s','%(started)s',
-                                                          '%(parameters)s','%(stout)s',
-                                                          '%(sterr)s','%(ended)s')"""%T
-            conn.set_isolation_level(0)
-            cur.execute(c)
+
+            cmd                 =   'logger -t "System_Admin" "%s"' % T
+            proc                =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+            (t, err)            =   proc.communicate()
+
+            # c               =   """insert into system_log values ('%(operation)s','%(started)s',
+            #                                               '%(parameters)s','%(stout)s',
+            #                                               '%(sterr)s','%(ended)s')"""%T
+            # conn.set_isolation_level(0)
+            # cur.execute(c)
 
         self.process_end = dt.isoformat(dt.now())
         return self.to_pastebin(params='\n'.join(self.database_names))
