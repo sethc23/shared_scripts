@@ -36,6 +36,7 @@ cur = conn.cursor()
 
 global THIS_SERVER
 #from IPython import embed_kernel as embed; embed()
+# from ipdb import set_trace as i_trace; i_trace()
 
 def exec_cmds(cmds,cmd_host,this_worker):
     cmd                         =   ' '.join(cmds)
@@ -133,9 +134,10 @@ class System_Crons:
         for it in all_repos:
             if it.find(serv)!=0:
                 serv                =   it[:it.find('@')]
-            s_path                  =   it[it.rfind(':')+1]
+            s_path                  =   it[it.rfind(':')+1:]
             cmds                    =   ['cd %s;' % s_path,
                                          'git fsck;']
+            from ipdb import set_trace as i_trace; i_trace()
             (_out,_err)             =   exec_cmds(cmds,serv,self.worker)
             assert _err==None
             if _out!='':
