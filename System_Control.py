@@ -37,9 +37,9 @@ cur = conn.cursor()
 global THIS_SERVER
 #from IPython import embed_kernel as embed; embed()
 
-def exec_cmds(cmds,cmd_host):
+def exec_cmds(cmds,cmd_host,this_worker):
     cmd                         =   ' '.join(cmds)
-    if cmd_host==THIS_SERVER:
+    if cmd_host==this_worker:
         p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
     else:
         cmd                     =   "ssh %s '%s'" % (cmd_host,cmd)
@@ -84,12 +84,12 @@ class System_Crons:
 
     def check_log_rotate(self):
 
-        (_out,_err)                 =   exec_cmds(['cat /etc/logrotate.d/sv_syslog'],self.worker)
+        (_out,_err)                 =   exec_cmds(['cat /etc/logrotate.d/sv_syslog'],self.worker,self.worker)
         if _out.find('weekly')!=-1:
             rotate_period           =   7
 
         cmds                        =   ['cat /var/lib/logrotate/status | grep syslogs | grep -v \'tmp_\'']
-        (_out,_err)                 =   exec_cmds(cmds,self.worker)
+        (_out,_err)                 =   exec_cmds(cmds,self.worker,self.worker)
         today                       =   dt.now()
         report_failure              =   False
         for it in _out.split('\n'):
