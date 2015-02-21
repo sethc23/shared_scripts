@@ -105,10 +105,9 @@ class System_Health:
             p               =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
             (_out,_err)     =   p.communicate()
             if _out.find('0')==-1:
-                res.append("[$(tput setaf 1 && tput bold)chk$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
-            else:
                 res.append("[$(tput bold && tput setaf 2)ok$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
-
+            else:
+                res.append("[$(tput setaf 1 && tput bold)chk$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
 
         print '<>'.join(res)
 
