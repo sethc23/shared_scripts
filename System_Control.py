@@ -137,7 +137,6 @@ class System_Crons:
             s_path                  =   it[it.rfind(':')+1:]
             cmds                    =   ['cd %s;' % s_path,
                                          'git fsck;']
-            # from ipdb import set_trace as i_trace; i_trace()
             (_out,_err)             =   exec_cmds(cmds,serv,self.worker)
             assert _err==None
             if _out!='':
@@ -160,6 +159,7 @@ class System_Crons:
             proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
             (t, err)                =   proc.communicate()
 
+        # from ipdb import set_trace as i_trace; i_trace()
 
 class System_Health:
 
