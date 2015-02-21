@@ -410,12 +410,18 @@ class System_Admin:
             fname           =   fpath[fpath.rfind('/')+1:]
             cmd             =   """%s -d %s -h 0.0.0.0 -p 8800 --username=postgres > %s
                                 """.replace('\n','').replace('\t','').strip()%(db_info['backup_cmd'],db_info['db_name'],fpath)
-            if db_info['db_server']!=self.worker:
-                cmd         =   "ssh %s '"%db_info['db_server'] + cmd + "'"
+
+            # if db_info['db_server']!=self.worker:
+            #     cmd         =   "ssh %s '"%db_info['db_server'] + cmd + "'"
+
             T.update(           {'started'      :   dt.isoformat(dt.now()),
                                  'parameters'   :   cmd.replace("'","''"),} )
-            proc            =   sub_popen([cmd], stdout=sub_PIPE, shell=True)
-            (t, err)        =   proc.communicate()
+
+
+
+            # proc            =   sub_popen([cmd], stdout=sub_PIPE, shell=True)
+            (t, err)        =   exec_cmds([cmd],db_info['db_server'],self.worker)
+
             T.update(           {'stout'        :   t,
                                  'sterr'        :   err,
                                  'ended'        :   dt.isoformat(dt.now())} )
@@ -431,7 +437,7 @@ class System_Admin:
             # cur.execute(c)
 
         self.process_end = dt.isoformat(dt.now())
-        return self.to_pastebin(params='\n'.join(self.database_names))
+        # return self.to_pastebin(params='\n'.join(self.database_names))
 
     def backup_system(self,params=''):
         self.cfg                =   self.get_cfg()
