@@ -130,14 +130,14 @@ class System_Crons:
         master_src                  =   g.git_master_src.tolist()
         all_repos                   =   sub_srcs + sub_dest + master_src
         all_repos                   =   sorted(dict(zip(all_repos,range(len(all_repos)))).keys())
-        serv,troubled_repos         =   '',[]
+        serv,troubled_repos         =   '0',[]
         for it in all_repos:
             if it.find(serv)!=0:
-                serv                =   it[:it.find('@')]
+                serv                =   it[it.find('@')+1:it.rfind(':')]
             s_path                  =   it[it.rfind(':')+1:]
             cmds                    =   ['cd %s;' % s_path,
                                          'git fsck;']
-            from ipdb import set_trace as i_trace; i_trace()
+            # from ipdb import set_trace as i_trace; i_trace()
             (_out,_err)             =   exec_cmds(cmds,serv,self.worker)
             assert _err==None
             if _out!='':
