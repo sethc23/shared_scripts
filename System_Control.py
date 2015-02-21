@@ -113,6 +113,13 @@ class System_Crons:
             proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
             (t, err)                =   proc.communicate()
 
+        else:
+            msg                     =   'LogRotate looks good'
+
+            cmd                     =   'logger -t "CRON" "%s"' % msg
+            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+            (t, err)                =   proc.communicate()
+
 
     def run_git_fsck(self):
         pass
