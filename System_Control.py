@@ -1,13 +1,12 @@
 # Libraries
 import                                 sys
 import                                 codecs
-reload(sys)
-sys.setdefaultencoding('UTF8')
+# reload(sys)
+# sys.setdefaultencoding('UTF8')
 from uuid                       import getnode          as get_mac
 from os                         import system           as os_cmd
 from os                         import environ          as os_environ
 from os                         import mkdir            as os_mkdir
-from os.path                    import abspath
 from subprocess                 import Popen            as sub_popen
 from subprocess                 import check_output     as sub_check_output
 from subprocess                 import PIPE             as sub_PIPE
@@ -61,6 +60,38 @@ class PasteBin:
         pb              =   PastebinPython(api_dev_key=dev_key)
         pb.createAPIUserKey(user_name,passw)
         self.pb         =   pb
+
+class System_Crons:
+
+    def __init__(self):
+        s                           =   System_Servers()
+        self.servers                =   s.servers
+        self.worker                 =   s.worker
+        c                           =   pd.read_sql('select * from crons',engine)
+        self.crons                  =   c
+
+    def check_log_rotate(self):
+
+        p                           =   sub_popen('cat /etc/logrotate.d/sv_syslog',stdout=sub_PIPE,shell=True)
+        (_out,_err)                 =   p.communicate()
+        if _out.find('weekly')!=-1:
+            rotate_period           =7
+
+        p                           =   sub_popen('cat /var/lib/logrotate/status | grep syslogs | grep -v \'tmp_\'',
+                                                  stdout=sub_PIPE,shell=True)
+        (_out,_err)                 =   p.communicate()
+        today                       =   dt.now()
+        report_failure              =   False
+        for it in _out.split('\n'):
+            if it!='':
+                t                   =   it.split()[1]
+                z                   =   t[:t.rfind('-')]
+                cron_d              =   dt.strptime(z,'%Y-%m-%d')
+                y                   =   cron_d-today
+                days_since          =   abs(y.days)
+                if days_since>rotate_period:
+                    report_failure  =   True
+        return report_failure
 
 
 
@@ -231,7 +262,6 @@ class System_Servers:
         #         res.append("$(tput bold && tput setaf 2) %s"%k)
         # print ';'.join(res)
         pass
-
 
 class System_Admin:
 
@@ -509,6 +539,8 @@ class System_Admin:
         conn.set_isolation_level(0)
         cur.execute(c)
         return True
+
+
 
 from sys import argv
 if __name__ == '__main__':

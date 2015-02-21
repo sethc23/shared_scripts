@@ -327,7 +327,7 @@ alias g-restore_local='g-restore_local_f'
 alias g-X='g_add_commit_push'
 
 
-# cat tmp.txt | xargs -n 1 $HERE/chroot.sh
+#cat tmp.txt | xargs -n 1 $HERE/chroot.sh
 #git log --abbrev --oneline | awk '{print $1}' | xargs -n 1 git diff-tree --no-commit-id --name-only -r | grep aprinto
 #git log | grep -A 10 27393e8aec5f2b7cca54b3e29c5afa00a32e875b
 #git log --abbrev --oneline | awk '{print $1}' | xargs -n 1 git diff-tree -r | grep -B 150 -E 'test_online_presence'
