@@ -143,6 +143,22 @@ class System_Crons:
             if _out!='':
                 troubled_repos.append(  it )
 
+                msg                 =   'Repo needs work >>%s<<' % it
+
+                cmd                 =   'logger -t "CRON" "%s"' % msg
+                proc                =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+                (t, err)            =   proc.communicate()
+
+                cmd                 =   'echo "%s" | mail -t 6174295700@vtext.com' % msg
+                proc                =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+                (t, err)            =   proc.communicate()
+
+        if troubled_repos==[]:
+            msg                     =   'Repos look good'
+
+            cmd                     =   'logger -t "CRON" "%s"' % msg
+            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+            (t, err)                =   proc.communicate()
 
 
 class System_Health:
