@@ -27,7 +27,7 @@ pd.set_option('display.width',180)
 np = pd.np
 np.set_printoptions(linewidth=200,threshold=np.nan)
 
-engine = create_engine(r'postgresql://postgres:postgres@192.168.3.52:8800/system',
+sys_eng = create_engine(r'postgresql://postgres:postgres@192.168.3.52:8800/system',
                        encoding='utf-8',
                        echo=False)
 
@@ -79,7 +79,7 @@ class System_Crons:
         s                           =   System_Servers()
         self.servers                =   s.servers
         self.worker                 =   s.worker
-        c                           =   pd.read_sql('select * from crons',engine)
+        c                           =   pd.read_sql('select * from crons',sys_eng)
         self.crons                  =   c
 
     def check_log_rotate(self):
@@ -120,9 +120,28 @@ class System_Crons:
             proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
             (t, err)                =   proc.communicate()
 
-
     def run_git_fsck(self):
-        pass
+        g                           =   pd.read_sql('select * from servers where git_tag is not null',sys_eng)
+        # check all sub_source
+        #       add new master_sources
+        # check master sources
+        sub_srcs,sub_dest           =   g.git_sub_src.tolist(),g.git_sub_dest.tolist()
+        master_src                  =   g.git_master_src.tolist()
+        all_repos                   =   sub_srcs + sub_dest + master_src
+        all_repos                   =   sorted(dict(zip(all_repos,range(len(all_repos)))).keys())
+        serv,troubled_repos         =   '',[]
+        for it in all_repos:
+            if it.find(serv)!=0:
+                serv                =   it[:it.find('@')]
+            s_path                  =   it[it.rfind(':')+1]
+            cmds                    =   ['cd %s;' % s_path,
+                                         'git fsck;']
+            (_out,_err)             =   exec_cmds(cmds,serv,self.worker)
+            assert _err==None
+            if _out!='':
+                troubled_repos.append(  it )
+
+
 
 class System_Health:
 
@@ -130,7 +149,7 @@ class System_Health:
         s                   =   System_Servers()
         self.servers        =   s.servers
         self.worker         =   s.worker
-        h                   =   pd.read_sql('select * from system_health',engine)
+        h                   =   pd.read_sql('select * from system_health',sys_eng)
         self.checks         =   h
 
     def make_display_check(self,chk_sys):
@@ -174,7 +193,7 @@ class System_Health:
 class System_Databases:
 
     def __init__(self):
-        self.databases  =   pd.read_sql('select * from databases where active is True',engine)
+        self.databases  =   pd.read_sql('select * from databases where active is True',sys_eng)
 
 class System_Servers:
 
@@ -203,7 +222,7 @@ class System_Servers:
             else:           R.update({k:v})
         self.L          =   L
         self.R          =   R
-        s               =   pd.read_sql('select * from servers where production_usage is not null',engine)
+        s               =   pd.read_sql('select * from servers where production_usage is not null',sys_eng)
         self.servers    =   s
         server_dir_dict =   dict(zip(s.tag.tolist(),s.home_dir.tolist()))
         mac             =   [int(str(get_mac()))]
@@ -320,7 +339,7 @@ class System_Admin:
         tbl             = 'config_rsync'
         conn.set_isolation_level(0)
         cur.execute('drop table if exists %s'%tbl)
-        cfg.to_sql(tbl,engine,index=False)
+        cfg.to_sql(tbl,sys_eng,index=False)
         return cfg
 
     def add_options(self):
@@ -529,7 +548,7 @@ class System_Admin:
                                     """ % (self.worker,self.process,'%%',
                                            self.process_start,self.process_end)
 
-            df                  =   pd.read_sql("select * from system_log where %s" % condition,engine)
+            df                  =   pd.read_sql("select * from system_log where %s" % condition,sys_eng)
 
             T                   =   df.iloc[0].to_dict()
             T['operation']      =   '%s: %s' % (self.worker,self.process)
