@@ -420,6 +420,9 @@ class System_Admin:
             cmds                    =   ['scp %(serv)s@%(serv)s:%(fpath)s /Volumes/EXT_HD/.pg_dump/'
                                          % ({ 'serv':db_info['db_server'],
                                               'fpath':fpath })]
+
+            from ipdb import set_trace as i_trace; i_trace()
+
             (_out,_err)             =   exec_cmds(cmds,'ub1',self.worker)
 
             T.update(                   {'scp_stout'            :   _out,
