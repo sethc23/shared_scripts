@@ -398,45 +398,38 @@ class System_Admin:
         return self.to_pastebin()
 
     def backup_databases(self,params=''):
-        self.process        =   'backup_databases'
-        self.process_start  =   dt.isoformat(dt.now())
-        T                   =   {'operation'    :   '%s: %s'%(self.worker,self.process)}
-        d                   =   System_Databases()
-        self.databases      =   d.databases
-        self.database_names =   self.databases.db_name.tolist()
+        self.process                =   'backup_databases'
+        self.process_start          =   dt.isoformat(dt.now())
+        T                           =   {'operation'    :   '%s: %s'%(self.worker,self.process)}
+        d                           =   System_Databases()
+        self.databases              =   d.databases
+        self.database_names         =   self.databases.db_name.tolist()
         for i in range(len(self.databases)):
-            db_info         =   self.databases.ix[i,['backup_path','db_server','db_name','backup_cmd']].map(str)
-            fpath           =   '%s/%s_%s_%s.sql'%tuple(db_info[:-1].tolist() + [dt.strftime(dt.now(),'%Y_%m_%d')])
-            fname           =   fpath[fpath.rfind('/')+1:]
-            cmd             =   """%s -d %s -h 0.0.0.0 -p 8800 --username=postgres > %s
-                                """.replace('\n','').replace('\t','').strip()%(db_info['backup_cmd'],db_info['db_name'],fpath)
+            db_info                 =   self.databases.ix[i,['backup_path','db_server','db_name','backup_cmd']].map(str)
+            fpath                   =   '%s/%s_%s_%s.sql'%tuple(db_info[:-1].tolist() + [dt.strftime(dt.now(),'%Y_%m_%d')])
+            fname                   =   fpath[fpath.rfind('/')+1:]
+            cmd                     =   """%s -d %s -h 0.0.0.0 -p 8800 --username=postgres > %s
+                                        """.replace('\n','').replace('\t','').strip()%(db_info['backup_cmd'],db_info['db_name'],fpath)
+            T.update(                   {'started'          :   dt.isoformat(dt.now()),
+                                         'parameters'        :   cmd.replace("'","''"),} )
+            (t, err)                =   exec_cmds([cmd],db_info['db_server'],self.worker)
 
-            # if db_info['db_server']!=self.worker:
-            #     cmd         =   "ssh %s '"%db_info['db_server'] + cmd + "'"
+            T.update(                   {'update_stout'            :   t,
+                                         'update_sterr'            :   err} )
 
-            T.update(           {'started'      :   dt.isoformat(dt.now()),
-                                 'parameters'   :   cmd.replace("'","''"),} )
+            cmds                    =   ['scp %(serv)s@%(serv)s:%(fpath)s /Volumes/EXT_HD/.pg_dump/'
+                                         % ({ 'serv':db_info['db_server'],
+                                              'fpath':fpath })]
+            (_out,_err)             =   exec_cmds(cmds,'ub1',self.worker)
 
+            T.update(                   {'scp_stout'            :   _out,
+                                         'scp_sterr'            :   _err,
+                                         'ended'                :   dt.isoformat(dt.now())} )
 
+            cmds                    =   ['logger -t "System_Admin" "%s"' % T]
+            (_out,_err)             =   exec_cmds(cmds,self.worker,self.worker)
 
-            # proc            =   sub_popen([cmd], stdout=sub_PIPE, shell=True)
-            (t, err)        =   exec_cmds([cmd],db_info['db_server'],self.worker)
-
-            T.update(           {'stout'        :   t,
-                                 'sterr'        :   err,
-                                 'ended'        :   dt.isoformat(dt.now())} )
-
-            cmd                 =   'logger -t "System_Admin" "%s"' % T
-            proc                =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-            (t, err)            =   proc.communicate()
-
-            # c               =   """insert into system_log values ('%(operation)s','%(started)s',
-            #                                               '%(parameters)s','%(stout)s',
-            #                                               '%(sterr)s','%(ended)s')"""%T
-            # conn.set_isolation_level(0)
-            # cur.execute(c)
-
-        self.process_end = dt.isoformat(dt.now())
+        self.process_end            =   dt.isoformat(dt.now())
         # return self.to_pastebin(params='\n'.join(self.database_names))
 
     def backup_system(self,params=''):
