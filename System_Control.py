@@ -34,7 +34,19 @@ engine = create_engine(r'postgresql://postgres:postgres@192.168.3.52:8800/system
 conn = psycopg2.connect("dbname='system' user='postgres' host='192.168.3.52' password='' port=8800");
 cur = conn.cursor()
 
+global THIS_SERVER
 #from IPython import embed_kernel as embed; embed()
+
+def exec_cmds(cmds,cmd_host):
+    cmd                         =   ' '.join(cmds)
+    if cmd_host==THIS_SERVER:
+        p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+    else:
+        cmd                     =   "ssh %s '%s'" % (cmd_host,cmd)
+        p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+    return p.communicate()
+
+
 
 class PasteBin:
     """
@@ -72,14 +84,12 @@ class System_Crons:
 
     def check_log_rotate(self):
 
-        p                           =   sub_popen('cat /etc/logrotate.d/sv_syslog',stdout=sub_PIPE,shell=True)
-        (_out,_err)                 =   p.communicate()
+        (_out,_err)                 =   exec_cmds(['cat /etc/logrotate.d/sv_syslog'],self.worker)
         if _out.find('weekly')!=-1:
-            rotate_period           =7
+            rotate_period           =   7
 
-        p                           =   sub_popen('cat /var/lib/logrotate/status | grep syslogs | grep -v \'tmp_\'',
-                                                  stdout=sub_PIPE,shell=True)
-        (_out,_err)                 =   p.communicate()
+        cmds                        =   ['cat /var/lib/logrotate/status | grep syslogs | grep -v \'tmp_\'']
+        (_out,_err)                 =   exec_cmds(cmds,self.worker)
         today                       =   dt.now()
         report_failure              =   False
         for it in _out.split('\n'):
@@ -91,9 +101,21 @@ class System_Crons:
                 days_since          =   abs(y.days)
                 if days_since>rotate_period:
                     report_failure  =   True
-        return report_failure
+
+        if report_failure:
+            msg                     =   'LogRotate does not appear to be working'
+
+            cmd                     =   'logger -t "CRON" "%s"' % msg
+            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+            (t, err)                =   proc.communicate()
+
+            cmd                     =   'echo "%s" | mail -t 6174295700@vtext.com' % msg
+            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
+            (t, err)                =   proc.communicate()
 
 
+    def run_git_fsck(self):
+        pass
 
 class System_Health:
 
@@ -180,6 +202,7 @@ class System_Servers:
         mac             =   [int(str(get_mac()))]
         worker          =   s[ s.mac.isin(mac) & s.home_dir.isin([os_environ['HOME']]) ].iloc[0].to_dict()
         self.worker     =   worker['server']
+        THIS_SERVER     =   self.worker
         self.base_dir   =   worker['home_dir']
         self.server_idx =   worker['server_idx']
         rank            =   {'high':3,'medium':2,'low':1,'none':0}
@@ -571,3 +594,10 @@ if __name__ == '__main__':
         elif argv[1]=='check_health':
             SYS             =       System_Health()
             SYS.make_display_check(argv[2])
+
+        elif argv[1]=='cron':
+            CRON = System_Crons()
+            if   argv[2]=='logrotate':
+                CRON.check_log_rotate()
+            elif argv[2]=='git_fsck':
+                CRON.run_git_fsck()
