@@ -211,7 +211,7 @@ class System_Health:
 class System_Databases:
 
     def __init__(self):
-        self.databases  =   pd.read_sql('select * from databases where active is True',sys_eng)
+        self.databases  =   pd.read_sql('select * from databases where is_active is True',sys_eng)
 
 class System_Servers:
 
