@@ -70,94 +70,45 @@ class System_Health:
         s                   =   System_Servers()
         self.servers        =   s.servers
         self.worker         =   s.worker
-        self.mbp2            =  {   #'nginx'             :   'nginx: master process',
-                                    'postgres'          :   '/opt/local/lib/postgresql93/bin/postgres -i -D /opt/local/var/db/postgresql93/defaultdb',
-                                    # 'supervisor_root'   :   'sudo /opt/local/Library/Frameworks/Python.framework/Versions/Current/bin/supervisord',
-                                    # 'redis'             :   '/opt/local/bin/redis-server',
-                                    'postfix'           :   '/opt/local/libexec/postfix/master',
-                                    'sshd'              :   '/opt/local/sbin/sshd',
-                                    'growl'             :   '/Applications/Growl.app/Contents/MacOS/Growl',
-                                    'nosleep'           :   '/Applications/Utilities/NoSleep.app/Contents/MacOS/NoSleep'}
-        self.mbp2_mounts     =  {   'ub1'               :   '/opt/local/bin/sshfs ub1:/ /Volumes/ub1',
-                                    'ub2'               :   '/opt/local/bin/sshfs ub2:/ /Volumes/ub2',
-                                    'ms1'               :   ''
-                                }
-
-        self.ub1            =   {   'elastic_search'    :   'org.elasticsearch.bootstrap.Elasticsearch',
-                                    'es_limit'          :   'sudo /usr/bin/cpulimit --limit 20 --path=/home/ub1/SERVER1/elasticsearch/lib/elasticsearch-1.4.1.jar',
-                                    'nginx'             :   'sudo /usr/local/openresty/nginx/sbin/nginx -p /home/ub1/SERVER1/run',
-                                    'supervisor'        :   '/usr/bin/python /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf',
-                                    'syslog'            :   '/usr/local/sbin/syslog-ng',
-                                    'syslog_feeder'     :   'sudo socat -lf /var/log/syslogs/socat.log -lp syslog_feeder',
-                                    'syslog_limit'      :   'sudo /etc/supervisor/process_scripts/run_cpulimit_on_syslog.bash',
-                                }
-
-        self.ub1_mounts     =   {   'mbp2'              :   '/usr/bin/sshfs mbp2:/ /Volumes/mbp2',
-                                    'ub2'               :   '/usr/bin/sshfs ub2:/ /Volumes/ub2'
-                                }
-
-        self.ub2            =   {   'celery_aprinto'    :   'sudo /etc/supervisor/process_scripts/run_celery_aprinto.bash',
-                                    'celery_git_serv'   :   'sudo /etc/supervisor/process_scripts/run_celery_git_serv.bash',
-                                    'ipython'           :   '/home/ub2/SERVER2/ipython/ENV/bin/python /home/ub2/SERVER2/ipython/ENV/bin/ipython notebook --profile=nbserver',
-                                    'kibana'            :   'sudo /etc/supervisor/process_scripts/run_kibana.bash',
-                                    'kibana_limit'      :   'sudo /etc/supervisor/process_scripts/run_cpulimit_on_kibana.bash',
-                                    'nginx'             :   'nginx: master process /usr/local/openresty/nginx/sbin/nginx',
-                                    'postgres'          :   '/usr/lib/postgresql/9.4/bin/postgres',
-                                    'rabbitmq'          :   'sudo /etc/supervisor/process_scripts/run_rabbitmq.bash',
-                                    'rabbitmq_feeder'   :   'sudo /etc/supervisor/process_scripts/run_rabbitmq_feeder.bash',
-                                    'redis_celery'      :   'sudo /etc/supervisor/process_scripts/run_redis_celery.bash',
-                                    'resty_feeder'      :   'sudo /etc/supervisor/process_scripts/run_resty_feeder.bash',
-                                    'supervisor'        :   '/usr/bin/python /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf',
-                                    'syslog'            :   'sudo /usr/local/sbin/syslog-ng -F -f /usr/local/etc/syslog-ng.conf',
-                                    'syslog_limit'      :   'sudo /etc/supervisor/process_scripts/run_cpulimit_on_syslog.bash',
-                                    'syslog_feeder'     :   'sudo /etc/supervisor/process_scripts/run_syslog_feeder.bash',
-                                }
-
-        self.ub2_mounts     =   {   'mbp2'              :   '/usr/bin/sshfs mbp2:/ /Volumes/mbp2',
-                                    'ub1'               :   '/usr/bin/sshfs ub1:/ /Volumes/ub1'
-                                }
-        self.ub3            =   {   'celery_aprinto'    :   'sudo /etc/supervisor/process_scripts/run_celery_aprinto.bash',
-                                    'postgres'          :   '/usr/lib/postgresql/9.4/bin/postgres',
-                                    'nginx'             :   'sudo /usr/local/openresty/nginx/sbin/nginx',
-                                    'rabbitmq'          :   'sudo /etc/supervisor/process_scripts/run_rabbitmq.bash',
-                                    'rabbitmq_feeder'   :   'socat -lf /var/log/syslogs/socat.log -lp rabbitmq_feeder',
-                                    'redis_celery'      :   'sudo /etc/supervisor/process_scripts/run_redis_celery.bash',
-                                    'resty_feeder'      :   'sudo /etc/supervisor/process_scripts/run_resty_feeder.bash',
-                                    'supervisor'        :   '/usr/bin/python /usr/local/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf',
-                                    'syslog-ng'         :   'sudo /usr/local/sbin/syslog-ng -F -f /usr/local/etc/syslog-ng.conf',
-                                    'syslog-ng_limiter' :   'sudo /etc/supervisor/process_scripts/run_cpulimit_on_syslog.bash',
-                                    'syslog-ng_feeder'  :   'sudo /etc/supervisor/process_scripts/run_syslog_feeder.bash',
-                                }
-
-        self.ub3_mounts     =   {   'mbp2'              :   '/usr/bin/sshfs mbp2:/ /Volumes/mbp2',
-                                    'ub1'               :   '/usr/bin/sshfs ub1:/ /Volumes/ub1',
-                                    'ub2'               :   '/usr/bin/sshfs ub2:/ /Volumes/ub2'
-                                }
+        h                   =   pd.read_sql('select * from system_health',engine)
+        self.checks         =   h
 
     def make_display_check(self,chk_sys):
-        if   chk_sys=='mbp2':
-            PROC            =       self.mbp2
-        elif chk_sys=='ub1':
-            PROC            =       self.ub1
-        elif chk_sys=='ub2':
-            PROC            =       self.ub2
-        elif chk_sys=='ub3':
-            PROC            =       self.ub3
+        H                   =   self.checks
+        procs               =   H[ (H.type_tag=='process') & (H.server_tag==chk_sys) ].ix[:,['param1','param2']]
+        procs               =   dict(zip(procs.param1.tolist(),procs.param2.tolist()))
 
-        if  chk_sys        !=       self.worker:
-            t               =       'ssh %s "ps -axww"'%chk_sys
-            cmd             =       shlex.split(t)
-        else: cmd           =       ['ps','-axww']
+        if  chk_sys        !=   self.worker:
+            t               =   'ssh %s "ps -axww"'%chk_sys
+            cmd             =   shlex.split(t)
+        else: cmd           =   ['ps','-axww']
 
-        p                   =       sub_popen(cmd,stdout=sub_PIPE)
-        (ap, err)           =       p.communicate()
-        res                 =       []
-        for k in sorted(PROC.keys()):
+        p                   =   sub_popen(cmd,stdout=sub_PIPE)
+        (ap, err)           =   p.communicate()
+        res                 =   []
+        for k in sorted(procs.keys()):
 
-            if len(re_findall(PROC[k],ap))==0:
+            if len(re_findall(procs[k],ap))==0:
                 res.append("[$(tput setaf 1 && tput bold)chk$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
             else:
                 res.append("[$(tput bold && tput setaf 2)ok$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
+
+        checks              =   H[ (H.type_tag=='check') & (H.server_tag==chk_sys) ].ix[:,['param1','param2']]
+        checks              =   dict(zip(checks.param1.tolist(),checks.param2.tolist()))
+
+        for k in sorted(checks.keys()):
+
+            cmd             =   checks[k]
+            if chk_sys!=self.worker:
+                cmd         =   "ssh %s '%s'" % (chk_sys,cmd)
+            # cmd             =   shlex.split(cmd)
+            p               =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+            (_out,_err)     =   p.communicate()
+            if _out.find('0')==-1:
+                res.append("[$(tput setaf 1 && tput bold)chk$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
+            else:
+                res.append("[$(tput bold && tput setaf 2)ok$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
+
 
         print '<>'.join(res)
 
