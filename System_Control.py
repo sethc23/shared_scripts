@@ -7,6 +7,7 @@ from uuid                       import getnode          as get_mac
 from os                         import system           as os_cmd
 from os                         import environ          as os_environ
 from os                         import mkdir            as os_mkdir
+from traceback                  import format_exc       as tb_format_exc
 from types                      import NoneType
 from subprocess                 import Popen            as sub_popen
 from subprocess                 import check_output     as sub_check_output
@@ -75,23 +76,180 @@ class PasteBin:
         pb.createAPIUserKey(user_name,passw)
         self.pb         =   pb
 
+class System_Results:
+    """
+    System_Results uniformly manages output and errors.
+
+    Input is taken from     self.process,
+                                .process_start,
+                                .process_params,
+                                .process_stout,
+                                .process_sterr, and
+                                .process_end
+
+
+    Assuming this class has already been initiated with:
+
+        self.results            =   System_Results()
+
+
+    Usage [ e.g., at the end of a function ]:
+
+        return self.results.manage(self,results_and_errors)
+
+
+    Where 'results_and_errors' is a list
+        with any one or more of the options:
+
+        ['','results_print','results_log','results_log_txt','results_paste_log','results_paste_log_txt',
+            'errors_print','errors_log','errors_log_txt','errors_paste_log','errors_paste_log_txt']
+
+    Note, if designations only exist for errors, no results are processed with content in self.process_sterr.
+
+    """
+
+    def __init__(self):
+        self.pb                 =   PasteBin().pb
+
+    def manage(self,admin,results_and_errors):
+        """
+
+        1. If no sterr, ignore rules provided re: errors.
+        2. Combine all rules into single Rule.
+        3. Create Message.
+        4. Process results with Message and according to Rule.
+
+        """
+
+        res,err                 =   [],[]
+        for it in results_and_errors:
+            if   it.find('results_')==0:
+                res.append(         it.replace('results_','') )
+            elif it.find('errors_')==0:
+                err.append(         it.replace('errors_','') )
+
+    #   1. If no sterr, ignore rules provided re: errors.
+        if not (type(admin.process_sterr)==NoneType or
+                        len(admin.process_sterr)==0 or
+                        [None,'None',''].count(admin.process_sterr)==1):
+            grp                 =   res
+        else: grp               =   res + err
+
+    #   2. Combine all rules into single Rule.
+        t                       =   []
+        for it in grp:
+            t.extend( it.split('_') )
+        methods                 =   dict(zip(t,range(len(t)))).keys()
+
+    #   3. Create Message.
+        runtime                 =   (admin.process_end-admin.process_start)
+        if runtime.total_seconds()/60.0 < 1:
+            runtime_txt         =   'Runtime: %s seconds' % str(runtime.total_seconds())
+        else:
+            runtime_txt         =   'Runtime: %s minutes' % str(runtime.total_seconds()/60.0)
+
+        msg_title               =   '["%s" ENDED]' % admin.process
+        msg_summary             =   ['Started: %s' % dt.isoformat(admin.process_start),
+                                     runtime_txt ]
+
+        msg                     =   [msg_title,
+                                     '',
+                                     'Parameters: %s' % str(admin.process_params),
+                                     '',
+                                     msg_summary[0],
+                                     msg_summary[1],
+                                     '']
+
+        if res:
+            if type(admin.process_stout)!=list:
+                admin.process_stout= [ admin.process_stout ]
+            if not (len(admin.process_stout)==0 or [None,'None',''].count(admin.process_stout)==1):
+                msg.extend(          ['Output: ',''])
+                msg.extend(          admin.process_stout )
+                msg.extend(          [''] )
+
+        if err:
+            if type(admin.process_sterr)!=list:
+                admin.process_sterr= [ admin.process_stout ]
+            if not (len(admin.process_sterr)==0 or [None,'None',''].count(admin.process_sterr)==1):
+                msg.extend(          ['Errors: ',''] )
+                msg.extend(          admin.process_sterr )
+                msg.extend(          [''] )
+
+        msg_summary             =   ', '.join(msg_summary)
+        msg_str                 =   '\n'.join([str(it) for it in msg])
+
+    #   4. Process results with Message and according to Rule.
+        if methods.count('print')==1:
+            self._print(self,msg)
+
+        if methods.count('paste')==1:
+            pb_url              =   self._paste(self,admin,msg_title,msg_str)
+            log_msg             =   ' - '.join([ msg_title,msg_summary,pb_url ])
+        else: log_msg           =   ' - '.join([ msg_title,msg_summary ])
+
+        if methods.count('txt')==1:
+            self._txt(self,log_msg)
+
+        if methods.count('log')==1:
+            self._log(self,log_msg)
+        # ---
+
+    def _print(self,msg):
+        for it in msg:
+            print it
+        return
+
+    def _paste(self,admin,msg_title,msg_str):
+        pb_url                  =   admin.pb.createPaste( msg_str,
+                                        api_paste_name=msg_title,
+                                        api_paste_format='',
+                                        api_paste_private='1',
+                                        api_paste_expire_date='1M')
+        return pb_url
+
+    def _txt(self,log_msg):
+        cmd                     =   'echo "%s" | mail -t 6174295700@vtext.com' % log_msg
+        proc                    =   sub_popen(cmd, stdout=sub_PIPE, shell=True)
+        (_out, _err)            =   proc.communicate()
+        assert _out==''
+        assert _err==None
+        return
+
+    def _log(self,admin,log_msg):
+        cmd                     =   'logger -t "System_Admin" "%s"' % log_msg
+        proc                    =   sub_popen(cmd, stdout=sub_PIPE, shell=True)
+        (_out, _err)            =   proc.communicate()
+        assert _out==''
+        assert _err==None
+        return
+
 class System_Crons:
 
     def __init__(self):
         s                           =   System_Servers()
         self.servers                =   s.servers
         self.worker                 =   s.worker
+        self.results                =   System_Results()
         c                           =   pd.read_sql('select * from crons',sys_eng)
         self.crons                  =   c
 
     def check_log_rotate(self):
 
+        self.process                =   'check_logrotate'
+        self.process_start          =   dt.now()
+        self.process_params         =   {}
+        self.process_stout          =   []
+        self.process_sterr          =   None
+
         (_out,_err)                 =   exec_cmds(['cat /etc/logrotate.d/sv_syslog'],self.worker,self.worker)
+        assert _err==None
         if _out.find('weekly')!=-1:
             rotate_period           =   7
 
         cmds                        =   ['cat /var/lib/logrotate/status | grep syslogs | grep -v \'tmp_\'']
         (_out,_err)                 =   exec_cmds(cmds,self.worker,self.worker)
+        assert _err==None
         today                       =   dt.now()
         report_failure              =   False
         for it in _out.split('\n'):
@@ -104,34 +262,28 @@ class System_Crons:
                 if days_since>rotate_period:
                     report_failure  =   True
 
+        self.process_end            =   dt.now()
         if report_failure:
-            msg                     =   'LogRotate does not appear to be working'
-
-            cmd                     =   'logger -t "CRON" "%s"' % msg
-            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-            (t, err)                =   proc.communicate()
-
-            cmd                     =   'echo "%s" | mail -t 6174295700@vtext.com' % msg
-            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-            (t, err)                =   proc.communicate()
-
+            self.process_stout.append(  'LogRotate does not appear to be working on %s' % self.worker )
+            results_and_errors      =   ['results_log_txt']
         else:
-            msg                     =   'LogRotate looks good'
+            self.process_stout.append(  'LogRotate looks good on %s' % self.worker )
+            results_and_errors            =   ['results_log']
 
-            cmd                     =   'logger -t "CRON" "%s"' % msg
-            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-            (t, err)                =   proc.communicate()
+        return self.results.manage(self,results_and_errors=results_and_errors)
 
     def run_git_fsck(self):
+        self.process                =   'git_fsck'
+        self.process_start          =   dt.now()
+        self.process_params         =   {}
+        self.process_stout          =   []
+        self.process_sterr          =   None
         g                           =   pd.read_sql('select * from servers where git_tag is not null',sys_eng)
-        # check all sub_source
-        #       add new master_sources
-        # check master sources
         sub_srcs,sub_dest           =   g.git_sub_src.tolist(),g.git_sub_dest.tolist()
         master_src                  =   g.git_master_src.tolist()
         all_repos                   =   sub_srcs + sub_dest + master_src
         all_repos                   =   sorted(dict(zip(all_repos,range(len(all_repos)))).keys())
-        serv,troubled_repos         =   '0',[]
+        serv                        =   '0'
         for it in all_repos:
             if it.find(serv)!=0:
                 serv                =   it[it.find('@')+1:it.rfind(':')]
@@ -141,26 +293,19 @@ class System_Crons:
             (_out,_err)             =   exec_cmds(cmds,serv,self.worker)
             assert _err==None
             if _out!='':
-                troubled_repos.append(  it )
-
                 msg                 =   'Repo needs work >>%s<<' % it
+                self.process_stout.append( msg )
 
-                cmd                 =   'logger -t "CRON" "%s"' % msg
-                proc                =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-                (t, err)            =   proc.communicate()
+        self.process_end            =   dt.now()
+        if self.process_stout==[]:
+            self.process_stout.append(  'Repos look good' )
+            results_and_errors      =   ['results_log']
+        else:
+            results_and_errors      =   ['results_paste_log_txt']
 
-                cmd                 =   'echo "%s" | mail -t 6174295700@vtext.com' % msg
-                proc                =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-                (t, err)            =   proc.communicate()
+        return self.results.manage(self,results_and_errors=results_and_errors)
 
-        if troubled_repos==[]:
-            msg                     =   'Repos look good'
 
-            cmd                     =   'logger -t "CRON" "%s"' % msg
-            proc                    =   sub_popen([''.join(cmd)], stdout=sub_PIPE, shell=True)
-            (t, err)                =   proc.communicate()
-
-        # from ipdb import set_trace as i_trace; i_trace()
 
 class System_Health:
 
@@ -247,6 +392,8 @@ class System_Servers:
         mac             =   [int(str(get_mac()))]
         worker          =   s[ s.mac.isin(mac) & s.home_dir.isin([os_environ['HOME']]) ].iloc[0].to_dict()
         self.worker     =   worker['server']
+        self.worker_host=   worker['host']
+        global THIS_SERVER
         THIS_SERVER     =   self.worker
         self.base_dir   =   worker['home_dir']
         self.server_idx =   worker['server_idx']
@@ -344,7 +491,8 @@ class System_Admin:
         self.params             =   {}
         # self.dry_run           =   True
         self.dry_run            =   False
-        self.pb                 =   PasteBin().pb
+        self.results            =   System_Results()
+        self.pb                 =   self.results.pb
 
     def get_cfg(self):
         base            = self.base_dir if self.worker=='ub2' else '/Volumes/ub2'+self.base_dir
@@ -400,41 +548,47 @@ class System_Admin:
 
     def backup_databases(self,params=''):
         self.process                =   'backup_databases'
-        self.process_start          =   dt.isoformat(dt.now())
-        T                           =   {'operation'    :   '%s: %s'%(self.worker,self.process)}
+        self.process_start          =   dt.now()
+        self.process_params         =   {}
+        self.process_stout          =   []
         d                           =   System_Databases()
         self.databases              =   d.databases
         self.database_names         =   self.databases.db_name.tolist()
         for i in range(len(self.databases)):
+            T                       =   {'started'                  :   dt.isoformat(dt.now())}
             db_info                 =   self.databases.ix[i,['backup_path','db_server','db_name','backup_cmd']].map(str)
-            fpath                   =   '%s/%s_%s_%s.sql'%tuple(db_info[:-1].tolist() + [dt.strftime(dt.now(),'%Y_%m_%d')])
+            serv_info               =   self.servers[self.servers.git_tag==db_info['db_server']].iloc[0,:].to_dict()
+
+            T.update(                   {'DB'                       :   '%s @ %s' % (db_info['db_name'],
+                                                                                     serv_info['server'])})
+
+            fpath                   =   '%s/%s_%s_%s.sql' % tuple(db_info[:-1].tolist() + [dt.strftime(dt.now(),'%Y_%m_%d')])
             fname                   =   fpath[fpath.rfind('/')+1:]
             cmd                     =   """%s -d %s -h 0.0.0.0 -p 8800 --username=postgres > %s
-                                        """.replace('\n','').replace('\t','').strip()%(db_info['backup_cmd'],db_info['db_name'],fpath)
-            T.update(                   {'started'          :   dt.isoformat(dt.now()),
-                                         'parameters'        :   cmd.replace("'","''"),} )
-            (t, err)                =   exec_cmds([cmd],db_info['db_server'],self.worker)
+                                        """.replace('\n','').replace('\t','').strip() % (db_info['backup_cmd'],
+                                                                                         db_info['db_name'],
+                                                                                         fpath)
+            (_out,_err)             =   exec_cmds([cmd],serv_info['server'],self.worker)
+            assert _out==''
+            assert _err==None
 
-            T.update(                   {'update_stout'            :   t,
-                                         'update_sterr'            :   err} )
-
-            cmds                    =   ['scp %(serv)s@%(serv)s:%(fpath)s /Volumes/EXT_HD/.pg_dump/'
-                                         % ({ 'serv':db_info['db_server'],
-                                              'fpath':fpath })]
-
-            from ipdb import set_trace as i_trace; i_trace()
+            cmds                    =   ['scp %(host)s@%(serv)s:%(fpath)s /Volumes/EXT_HD/.pg_dump/;'
+                                         % ({ 'host'                :   serv_info['host'],
+                                              'serv'                :   serv_info['server'],
+                                              'fpath'               :   fpath })]
 
             (_out,_err)             =   exec_cmds(cmds,'ub1',self.worker)
+            assert _out==''
+            assert _err==None
 
-            T.update(                   {'scp_stout'            :   _out,
-                                         'scp_sterr'            :   _err,
-                                         'ended'                :   dt.isoformat(dt.now())} )
+            T.update(                   {'ended'                    :   dt.isoformat(dt.now())} )
 
-            cmds                    =   ['logger -t "System_Admin" "%s"' % T]
-            (_out,_err)             =   exec_cmds(cmds,self.worker,self.worker)
+            self.process_stout.append( T )
 
-        self.process_end            =   dt.isoformat(dt.now())
-        # return self.to_pastebin(params='\n'.join(self.database_names))
+        self.process_sterr          =   None
+        self.process_end            =   dt.now()
+        return self.results.manage(self,results_and_errors=['results_paste_log'])
+
 
     def backup_system(self,params=''):
         self.cfg                =   self.get_cfg()
@@ -482,64 +636,57 @@ class System_Admin:
         """
 
         if len(vars)==1:
-            single_serv,spec_lib=   True,False
-            single_serv_tag     =   vars[0]
+            serv,spec_libs      =   vars[0],[]
         elif len(vars)>1:
-            single_serv,spec_lib=   True,True
-            single_serv_tag     =   vars[0]
-            spec_lib_list       =   vars[1:]
+            serv,spec_libs      =   vars[0],vars[1:]
         else:
-            single_serv,spec_lib=   False,False
+            assert 'Specified server on which to backup_pip'==False
 
 
         self.process            =   'backup_pip'
-        self.process_start      =   dt.isoformat(dt.now())
-
-        for serv in self.servers[self.servers.pip_libs.isnull()==False].tag.tolist():
-
-            D,old_reqs          =   {},[]
+        self.process_start    =   dt.now()
+        self.process_params     =   {'serv'             :   serv }
 
 
-            if single_serv:
-                serv            =   single_serv_tag
+        libs,save_libs          =   {},{}
+        if len(spec_libs)==0:
+            libs                =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
+        else:
+            all_libs            =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
+            for it in all_libs.keys():
+                if spec_libs.count(it)>0:
+                    libs.update({   it                  :   all_libs[it] }  )
+                else:
+                    save_libs.update({ it               :   all_libs[it] }  )
 
-            libs,save_libs  =   {},{}
-            if spec_lib:
-                all_libs        =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
-                for it in all_libs.keys():
-                    if spec_lib_list.count(it)>0:
-                        libs.update({ it                :   all_libs[it] }  )
-                    else:
-                        save_libs.update({ it           :   all_libs[it] }  )
-            else:
-                libs            =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
+        self.process_params.update({'pip_libs'          :   str(libs) })
 
-            for k,v in libs.iteritems():
 
-                # print serv,k
+        D,old_reqs              =   {},[]
+        for k,v in libs.iteritems():
 
-                if v['requirements']!='':
-                    old_reqs.append(v['requirements'].replace('http://pastebin.com/','')  )
+            if v['requirements']!='':
+                old_reqs.append(v['requirements'].replace('http://pastebin.com/','')  )
 
-                lib_loc         =   v['location']
-                cmds            =   ['cd %s' % lib_loc]
-                if lib_loc.find('ENV')>0:
-                    cmds.append(    'source bin/activate'  )
-                cmds.append(        'pip freeze'  )
+            lib_loc             =   v['location']
+            cmds                =   ['cd %s' % lib_loc]
+            if lib_loc.find('ENV')>0:
+                cmds.append(        'source bin/activate'  )
+            cmds.append(            'pip freeze'  )
 
-                cmd             =   '; '.join(cmds)
-                if serv!=self.worker:
-                    cmd         =   "ssh %s '%s'" % (serv,cmd)
+            cmd                 =   '; '.join(cmds)
+            if serv!=self.worker:
+                cmd             =   "ssh %s '%s'" % (serv,cmd)
 
-                proc            =   sub_check_output(cmd, stderr=sub_stdout, shell=True)
+            proc                =   sub_check_output(cmd, stderr=sub_stdout, shell=True)
 
-                pb_url          =   self.pb.createPaste(  proc,
+            pb_url              =   self.pb.createPaste(  proc,
                                         api_paste_name='%s -- pip_lib: %s' % (serv,k),
                                         api_paste_format='',
                                         api_paste_private='1',
                                         api_paste_expire_date='N')
 
-                D.update(           { k     :   {'location'     :   lib_loc,
+            D.update(               { k     :   {'location'     :   lib_loc,
                                                  'requirements' :   pb_url }
                                     })
 
@@ -562,12 +709,11 @@ class System_Admin:
             for it in old_reqs:
                 self.pb.deletePaste(it)
 
-            if single_serv:
-                break
+        self.process_stout      =   [None]
+        self.process_sterr      =   [None]
+        self.process_end      =   dt.now()
 
-
-        self.process_end        =   dt.isoformat(dt.now())
-        return
+        return self.results.manage(self,results_and_errors=['results_log'])
 
     def install_pip(self,*vars):
         """
@@ -575,54 +721,109 @@ class System_Admin:
 
         e.g.,
             python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV ub3 aprinto
+            python System_Control.py install pip_lib ub1 $HOME/.scripts/ENV ub2 .scripts
             python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV mbp2 ipython upgrade
             python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV mbp2 ipython upgrade overwrite
         """
-
-        from ipdb import set_trace as i_trace; i_trace()
+        self.process            =   'install_pip'
+        self.process_start      =   dt.now()
 
         assert len(vars) >= 4
 
         to_serv,to_path         =   vars[0:2]
-        to_dir                  =   to_path[:to_path.rfind('/')]
-        from_serv,from_lib      =   vars[2:4]
-        option                  =   ''
-        if len(vars)==5:
-            option              =   vars[5:]
 
-        self.process            =   'install_pip'
-        self.process_start      =   dt.isoformat(dt.now())
+        serv                    =   self.servers[self.servers.tag==to_serv].iloc[0,:].to_dict()
+        to_path                 =   to_path % serv
+
+        to_dir,env_dir          =   to_path[:to_path.rfind('/')],to_path[to_path.rfind('/')+1:]
+        from_serv,from_lib      =   vars[2:4]
+        options                 =   ['']
+
+        results_and_errors      =   []
+        if len(vars)>=5:
+            for it in vars[4:]:
+                if it.find('errors_')==0 or it.find('result_')==0:
+                    with_errors.append(it)
+                else:
+                    options.append(it)
+        if len(results_and_errors)==0:
+            results_and_errors  =   ['results_log','errors_paste_log']
+
+        self.process_params     =   {'to_serv'          :   to_serv,
+                                     'to_path'          :   to_path,
+                                     'from_serv'        :   from_serv,
+                                     'from_lib'         :   from_lib,
+                                     'options'          :   options,}
 
         z                       =   pd.read_sql("select pip_libs from servers where tag = '%s'"%from_serv,sys_eng)
         t                       =   z.pip_libs.tolist()[0][from_lib]['requirements']
 
         reqs                    =   self.pb.getPasteRawOutput(t[t.rfind('/')+1:]).split('\n')
-        if option.count('upgrade')>0:
+        if options.count('upgrade')==1:
             reqs                =   [it.replace('==','>=') for it in reqs if it.find('==')!=-1]
         else:
             reqs                =   [it for it in reqs if it.find('==')!=-1]
 
-        cmds                    =   ['if [ ! -d "%s" ]; then echo "DEST PATH NOT EXIST" && exit 1 fi;' % to_dir]
+        cmds                    =   ['rm -fR /tmp/install_env;',
+                                     'pip --version;',
+                                     'virtualenv --version;',
+                                     'if [ ! -d "%s" ]; then echo "DEST PATH NOT EXIST" && exit 1; fi;' % to_dir]
+        if options.count('overwrite')==0:
+            cmds.append(            'if [ -d "%s" ]; then echo "DEST PATH ALREADY EXISTS" && exit 1; fi;' % to_path)
+
+
         (_out,_err)             =   exec_cmds(cmds,to_serv,self.worker)
         assert _err==None
+        assert _out.find('No such file or directory')==-1
+        assert _out.find('command not found')==-1
+        assert _out.find('DEST PATH NOT EXIST')==-1
+        assert _out.find('DEST PATH ALREADY EXISTS')==-1
+
 
         script                  =   ['#!/bin/bash',
-                                     '',
-                                     'cd %s;' % to_dir,
-                                     '',
-                                     'pip install --upgrade pip || exit 1',
-                                     'virtualenv ENV  || pip install virtualenv; virtualenv ENV || exit 1'
-                                     'source ENV/bin/activate  || exit 1']
-        prefix,suffix           =   'pip install --allow-all-external ',' || exit 1'
-        script.extend(              [ prefix + it + suffix for it in reqs ])
+                                     'echo "install_env started"',
+                                     'cd %s' % to_dir]
+
+        if options.count('overwrite')==1:
+            script.append(          'rm -fR %s/' % env_dir)
+
+        script.extend(              ['pip install --upgrade pip || exit 1',
+                                     'virtualenv ENV || exit 1',
+                                     'source ENV/bin/activate  || exit 1',
+                                     'pip install --upgrade pip'] )
+
+        prefix                  =   'pip install --allow-all-external '
+        script.extend(              [ prefix + it + ' || echo "Error installing %s"' % it for it in reqs ])
+        script.append(              'echo "install_env complete"')
         with open('/tmp/install_env','w') as f:
             f.write('\n'.join(script))
         os_cmd(                     'chmod +x /tmp/install_env')
 
+        if to_serv!=self.worker:
+            cmds                =   ['scp %s@%s:/tmp/install_env /tmp/ 2>&1;' % (self.worker,self.worker),
+                                     '/tmp/install_env 2>&1;',
+                                     'rm /tmp/install_env;']
+            (_out,_err)         =   exec_cmds(cmds,to_serv,self.worker)
+        else:
+            (_out,_err)         =   exec_cmds(['/tmp/install_env 2>&1','rm /tmp/install_env'],self.worker,self.worker)
+        assert _err==None
+        assert _out.count('install_env started')==1
+        assert _out.count('install_env complete')==1
 
+        self.process_end      =   dt.now()
 
+        errors                  =   []
+        for it in _out.split('\n'):
+            if it.find('Error installing ')==0:
+                errors.append(it.replace('Error installing ',''))
 
+        self.process_stout      =   None
+        if len(errors)==0:
+            self.process_sterr  =   None
+        else:
+            self.process_sterr  =   'Errors installing [%s]' % ','.join(errors)
 
+        return self.results.manage(self,results_and_errors=results_and_errors)
 
     def to_pastebin(self,params=''):
         if self.dry_run==True:      return True

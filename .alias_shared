@@ -243,6 +243,9 @@ alias restart='sudo shutdown -r now'
 alias rsync_all='python $BD/rsync_cmds.py all'
 alias rsync_test='python $BD/rsync_cmds.py test'
 
+alias scr_env='source $HOME/.scripts/ENV/bin/activate'
+alias scr_ed='scr_env; cd $HOME/.scripts'
+
 alias spotlight_off='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
 alias spotlight_on='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
