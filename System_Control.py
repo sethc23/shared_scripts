@@ -707,7 +707,7 @@ if __name__ == '__main__':
         elif argv[1]=='install':
             SYS = System_Admin()
             if   argv[2]=='pip_lib':
-                SYS.install_pip(argv[3:])
+                SYS.install_pip(*argv[3:])
 
         elif argv[1]=='check_health':
             SYS             =       System_Health()
