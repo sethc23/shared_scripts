@@ -473,6 +473,13 @@ class System_Admin:
         return self.to_pastebin()
 
     def backup_pip(self,*vars):
+        """
+        usage:
+            python System_Control.py backup_pip
+            python System_Control.py backup_pip ub2
+            python System_Control.py backup_pip ub2 ipython
+            python System_Control.py backup_pip ub2 ipython aprinto
+        """
 
         if len(vars)==1:
             single_serv,spec_lib=   True,False
@@ -561,6 +568,58 @@ class System_Admin:
 
         self.process_end        =   dt.isoformat(dt.now())
         return
+
+    def install_pip(self,*vars):
+        """
+        usage: python System_Control.py install pip_lib [dest_serv] [dest_serv_path] [source_serv_lib] [source_lib] [option]
+
+        e.g.,
+            python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV ub3 aprinto
+            python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV mbp2 ipython upgrade
+            python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV mbp2 ipython upgrade overwrite
+        """
+        assert len(vars) >= 4
+
+        to_serv,to_path         =   vars[0:2]
+        to_dir                  =   to_path[:to_path.rfind('/')]
+        from_serv,from_lib      =   vars[2:4]
+        option                  =   ''
+        if len(var)==5:
+            option              =   vars[5:]
+
+        self.process            =   'install_pip'
+        self.process_start      =   dt.isoformat(dt.now())
+
+        z                       =   pd.read_sql("select pip_libs from servers where tag = '%s'"%from_serv,sys_eng)
+        t                       =   z.pip_libs.tolist()[0][from_lib]['requirements']
+
+        reqs                    =   pb.getPasteRawOutput(t[t.rfind('/')+1:]).split('\n')
+        if option.count('upgrade')>0:
+            reqs                =   [it.replace('==','>=') for it in reqs if it.find('==')!=-1]
+        else:
+            reqs                =   [it for it in reqs if it.find('==')!=-1]
+
+        cmds                    =   ['if [ ! -d "%s" ]; then echo "DEST PATH NOT EXIST" && exit 1 fi;' % to_dir]
+        (_out,_err)             =   exec_cmds(cmds,to_serv,self.worker)
+        assert _err==None
+
+        script                  =   ['#!/bin/bash',
+                                     '',
+                                     'cd %s;' % to_dir,
+                                     '',
+                                     'pip install --upgrade pip || exit 1',
+                                     'virtualenv ENV  || pip install virtualenv; virtualenv ENV || exit 1'
+                                     'source ENV/bin/activate  || exit 1']
+        prefix,suffix           =   'pip install --allow-all-external ',' || exit 1'
+        script.extend(              [ prefix + it + suffix for it in reqs ])
+        with open('/tmp/install_env','w') as f:
+            f.write('\n'.join(script))
+        os_cmd(                     'chmod +x /tmp/install_env')
+        
+
+
+
+
 
     def to_pastebin(self,params=''):
         if self.dry_run==True:      return True
