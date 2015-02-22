@@ -596,7 +596,7 @@ class System_Admin:
         z                       =   pd.read_sql("select pip_libs from servers where tag = '%s'"%from_serv,sys_eng)
         t                       =   z.pip_libs.tolist()[0][from_lib]['requirements']
 
-        reqs                    =   pb.getPasteRawOutput(t[t.rfind('/')+1:]).split('\n')
+        reqs                    =   self.pb.getPasteRawOutput(t[t.rfind('/')+1:]).split('\n')
         if option.count('upgrade')>0:
             reqs                =   [it.replace('==','>=') for it in reqs if it.find('==')!=-1]
         else:
