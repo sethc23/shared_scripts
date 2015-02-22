@@ -578,6 +578,9 @@ class System_Admin:
             python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV mbp2 ipython upgrade
             python System_Control.py install pip_lib ub2 $HOME/.scripts/ENV mbp2 ipython upgrade overwrite
         """
+
+        from ipdb import set_trace as i_trace; i_trace()
+
         assert len(vars) >= 4
 
         to_serv,to_path         =   vars[0:2]
@@ -615,7 +618,7 @@ class System_Admin:
         with open('/tmp/install_env','w') as f:
             f.write('\n'.join(script))
         os_cmd(                     'chmod +x /tmp/install_env')
-        
+
 
 
 
@@ -700,6 +703,11 @@ if __name__ == '__main__':
             elif  argv[1]=='backup_databases':   SYS.backup_databases()
             elif  argv[1]=='backup_system':      SYS.backup_system()
             elif  argv[1]=='backup_pip':         SYS.backup_pip(*vars)
+
+        elif argv[1]=='install':
+            SYS = System_Admin()
+            if   argv[2]=='pip_lib':
+                SYS.install_pip(argv[3:])
 
         elif argv[1]=='check_health':
             SYS             =       System_Health()
