@@ -587,7 +587,7 @@ class System_Admin:
         to_dir                  =   to_path[:to_path.rfind('/')]
         from_serv,from_lib      =   vars[2:4]
         option                  =   ''
-        if len(var)==5:
+        if len(vars)==5:
             option              =   vars[5:]
 
         self.process            =   'install_pip'
