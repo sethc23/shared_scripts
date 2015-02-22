@@ -7,6 +7,7 @@ from uuid                       import getnode          as get_mac
 from os                         import system           as os_cmd
 from os                         import environ          as os_environ
 from os                         import mkdir            as os_mkdir
+from types                      import NoneType
 from subprocess                 import Popen            as sub_popen
 from subprocess                 import check_output     as sub_check_output
 from subprocess                 import PIPE             as sub_PIPE
@@ -506,7 +507,8 @@ class System_Admin:
             else:
                 libs            =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
 
-            from ipdb import set_trace as i_trace; i_trace()
+            if type(libs)==NoneType:
+                from ipdb import set_trace as i_trace; i_trace()
 
             for k,v in libs.iteritems():
 
