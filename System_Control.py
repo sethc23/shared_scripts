@@ -506,6 +506,7 @@ class System_Admin:
             else:
                 libs            =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
 
+            from ipdb import set_trace as i_trace; i_trace()
 
             for k,v in libs.iteritems():
 
