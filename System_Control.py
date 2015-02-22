@@ -149,16 +149,14 @@ class System_Results:
             runtime_txt         =   'Runtime: %s minutes' % str(runtime.total_seconds()/60.0)
 
         msg_title               =   '["%s" ENDED]' % admin.process
-        msg_summary             =   ['Started: %s' % dt.isoformat(admin.process_start),
-                                     runtime_txt ]
-
         msg                     =   [msg_title,
                                      '',
                                      'Parameters: %s' % str(admin.process_params),
                                      '',
-                                     msg_summary[0],
-                                     msg_summary[1],
+                                     'Started: %s' % dt.isoformat(admin.process_start),
+                                     runtime_txt,
                                      '']
+        msg_summary             =   ', '.join(msg)
 
         if res:
             if type(admin.process_stout)!=list:
@@ -176,7 +174,6 @@ class System_Results:
                 msg.extend(          admin.process_sterr )
                 msg.extend(          [''] )
 
-        msg_summary             =   ', '.join(msg_summary)
         msg_str                 =   '\n'.join([str(it) for it in msg])
 
     #   4. Process results with Message and according to Rule.
@@ -588,7 +585,6 @@ class System_Admin:
         self.process_sterr          =   None
         self.process_end            =   dt.now()
         return self.results.manage(self,results_and_errors=['results_paste_log'])
-
 
     def backup_system(self,params=''):
         self.cfg                =   self.get_cfg()
