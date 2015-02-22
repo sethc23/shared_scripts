@@ -488,7 +488,7 @@ class System_Admin:
         self.process            =   'backup_pip'
         self.process_start      =   dt.isoformat(dt.now())
 
-        for serv in self.servers.tag.tolist():
+        for serv in self.servers[self.servers.pip_libs.isnull()==False].tag.tolist():
 
             D,old_reqs          =   {},[]
 
@@ -506,9 +506,6 @@ class System_Admin:
                         save_libs.update({ it           :   all_libs[it] }  )
             else:
                 libs            =   self.servers[ self.servers.tag==serv ].pip_libs.tolist()[0]
-
-            if type(libs)==NoneType:
-                from ipdb import set_trace as i_trace; i_trace()
 
             for k,v in libs.iteritems():
 
