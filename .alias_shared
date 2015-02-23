@@ -328,12 +328,3 @@ alias g-not_staged="git diff --name-status | awk \'{print $2}\'"
 alias g-r-unstaged="g-not_staged | awk '{print $2}' | xargs git update-index --assume-unchanged --"
 alias g-restore_local='g-restore_local_f'
 alias g-X='g_add_commit_push'
-
-
-#cat tmp.txt | xargs -n 1 $HERE/chroot.sh
-#git log --abbrev --oneline | awk '{print $1}' | xargs -n 1 git diff-tree --no-commit-id --name-only -r | grep aprinto
-#git log | grep -A 10 27393e8aec5f2b7cca54b3e29c5afa00a32e875b
-#git log --abbrev --oneline | awk '{print $1}' | xargs -n 1 git diff-tree -r | grep -B 150 -E 'test_online_presence'
-#git merge --no-commit -s recursive -X ours FETCH_HEAD
-#git log --follow -p -- /home/ub2/SERVER2/BD_Scripts/ipython/notebooks/reference/Ubuntu_Config.ipynb | grep -E '^commit|git'
-#git show <commit_id>

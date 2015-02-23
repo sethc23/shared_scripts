@@ -790,7 +790,7 @@ class System_Admin:
 
         prefix                  =   'pip install --allow-all-external '
         script.extend(              [ prefix + it + ' || echo "Error installing %s"' % it for it in reqs ])
-        script.append(              'echo "install_env complete"')
+        script.extend(              ['echo "install_env complete"'])
         with open('/tmp/install_env','w') as f:
             f.write('\n'.join(script))
         os_cmd(                     'chmod +x /tmp/install_env')
@@ -805,6 +805,7 @@ class System_Admin:
         assert _err==None
         assert _out.count('install_env started')==1
         assert _out.count('install_env complete')==1
+        os_cmd('rm /tmp/install_env;')
 
         self.process_end      =   dt.now()
 
