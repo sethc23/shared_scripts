@@ -269,6 +269,8 @@ alias t_reset="`tput sgr0`"
 alias test_nginx_socket='socat - UNIX-CLIENT:/var/log/nginx.sock'
 alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
 
+alias untar='tar -zxvf'
+
 alias T2='curl http://0.0.0.0:8888/t2;'
 alias T='curl http://0.0.0.0:8888/t1?b=2;'
 alias N='ng_push_config; ng_reload;'
