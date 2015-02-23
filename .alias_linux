@@ -3,7 +3,7 @@ function newalias_linux() { echo "alias "$1 >> $HOME/.alias_linux; source_bash; 
 function ap_remove() { sudo apt-get purge $1 && sudo apt-get --purge autoremove; }
 function ib_konnect() { sudo $IPY/ENV/bin/ipython console --existing $HOME/.ipython/profile_default/security/kernel-$1.json; kill $1;}
 
-function aprinto() { cd $APRINTO; source ENV/bin/activate; }
+function aprinto() { cd $APRINTO; source $APRINTO/ENV/bin/activate; }
 function aprinto_test() { aprinto; behave tests/features/ > /dev/null 2>&1; }
 function aprinto_fwd_off() { aprinto; cd celery; python document_processing.py settings fwd_order_false; }
 function aprinto_fwd_on() { aprinto; cd celery; python document_processing.py settings fwd_order_true; }
@@ -20,6 +20,7 @@ function aprinto_celery_txt_chk() { cat $SERV_HOME/aprinto/aprinto_settings.py |
 function aprinto_txt_off() { aprinto_behave_txt_off; aprinto_celery_txt_off; }
 function aprinto_txt_on() { aprinto_behave_txt_on; aprinto_celery_txt_on; }
 function aprinto_txt_chk() { aprinto_behave_txt_chk; aprinto_celery_txt_chk; }
+
 
 alias BT_off='sudo /etc/init.d/bluetooth stop'
 alias BT_on='sudo /etc/init.d/bluetooth start'
