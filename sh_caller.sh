@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SCRIPTS=/Users/admin/SERVER3/.scripts
+SCRIPTS=/Users/admin/.scripts
 
-source /Users/admin/SERVER3/ipython/ENV/bin/activate
+source /Users/admin/.scripts/ENV/bin/activate
 cd $SCRIPTS
 python $SCRIPTS/$1.py
