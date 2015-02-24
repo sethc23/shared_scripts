@@ -13,7 +13,7 @@ from subprocess                 import Popen            as sub_popen
 from subprocess                 import check_output     as sub_check_output
 from subprocess                 import PIPE             as sub_PIPE
 from subprocess                 import STDOUT           as sub_stdout
-import shlex
+import                                 shlex
 from time                       import sleep            as delay
 from datetime                   import datetime         as dt
 from json                       import dumps            as j_dump
@@ -82,6 +82,29 @@ class PasteBin:
         pb                          =   PastebinPython(api_dev_key=dev_key)
         pb.createAPIUserKey(            user_name,passw)
         self.pb                     =   pb
+
+class System_Build:
+
+    def __init__(self):
+        s                           =   System_Servers()
+        self.servers                =   s.servers
+        self.worker                 =   s.worker
+        self.params                 =   {}
+        self.reporter               =   System_Reporter()
+        self.pb                     =   self.reporter.pb
+
+    def configure_scripts(self,*vars):
+        if len(vars)==0: cmd_host   =   self.worker
+        else:            cmd_host   =   vars[0]
+
+        cmds                        =   ['cd $HOME/.scripts;',
+                                         'if [ -n "$(cat ENV/bin/activate | grep \'source ~/.bashrc\')" ]; then',
+                                         'echo -e "\nsource ~/.bashrc\n" >> ENV/bin/activate;'
+                                         'fi;']
+        (_out,_err)                 =   exec_cmds(cmds,cmd_host,self.worker)
+        assert _err==None
+        assert _out==''
+
 
 class System_Reporter:
     """
@@ -230,6 +253,85 @@ class System_Reporter:
         assert _out==''
         assert _err==None
         return
+
+class System_Config:
+
+    def __init__(self):
+        pass
+
+    def adjust_settings(*vars):
+        """
+                                        '/home/ub3/SERVER4/aprinto'
+        Aprinto:                        'aprinto_settings.py'
+            BEHAVE_TXT_ON_ERROR
+            CELERY_TXT_NOTICE
+            FWD_ORDER
+
+                                        '/home/jail/home/serv/system_config/SERVER5/celery/git_serv'
+        GitServ                         'git_serv_settings.py'
+            GITSERV_TXT_NOTICE
+            GITSERV_GROWL_NOTICE
+            BEHAVE_VERIFICATION
+
+
+        BINARY USAGE:
+
+            ... System_Control.py settings aprinto behave_txt_false
+
+
+
+
+        """
+        prog                        =   vars[0]
+
+        D                           =   {'aprinto'  :   ['$SERV_HOME/aprinto',
+                                                         'aprinto_settings.py'],
+                                         'gitserv'  :   ['$GIT_SERV_HOME/celery/git_serv',
+                                                         'git_serv_settings.py'],
+                                         'nginx'    :   ['$SERV_HOME/nginx/setup/nginx/sites-available',
+                                                         'run_aprinto.conf']
+                                        }
+
+        settings_dir                =   D[ prog ][0]
+        settings_file               =   D[ prog ][1]
+        t                           =   vars[1]
+        toggle                      =   t[t.rfind('_')+1:].lower()
+        param                       =   t[:-len(toggle)-1].upper()
+
+        if ['true','false'].count(toggle)==1:
+            self._binary(settings_dir,
+                         settings_file,
+                         toggle,param)
+
+
+
+    def _binary(self,settings_dir,settings_file,toggle,param):
+
+        if  toggle=='true':
+
+            cmds                    =   ['cd %(settings_dir)s;',
+                                        'if [ -n "$(cat %(settings_file)s | grep %(param)s | grep False)" ]; then',
+                                        'a=$(cat %(settings_file)s | grep %(param)s);',
+                                        'b=$(cat %(settings_file)s | grep %(param)s | sed "s|False|True|g");',
+                                        'sed -i "s|$a|$b|g" %(settings_file)s;',
+                                        'fi;']
+
+        elif toggle=='false':
+
+            cmds                    =   ['cd %(settings_dir)s;',
+                                        'if [ -n "$(cat %(settings_file)s | grep %(param)s | grep True)" ]; then',
+                                        'a=$(cat %(settings_file)s | grep %(param)s);',
+                                        'b=$(cat %(settings_file)s | grep %(param)s | sed "s|True|False|g");',
+                                        'sed -i "s|$a|$b|g" %(settings_file)s;',
+                                        'fi;']
+
+        cmd                         =   ' '.join(cmds) % {'settings_dir'        :   settings_dir,
+                                                          'settings_file'       :   settings_file,
+                                                          'param'               :   param}
+        p                           =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+        (_out,_err)                 =   p.communicate()
+        assert _err==None
+        assert _out==''
 
 class System_Crons:
 
@@ -894,7 +996,7 @@ if __name__ == '__main__':
             elif  argv[1]=='backup_pip':         SYS.backup_pip(*vars)
 
         elif argv[1]=='install':
-            SYS = System_Admin(         )
+            SYS                     =   System_Admin()
             if   argv[2]=='pip_lib':
                 SYS.install_pip(        *argv[3:])
 
@@ -903,11 +1005,12 @@ if __name__ == '__main__':
             SYS.make_display_check(     argv[2])
 
         elif argv[1]=='cron':
-            CRON = System_Crons()
+            CRON                    =   System_Crons()
             if   argv[2]=='logrotate':
                 CRON.check_log_rotate(  )
             elif argv[2]=='git_fsck':
                 CRON.run_git_fsck(      )
 
         elif argv[1]=='settings':
-            CFG = System_Config(        )
+            CFG                     =   System_Config()
+            CFG.adjust_settings(        *argv[2:])
