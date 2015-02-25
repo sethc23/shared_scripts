@@ -259,7 +259,7 @@ class System_Config:
     def __init__(self):
         pass
 
-    def adjust_settings(*vars):
+    def adjust_settings(self,*vars):
         """
                                         '/home/ub3/SERVER4/aprinto'
         Aprinto:                        'aprinto_settings.py'
@@ -278,60 +278,116 @@ class System_Config:
 
             ... System_Control.py settings aprinto behave_txt_false
 
+            ... System_Control.py settings nginx access_log_disable
+
 
 
 
         """
         prog                        =   vars[0]
-
-        D                           =   {'aprinto'  :   ['$SERV_HOME/aprinto',
+        D                           =   {'aprinto'  :   ['%(SERV_HOME)s/aprinto',
                                                          'aprinto_settings.py'],
-                                         'gitserv'  :   ['$GIT_SERV_HOME/celery/git_serv',
+                                         'gitserv'  :   ['%(GIT_SERV_HOME)s/celery/git_serv',
                                                          'git_serv_settings.py'],
-                                         'nginx'    :   ['$SERV_HOME/nginx/setup/nginx/sites-available',
-                                                         'run_aprinto.conf']
+                                         'nginx'    :   ['%(SERV_HOME)s/nginx/setup/nginx/sites-available',
+                                                         'run_aprinto.conf','#']
                                         }
 
-        settings_dir                =   D[ prog ][0]
-        settings_file               =   D[ prog ][1]
+        binary_toggles              =   [ ['true','false'],
+                                          ['enable','disable'] ]
+
+        settings_dir                =   D[ prog ][0] % os_environ
+        settings_file               =   D[ prog ][1] % os_environ
         t                           =   vars[1]
         toggle                      =   t[t.rfind('_')+1:].lower()
         param                       =   t[:-len(toggle)-1].upper()
 
-        if ['true','false'].count(toggle)==1:
-            self._binary(settings_dir,
-                         settings_file,
-                         toggle,param)
+        toggle_from,toggle_to       =   '',''
+        for it in binary_toggles:
+            stop                    =   False
+            if it.count(toggle)==1:
+                toggle_to           =   it[ it.index(toggle) ]
+                toggle_from         =   it[0] if it.index(toggle)==1 else it[1]
+                stop                =   True
+                break
+
+        # TO CHANGE NON-BINARY SETTINGS ... if (toggle_from,toggle_to)==('',''): ...
+
+        delim                       =   None if prog=='nginx' else '='
+        cfg_file                    =   settings_dir + '/' + settings_file
+
+        cfgs                        =   self.get_config_params(cfg_file,param,
+                                                               delim=delim,
+                                                               toggle_from=toggle_from)
+
+        for d in cfgs:
+
+            t_from,t_to             =   d['value'],toggle_to
+
+            if ['enable','disable'].count(toggle_from)>0:
+                t_from,t_to         =   d['param'],d['param']
+                t_to                =   t_to.lstrip('#') if toggle_to=='enable' else t_to
+                t_to                =   '#' + t_from if toggle_to=='disable' else t_to
+
+            t_to                    =   t_to.lower() if t_from.islower() else t_to
+            t_to                    =   t_to.title() if t_from.istitle() else t_to
+            t_to                    =   t_to.upper() if t_from.isupper() else t_to
+
+            d.update(                   {'fpath'                :   cfg_file,
+                                         'from'                 :   t_from,
+                                         'to'                   :   t_to } )
+
+            cmd                     =   'sed -i \'%(line)ss/%(from)s/%(to)s/g\' %(fpath)s' % d
+            p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+            (_out,_err)             =   p.communicate()
+            assert _err==None
+
+        return cfgs
+
+    def restore_orig_settings(self,cfgs):
+
+        for d in cfgs:
+
+            d.update(                   {'from'                 :   d['to'],
+                                         'to'                   :   d['from'] } )
+
+            cmd                     =   'sed -i \'%(line)ss/%(from)s/%(to)s/g\' %(fpath)s' % d
+            p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+            (_out,_err)             =   p.communicate()
+            assert _err==None
+
+    def get_config_params(self,cfg_file,cfg_params,delim=None,toggle_from=''):
+        mod                         =   '#' if toggle_from=='disable' else ''
+        param_value                 =   toggle_from if ['enable','disable'].count(toggle_from)==0 else ''
+        D                           =   {'fpath'                :   cfg_file,
+                                         'mod'                  :   mod,
+                                         'param_val'            :   param_value}
+        cfg_params                  =   cfg_params if type(cfg_params)==list else [cfg_params]
+        cfgs                        =   []
+
+        for it in cfg_params:
+            D.update(                   {'param'                :   it} )
+            cmd                     =   'cat %(fpath)s | grep -i -E -n \'^[[:space:]]*%(mod)s%(param)s.*%(param_val)s\';' % D
+
+            p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
+            (_out,_err)             =   p.communicate()
+            assert _err==None
+
+            for it in _out.split('\n'):
+                line                =   it[:it.find(':')]
+                it                  =   it[it.find(':')+1:]
+                t                   =   it.split() if not delim else it.split(delim)
+                m                   =   ' ' if not delim else delim
+
+                if len(t)>=2:
+                    cfgs.append(        {'line'                 :   line,
+                                         'param'                :   t[0].strip(),
+                                         'value'                :   '%s'%m.join(t[1:]).lstrip(' %s' % m) })
+
+        return cfgs
 
 
 
-    def _binary(self,settings_dir,settings_file,toggle,param):
-
-        if  toggle=='true':
-
-            cmds                    =   ['cd %(settings_dir)s;',
-                                        'if [ -n "$(cat %(settings_file)s | grep %(param)s | grep False)" ]; then',
-                                        'a=$(cat %(settings_file)s | grep %(param)s);',
-                                        'b=$(cat %(settings_file)s | grep %(param)s | sed "s|False|True|g");',
-                                        'sed -i "s|$a|$b|g" %(settings_file)s;',
-                                        'fi;']
-
-        elif toggle=='false':
-
-            cmds                    =   ['cd %(settings_dir)s;',
-                                        'if [ -n "$(cat %(settings_file)s | grep %(param)s | grep True)" ]; then',
-                                        'a=$(cat %(settings_file)s | grep %(param)s);',
-                                        'b=$(cat %(settings_file)s | grep %(param)s | sed "s|True|False|g");',
-                                        'sed -i "s|$a|$b|g" %(settings_file)s;',
-                                        'fi;']
-
-        cmd                         =   ' '.join(cmds) % {'settings_dir'        :   settings_dir,
-                                                          'settings_file'       :   settings_file,
-                                                          'param'               :   param}
-        p                           =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
-        (_out,_err)                 =   p.communicate()
-        assert _err==None
-        assert _out==''
 
 class System_Crons:
 
@@ -528,7 +584,7 @@ class System_Servers:
         p                           =   sub_popen(['ps','-axww'],stdout=sub_PIPE)
         (ap, err)                   =   p.communicate()
 
-        for it in folders:
+        for it in dirs:
             sshfs                   =   os_environ['SSHFS']+' '
             mnt_loc                 =   self.T[it]
             if len(re_findall(mnt_loc,ap))==0:
