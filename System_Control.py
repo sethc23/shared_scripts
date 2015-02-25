@@ -105,7 +105,6 @@ class System_Build:
         assert _err==None
         assert _out==''
 
-
 class System_Reporter:
     """
     System_Reporter uniformly manages output and errors.
@@ -284,6 +283,11 @@ class System_Config:
 
 
         """
+
+        if vars[0]=='restore':
+            assert len(vars)==2
+            return self.restore_orig_settings(vars[1])
+
         prog                        =   vars[0]
         D                           =   {'aprinto'  :   ['%(SERV_HOME)s/aprinto',
                                                          'aprinto_settings.py'],
@@ -344,7 +348,11 @@ class System_Config:
 
         return cfgs
 
-    def restore_orig_settings(self,cfgs):
+    def restore_settings(self,cfgs):
+
+        # not sure this double eval is necessary BUT IT IS !!
+        cfgs                        =   cfgs if type(cfgs)==list else eval(cfgs)
+        cfgs                        =   cfgs if type(cfgs)==list else eval(cfgs)
 
         for d in cfgs:
 
@@ -1027,6 +1035,7 @@ class System_Admin:
 
 from sys import argv
 if __name__ == '__main__':
+    return_var                      =   None
     if len(argv)>1:
 
         if argv[1].find('backup_')==0:
@@ -1069,4 +1078,7 @@ if __name__ == '__main__':
 
         elif argv[1]=='settings':
             CFG                     =   System_Config()
-            CFG.adjust_settings(        *argv[2:])
+            return_var              =   CFG.adjust_settings( *argv[2:] )
+
+        if return_var:
+            print return_var
