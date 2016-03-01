@@ -3,4 +3,5 @@ ghostdriver.log
 .idea/
 ENV/
 system_settings.pyc
-*.pyc
+*.pyc.DS_Store
+py_classes.pyc

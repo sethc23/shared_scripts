@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -l
 
 source ~/.bashrc
 
@@ -14,7 +14,12 @@ default=`tput setaf 9`
 echo ${yellow}${bold}$'\t\t\t'$1${default}
 source $SERV_HOME/ipython/ENV/bin/activate
 cd $HOME/.scripts
-a=$(python System_Control.py check_health $1)
-IFS='<>' read -a array <<< "$a"
-eval echo "${array[@]}" | tr " " "\n"
-$(`tput sgr0`)
+a=$(python System_Control.py check_health $1 )
+
+eval $a
+
+# NOTE:  running from terminal will always show "line 19: : command not found".
+#        removing the inner sub-shell for each line output will fix the terminal error, BUT,
+#		 GeekTool displays will have an 'm' at the end of certain lines due to issues with multiple tput commands
+
+$(tput sgr0)

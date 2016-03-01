@@ -5,6 +5,22 @@ function mnt_dev() { scr_ed; python System_Control.py mnt dev; }
 function diff-dir-all() { colordiff --brief --recursive $1 $2; }
 function diff-dir-left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 function diff-dir-right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
+function diff-dir-right-copy-left { 
+    here=$(echo $(pwd))
+    f=$(diff-dir-right $1 $2 | awk '{print $3$4}' | sed 's/:/\//g' | sed 's/\/\//\//g');
+    repl_part=$(echo $2 | sed 's/\//\\\//g');
+    for from_file in $f 
+        do
+            to_file=$(echo $1$from_file | sed "s/$repl_part//g")
+            cmd=$(echo "cp -R "$here/$from_file $to_file)
+            #cmd=$(echo $here/$from_file $to_file)
+            
+            sh -c "$cmd"
+            
+            # | xargs cp -R
+            #cp -R $(echo $from_file $to_file)
+        done;
+    unset here f repl_part to_file;}
 function diff-dir-files() { colordiff --brief --recursive $1 $2 | grep -E '^Files'; }
 function diff-dir-same() { colordiff --brief --recursive --report-identical-files $1 $2 | grep 'are identical'; }
 function diff-files() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
@@ -14,6 +30,14 @@ function diff-files-left() { colordiff --side-by-side --suppress-common-lines --
 function diff-files-right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; }
 function source_bash() { source $HOME/$SHELL_CONFIG; }
+function get_my_ip() {
+    local _ip _line
+    while IFS=$': \t' read -a _line ;do
+        [ -z "${_line%inet}" ] &&
+           _ip=${_line[${#_line[1]}>4?1:2]} &&
+           [ "${_ip#127.0.0.1}" ] && echo $_ip && return 0
+      done< <(LANG=C /sbin/ifconfig)
+}
 function pull_shared_scripts() { a=`pwd`; cd $HOME/.scripts; git pull sub_dest master; source_bash; cd $a;}
 function push_shared_scripts() { cd $HOME/.scripts;\
     git add -- .alias_shared;\
@@ -152,7 +176,7 @@ alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 
 alias ipython='ipython --profile=nbserver'
 alias ib_BD='cd $BD; source $SERV_HOME/ipython/ENV/bin/activate; ipython'
 alias ib_scr='scr_ed; ipython'
-alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/python2.7/site-packages/'
+alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/python2.7/site-packages/; echo "/usr/lib/python2.7/dist-packages/"; echo "/usr/local/lib/python2.7/dist-packages"'
 
 
 alias kill_by='f_kill_by'
@@ -171,10 +195,7 @@ alias unload_custom_syslogd='sudo launchctl unload -w -F /System/Library/LaunchD
 alias load_sshd='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
 alias unload_sshd='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
 
-alias mnt_ms1='mkdir -p /Volumes/ms1; sshfs ms1_wifi:/ /Volumes/ms1 -o ConnectTimeout=5'
-alias mnt_s2_remote='mkdir -p /Volumes/mb; sshfs mb_remote:/ /Volumes/mb -o ConnectTimeout=5'
-alias mnt_ub3='scr_ed; python mounted_shares.py ub3'
-alias mnt_ec2='scr_ed; python mounted_shares.py ec2'
+alias mnt='scr_ed; python System_Control.py mnt'
 alias mnt_EXT_HD='mkdir -p /Volumes/EXT_HD; $SSHFS ub1:/Volumes/EXT_HD /Volumes/EXT_HD -o ConnectTimeout=5'
 
 alias mp_check='f_mp_check'
@@ -376,7 +397,7 @@ alias g-f_servs='git fetch git_repo; git fetch local_serv; g-b'
 alias g-pll_servs='g-pll_master; g-pll_local_serv;'
 alias g-psh_servs='g-psh_master; g-psh_local_serv;'
 alias g-sparse_update='git read-tree -mu HEAD'
-alias g-not_staged="git diff --name-status | awk \'{print $2}\'"
+alias g-not_staged="git diff --name-status | awk '{print $2}'"
 alias g-r-unstaged="g-not_staged | awk '{print $2}' | xargs git update-index --assume-unchanged --"
 alias g-restore_local='g-restore_local_f'
 alias g-X='g_add_commit_push'

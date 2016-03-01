@@ -1,7 +1,15 @@
+# PYTHON_ARGCOMPLETE_OK
 
+from system_settings import *
+# sys_vars                            =   ['DB_HOST','DB_PORT','DB_NAME','THIS_IP','PASS','THIS_PC','BASE_DIR',
+#                                          'SYS_HEALTH_TXT_ERRORS','ELASTIC_SEARCH_CPU_LIMIT','SYSLOG_CPU_LIMIT',
+#                                          'KIBANA_CPU_LIMIT']
 
 # from IPython import embed_kernel as embed; embed()
-from ipdb import set_trace as i_trace
+try:
+    from ipdb import set_trace as i_trace
+except:
+    pass
 #i_trace()
 
 class Google:
@@ -449,7 +457,7 @@ class System_Crons:
 
         self.T                      =   System_Lib().T
         T                           =   self.T
-        locals().update(                T)
+        locals().update(                T.__getdict__())
         s                           =   System_Servers()
         self.servers                =   s.servers
         self.worker                 =   s.worker
@@ -663,19 +671,23 @@ class System_Health:
 
         p                           =   sub_popen(cmd,stdout=sub_PIPE)
         (ap, err)                   =   p.communicate()
-        res,errs                    =   [],[]
+        res,errs,wc                 =   [],[],r'#'
+        chk_templ                   =   "printf $(tput bold && tput setaf 1)\"chk\"$(tput setaf 9 && `tput rmso`)\\\\t\"%s\\\\n\";"
+        ok_templ                    =   "printf $(tput bold && tput setaf 2)\"ok\"$(tput setaf 9 && `tput rmso`)\\\\t\"%s\\\\n\";"
+        issue_templ                 =   'Issue on "%s" with check: "%s"'
+
         for k in sorted(procs.keys()):
 
             if len(re_findall(procs[k],ap))==0:
-                res.append(             "[$(tput setaf 1 && tput bold)chk$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
-                errs.append(            'Issue on "%s" with process: "%s"' % (chk_sys,k) )
+                
+                res.append(             chk_templ % k)
+                errs.append(            issue_templ % (chk_sys,k) )
             else:
-                res.append(             "[$(tput bold && tput setaf 2)ok$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
+                res.append(             ok_templ % k)
 
         C                           =   self.checks
         checks                      =   C[ C.server_tag==chk_sys ].ix[:,['param1','param2']]
         checks                      =   dict(zip(checks.param1.tolist(),checks.param2.tolist()))
-
         for k in sorted(checks.keys()):
 
             cmd                     =   checks[k]
@@ -684,13 +696,12 @@ class System_Health:
             p                       =   sub_popen(cmd,stdout=sub_PIPE,shell=True)
             (_out,_err)             =   p.communicate()
             if _out.find('0')==-1:
-                res.append(             "[$(tput bold && tput setaf 2)ok$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
+                res.append(             chk_templ % k)
             else:
-                res.append(             "[$(tput setaf 1 && tput bold)chk$(tput setaf 9 && `tput rmso`)]$'\t'%s"%k)
-                errs.append(            'Issue on "%s" with check: "%s"' % (chk_sys,k))
+                res.append(             ok_templ % k)
+                errs.append(            issue_templ % (chk_sys,k))
 
-
-        print '<>'.join(                res)
+        print ''.join(                res).rstrip('\\n";') + '";'
 
         self.process_sterr          =   errs if errs else None
         self.process_end            =   dt.now()
@@ -709,9 +720,9 @@ class System_Servers:
         self.T                      =   System_Lib().T
         locals().update(                self.T.__getdict__())
         shares                      =   pd.read_sql('select * from shares',sys_eng)
-        self.sh                     =   shares
         s                           =   pd.read_sql('select * from servers where production_usage is not null',sys_eng)
-        self.s                      =   s
+        self.sh         =   self.shares         =   shares
+        self.s          =   self.servers        =   s
         server_dir_dict             =   dict(zip(s.tag.tolist(),s.home_dir.tolist()))
         mac                         =   [int(str(get_mac()))]
         worker                      =   s[ s.mac.isin(mac) & s.home_dir.isin([os_environ['HOME']]) ].iloc[0].to_dict()
@@ -1276,10 +1287,7 @@ class System_Lib:
         from json                           import dumps            as j_dump
         from re                             import findall          as re_findall
         from sqlalchemy                     import create_engine
-        import                                  pandas           as pd
-        from system_settings                import DB_HOST,DB_PORT,DB_NAME,THIS_IP,PASS,THIS_PC,BASE_DIR
-        from system_settings                import SYS_HEALTH_TXT_ERRORS,ELASTIC_SEARCH_CPU_LIMIT
-        from system_settings                import SYSLOG_CPU_LIMIT,KIBANA_CPU_LIMIT
+        import                                  pandas              as pd
         import                                  psycopg2
 
         pd.set_option(                          'expand_frame_repr',False)
@@ -1319,9 +1327,63 @@ class System_Lib:
         return p.communicate()
 
 
+# def get_arg_parser( parser_objs={'description':'parser_desciption'},
+#                     parser_args=[{'name':'argument_1'}]):
+#     import argparse
+    
+#     parser                              =   argparse.ArgumentParser()
+#     for k,v in parser_objs.iteritems():
+#         parser.__dict__[k]              =   v
+#     for it in parser_args:
+#         parser.add_argument(it)
+#     return parser
 
-from sys import argv
+    
+
 if __name__ == '__main__':
+
+    # PUT AT TOP OF FILE?:                      #!/usr/bin/python
+
+    # from os                             import environ          as os_environ
+    # from sys                            import path             as py_path
+    # py_path.append(os_environ['HOME']+'/.scripts/ENV/lib/python2.7/site-packages')
+
+    # # i_trace()
+
+    # main_descr                          =   'Manage Distributed System'
+    # main_choices                        =   ('backup', 
+    #                                          'install', 
+    #                                          'check', 
+    #                                          'cron', 
+    #                                          'settings',
+    #                                          'mnt',
+    #                                          'umnt')
+    # main_args                           =   {'choices':main_choices,'required':True}
+
+    # import argcomplete
+    # import argparse
+    # p                                   =   argparse.ArgumentParser(description=main_descr)
+
+    # from argcomplete.completers import ChoicesCompleter
+    # p.add_argument("-f",choices=main_choices).completer  =   ChoicesCompleter(main_choices)
+    # p.add_argument("-f",choices=main_choices).completer  =   (main_choices)
+
+    # from IPython.core.completer import Completer as ipy_completer
+    # p.add_argument("-f",choices=main_choices).completer  =   ipy_completer()
+
+
+    # ap                                  =   get_arg_parser( parser_objs={'description':main_descr},
+    #                                                         parser_args=main_args)
+    # 
+    # ap.completer = ChoicesCompleter(main_choices)
+    #
+
+    # argcomplete.autocomplete(p)
+    # args = p.parse_args()
+
+    # i_trace()
+
+    from sys import argv
     return_var                          =   None
     if len(argv)>1:
 

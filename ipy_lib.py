@@ -5,7 +5,6 @@ def ib_k(a='get_ipython()'):
     from subprocess                     import PIPE             as sub_PIPE
     from os.path                        import isdir
     from os                             import environ          as os_environ
-    from mounted_shares                 import mnt_shares
     USER                                =   os_environ['USER']
     BASE_DIR                            =   os_environ['HOME'] + '/'
 
@@ -28,7 +27,10 @@ def ib_k(a='get_ipython()'):
     k_info                              =   eval(t)
 
     # 2. confirm access from REMOTE
-    if not isdir('/Volumes/mbp2'):          mnt_shares(['mbp2'])
+    if not isdir('/Volumes/mbp2/Users/admin/.scripts'):          
+        from System_Control             import System_Servers
+        SERVS                           =   System_Servers()
+        SERVS.mnt_shares(['mbp2'])
 
 
     if not isdir('/Volumes/mbp2/Volumes/%s' % USER):
