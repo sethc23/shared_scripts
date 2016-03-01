@@ -1,6 +1,7 @@
 
 function djJSON() { f_getJSON http://0.0.0.0/api_view/$1/?format=json; }
-function mnt_up() { $IPY/ENV/bin/python $HOME/.scripts/mounted_shares.py; }
+function mnt_up() { scr_ed; python System_Control.py mnt; }
+function mnt_dev() { scr_ed; python System_Control.py mnt dev; }
 function diff-dir-all() { colordiff --brief --recursive $1 $2; }
 function diff-dir-left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 function diff-dir-right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
