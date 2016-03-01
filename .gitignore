@@ -3,5 +3,9 @@ ghostdriver.log
 .idea/
 ENV/
 system_settings.pyc
-*.pyc.DS_Store
-py_classes.pyc
+*.pyc
+.DS_Store
+k.sh
+files/git_commits.png
+*.rdb
+tmp/phantom_shot

@@ -1,38 +1,42 @@
-from selenium                       import webdriver
-from time                           import sleep
-from bs4                            import BeautifulSoup        as BS
-import                                  pandas                  as pd
-from sqlalchemy                     import create_engine
-from system_settings                import DB_HOST,DB_PORT
-from subprocess                     import Popen                as sub_popen
-from subprocess                     import PIPE                 as sub_PIPE
+#! /Users/admin/.scripts/ENV/bin/python
 
-D                                   =   webdriver.PhantomJS(executable_path='/usr/local/bin/phantomjs')
-D.set_window_position(                  0, 0)
-D.set_window_size(                      300, 300)
-capabilities                        =   ['applicationCacheEnabled',
-                                         'locationContextEnabled',
-                                         'databaseEnabled',
-                                         'webStorageEnabled',
-                                         'JavascriptEnabled',
-                                         'acceptSslCerts',
-                                         'browserConnectionEnabled',
-                                         'rotatable']
-for it in capabilities:
-    D.desired_capabilities[it]      =   True
-username,pw                         =   'sethc23','ferrarif50'
-login                               =   'https://github.com/session'
-homepage                            =   'https://github.com/sethc23'
-D.get(                                  login)
+from time                                   import sleep
+from bs4                                    import BeautifulSoup            as BS
+import                                          pandas                      as pd
+from sqlalchemy                             import create_engine
+from system_settings                        import DB_HOST,DB_PORT
+from subprocess                             import Popen                    as sub_popen
+from subprocess                             import PIPE                     as sub_PIPE
+from os                                     import environ                  as os_environ
+from sys                                    import path                     as py_path
+py_path                                     =   py_path
+py_path.append(                                 os_environ['BD'] + '/html')
+from webpage_scrape                         import scraper
+D                                           =   scraper('phantom').browser.window
+
+username,pw                                 =   'sethc23','ferrarif50'
+login                                       =   'https://github.com/session'
+homepage                                    =   'https://github.com/sethc23'
+
+D.get(                                          login)
+sleep(                                          10)
+
+# from ipdb import set_trace as i_trace
+# i_trace()
+
+# scr = 'document.getElementById("login_field").value = "%s";' % username
+# D.execute_script(scr)
+# D.find_element_by_xpath('//*[@id="login_field"]').send_keys(username)
+
 D.find_element_by_id("login_field").send_keys(  username)
 D.find_element_by_id("password").send_keys(     pw)
 D.find_element_by_name("commit").click(         )
-D.implicitly_wait(                      60)
-D.get(                                  homepage)
+D.implicitly_wait(                              60)
+D.get(                                          homepage)
 
-sleep(                                  10)
-D.get(                                  homepage)
-src                                 =   D.page_source
+sleep(                                          10)
+D.get(                                          homepage)
+src                                         =   D.page_source
 D.quit()
 
 h                                   =   BS(src)

@@ -1,12 +1,11 @@
 
 def ib_k(a='get_ipython()'):
-    from os                             import system           as os_cmd
+    
+    import os
     from subprocess                     import Popen            as sub_popen
     from subprocess                     import PIPE             as sub_PIPE
-    from os.path                        import isdir
-    from os                             import environ          as os_environ
-    USER                                =   os_environ['USER']
-    BASE_DIR                            =   os_environ['HOME'] + '/'
+    USER                                =   os.environ['USER']
+    BASE_DIR                            =   os.environ['HOME'] + '/'
 
     def exec_cmds(cmds,cmd_host,this_worker):
         cmd                             =   ' '.join(cmds)
@@ -20,24 +19,29 @@ def ib_k(a='get_ipython()'):
     # 1. get info about kernel
     a                                   =   get_ipython()
     fpath                               =   a.kernel.config['IPKernelApp']['connection_file']
-    fpath_shared                        =   fpath[fpath.find('.ipython'):]
-    fpath_in_mnt                        =   '/Volumes/%s/%s' % (USER,BASE_DIR) + fpath_shared
+    fpath_in_mnt                        =   ''.join(['/Volumes/%s' % USER, fpath])
+    # print fpath_in_mnt
+    # fpath_shared                        =   fpath[fpath.find('.ipython'):]
+    # fpath_in_mnt                        =   '/Volumes/%s/%s' % (USER,BASE_DIR) + fpath_shared
     (t, err)                            =   exec_cmds(["cat "+fpath],USER,USER)
     assert err==None
     k_info                              =   eval(t)
+    # print k_info
 
     # 2. confirm access from REMOTE
-    if not isdir('/Volumes/mbp2/Users/admin/.scripts'):          
+    if not os.path.isdir('/Volumes/mbp2/Users/admin/.scripts'):          
         from System_Control             import System_Servers
         SERVS                           =   System_Servers()
-        SERVS.mnt_shares(['mbp2'])
+        # from ipdb import set_trace as i_trace; i_trace()
+        # print SERVS
+        SERVS.mnt(['mbp2'])
 
 
-    if not isdir('/Volumes/mbp2/Volumes/%s' % USER):
-        cmd                             =   ["python /Users/admin/.scripts/mounted_shares.py s3_always"]
-        (t, err)                        =   exec_cmds(cmd,'mbp2',USER)
-        assert err==None
-        assert t==''
+    # if not os.path.isdir('/Volumes/mbp2/Volumes/%s' % USER):
+    #     cmd                             =   ["python /Users/admin/.scripts/mounted_shares.py s3_always"]
+    #     (t, err)                        =   exec_cmds(cmd,'mbp2',USER)
+    #     assert err==None
+    #     assert t==''
 
     # 3. create script on REMOTE for execution
 
@@ -66,7 +70,7 @@ def ib_k(a='get_ipython()'):
 
     # 4. send ssh cmd for REMOTE execution of script
     # not sure sub_popen doesn't work...
-    os_cmd(                                 "ssh -Xf mbp2 'cd $HOME/.scripts; ./k.sh &'")
+    os.system(                                 "ssh -Xf mbp2 'cd $HOME/.scripts; ./k.sh &'")
     # cmd                                 =   ['cd $HOME/.scripts; ./k.sh &']
     # (t, err)                            =   exec_cmds(cmd,'mbp2',USER)
     # assert err==None
@@ -75,4 +79,5 @@ def ib_k(a='get_ipython()'):
 
     return
 
-# ib_k()
+if __name__ == '__main__':
+    ib_k()

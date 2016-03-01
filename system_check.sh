@@ -12,9 +12,9 @@ yellow=`tput setaf 3`
 default=`tput setaf 9`
 
 echo ${yellow}${bold}$'\t\t\t'$1${default}
-source $SERV_HOME/ipython/ENV/bin/activate
+source ENV/bin/activate
 cd $HOME/.scripts
-a=$(python System_Control.py check_health $1 )
+a=$(./System_Control.py status make_display_check $1 -R '' -E '')
 
 eval $a
 
