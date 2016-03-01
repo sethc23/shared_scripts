@@ -387,6 +387,7 @@ function g-S-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 
 function g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*//g';}
 alias g-b='git branch -avv'
 alias g-b-DELETE='git branch -d'
+alias g-b-r-DELETE='git branch --remotes --delete'
 alias g-c='git commit -m'
 alias g-ch-n='git checkout -b'
 alias g-f-MODIFIED="g-s-p | grep '^ M ' | awk '{print $2}'"
