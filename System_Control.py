@@ -1,3 +1,5 @@
+
+
 # Libraries
 import                                 sys
 import                                 codecs
@@ -20,6 +22,7 @@ from json                       import dumps            as j_dump
 from re                         import findall          as re_findall
 from sqlalchemy                 import create_engine
 import                                 pandas           as pd
+from system_settings            import *
 import                                 psycopg2
 
 pd.set_option(                          'expand_frame_repr',False)
@@ -29,12 +32,13 @@ pd.set_option(                          'display.width',180)
 np                                  =   pd.np
 np.set_printoptions(                    linewidth=200,threshold=np.nan)
 
-sys_eng                             =   create_engine(r'postgresql://postgres:postgres@192.168.3.52:8800/system',
+sys_eng                             =   create_engine(r'postgresql://postgres:postgres@%s:%s/%s'%(DB_HOST,DB_PORT,DB_NAME),
                                             encoding='utf-8',
                                             echo=False)
 
-conn                                =   psycopg2.connect("""dbname='system' user='postgres'
-                                                            host='192.168.3.52' password='' port=8800""");
+conn                                =   psycopg2.connect("""dbname='%s' user='postgres'
+                                                            host='%s' password='' port=%s"""
+                                                         %(DB_NAME,DB_HOST,DB_PORT));
 cur                                 =   conn.cursor()
 
 global THIS_SERVER

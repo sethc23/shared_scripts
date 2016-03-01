@@ -251,6 +251,14 @@ alias spotlight_on='sudo mdutil -a -i on; sudo launchctl load -w /System/Library
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sudo_textedit='f_sudo_textedit'
 
+#-- SUPERVISOR --#
+alias sv_sudo_push_config='sl_push_config; sudo $SERV_HOME/supervisor_root/push_sv_config_root.bash'
+alias sv_load='sv_sudo_push_config; sudo service supervisord start'
+alias sv_unload='sudo service supervisord stop'
+alias sv_reload='sv_sudo_push_config; sudo service supervisord restart'
+alias sv_reset='sv_sudo_push_config && sv_ctl reread && sv_ctl update'
+alias sv_s='sv_ctl status'
+alias sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
 alias sv_ctl='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock'
 alias sv_update='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock reread && sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock update'
 

@@ -131,16 +131,6 @@ alias svc_rsyslog_unload='sudo service rsyslog stop'
 alias svc_rsyslog_restart='sudo service rsyslog restart'
 
 
-
-#-- SUPERVISOR --#
-alias sv_sudo_push_config='sl_push_config; sudo $SERV_HOME/supervisor_root/push_sv_config_root.bash'
-alias sv_load='sv_sudo_push_config; sudo service supervisord start'
-alias sv_unload='sudo service supervisord stop'
-alias sv_reload='sv_sudo_push_config; sudo service supervisord restart'
-alias sv_reset='sv_sudo_push_config && sv_ctl reread && sv_ctl update'
-alias sv_s='sv_ctl status'
-alias sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
-
 alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; sl_push_config; sudo syslog-ng;'
 
 alias vi='vim'
