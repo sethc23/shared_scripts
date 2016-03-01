@@ -1,5 +1,4 @@
-function aporo_env() { cd $APORO; source ENV/bin/activate; }
-function aprinto_env() { cd $APRINTO; source ENV/bin/activate; }
+
 function djJSON() { f_getJSON http://0.0.0.0/api_view/$1/?format=json; }
 function mnt_up() { $IPY/ENV/bin/python $HOME/.scripts/mounted_shares.py; }
 function diff-dir-all() { colordiff --brief --recursive $1 $2; }
@@ -31,17 +30,11 @@ function f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
 function f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 function f_find_folder() { sudo find -H -s $1 -type d -iregex "$2"; }
 function f_getJSON() { curl -H 'Accept: application/json; indent=4' $1; }
-function f_kill_by() { sudo kill -9 `ps -A | grep $1 | grep -v grep | awk '{print $1}'`; }
+function f_kill_by() { sudo kill -9 `ps -awx | grep $1 | grep -v grep | awk '{print $1}'`; }
 function f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
 function f_mp_py() { sudo port select python python$1; }
 function f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
-function f_sencha_build() { cd $SERV_HOME/aporo/static/sencha; sudo sencha app build production; }
-function ib_e() { cd $IPY; source ENV/bin/activate; }
-function ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}
-function link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 $IPY/ENV/lib/python2.7/site-packages/; }
-function link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 $APRINTO/ENV/lib/python2.7/site-packages/; }
-function link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
-function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
+function f_sencha_build() { cd $APORO/static/sencha; sudo sencha app build production; }
 function mp_py_select() { echo "admin" | sudo port select python python$1; }
 function pyprofilewrite() { kernprof.py -l $1; }
 function pyprofileread() { python -m line_profiler $1.lprof; }
@@ -66,12 +59,6 @@ alias apache_test='sudo apachectl configtest'
 alias apache_unload='sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist'
 alias apache_virtuals='apachectl -S'
 
-alias aporo='cd $APORO'
-alias aporo_debug='$APORO/ENV/bin/python $APORO/manage.py runserver 0.0.0.0:8080'
-alias aporo_db_sync='$APORO/ENV/bin/python manage.py syncdb'
-#alias aprinto='cd $APRINTO'
-#alias aprinto_debug='$APRINTO/ENV/bin/python $SERV_HOME/aprinto/manage.py runserver 0.0.0.0:8088'
-#alias aprinto_db_sync='$APRINTO/ENV/bin/python manage.py syncdb'
 #alias aprinto_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 aprinto'
 
 
@@ -102,6 +89,8 @@ alias bashedit_prof='edit_bash_prof'
 alias bashedit_shared='edit_bash_share; push_shared_scripts'
 alias bashedit_linux='edit_linux_share; push_shared_scripts'
 
+alias BD_env='cd $BD; source ENV/bin/activate'
+
 alias btoff='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 0'
 alias bton='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 1'
 alias chmod_num="stat -f %Mp%Lp"
@@ -121,6 +110,9 @@ alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
 alias enableScreenSh='sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -off -restart -agent -privs -all -allowAccessFor -allUsers -clientopts'
 alias find_file='f_find_file'
 alias find_folder='f_find_folder'
+alias grep='grep -i --color=auto'
+alias fgrep='fgrep -i --color=auto'
+alias egrep='egrep -i --color=auto'
 alias git_history='git reflog --date=local origin/master'
 alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME/django/Dropbox/aporo/static/sencha'
 alias grep_folder='grep -r "$1" *'
@@ -136,14 +128,31 @@ alias hist_cmds="history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"
 # history | sed -e 's/^[ \t]*//' | sort -u -k4 | sort -k1
 # need to standardize column separation and re-split
 
-alias ib='sudo $IPY/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+function ib_e() { cd $IPY; source ENV/bin/activate; }
+function ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}
+function link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+    $IPY/ENV/lib/python2.7/site-packages/; }
+function link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+    $APRINTO/ENV/lib/python2.7/site-packages/; }
+function link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
+function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
+
+alias ib='$IPY/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_load='sudo launchctl load -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
 alias ib_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
 alias ib_config='f_sudo_textedit ~/.ipython/profile_nbserver/ipython_config.py'
-alias ib_console='$SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ib_console='$SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+function ib_console_existing() { $SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent \
+    --color-info --colors=linux --confirm-exit \
+    --existing /home/ub2/SERVER2/ipython/config/.ipython/profile_default/security/$1; }
 alias ib_js='f_sudo_xcode ~/.ipython/profile_nbserver/static/custom/custom.js'
 alias ib_js_folder='open $HOME/.ipython/profile_nbserver/static/custom/'
-alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ipython='ipython --profile=nbserver'
+alias ib_BD='cd $BD; source $SERV_HOME/ipython/ENV/bin/activate; ipython'
+alias ib_scr='scr_ed; ipython'
+alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/python2.7/site-packages/'
+
 
 alias kill_by='f_kill_by'
 
@@ -154,16 +163,18 @@ alias locate='locate -i'
 alias locate_update='sudo /usr/libexec/locate.updatedb'
 alias load_locate='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist'
 alias unload_locate='sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.locate.plist'
-alias load_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl start custom.syslogd'
-alias unload_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl stop custom.syslogd'
+alias load_standard_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
+alias unload_standard_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
+alias load_custom_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl start custom.syslogd'
+alias unload_custom_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl stop custom.syslogd'
 alias load_sshd='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
 alias unload_sshd='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
 
-alias mnt_s3_always='$IPY/ENV/bin/python $HOME/.scripts/mounted_shares.py mnt_s3_always'
-alias mnt_ec2='$IPY/ENV/bin/python $HOME/.scripts/mounted_shares.py ec2'
-alias mnt_ms1='mkdir -p /Volumes/ms1; sshfs ms1_wifi:/ /Volumes/ms1 -ovolname=ms1'
-alias mnt_s2_remote='mkdir -p /Volumes/mb; sshfs mb_remote:/ /Volumes/mb -ovolname=mb'
-alias mnt_ub3='$IPY/ENV/bin/python $HOME/.scripts/mounted_shares.py ub3'
+alias mnt_ms1='mkdir -p /Volumes/ms1; sshfs ms1_wifi:/ /Volumes/ms1 -o ConnectTimeout=5'
+alias mnt_s2_remote='mkdir -p /Volumes/mb; sshfs mb_remote:/ /Volumes/mb -o ConnectTimeout=5'
+alias mnt_ub3='scr_ed; python mounted_shares.py ub3'
+alias mnt_ec2='scr_ed; python mounted_shares.py ec2'
+alias mnt_EXT_HD='mkdir -p /Volumes/EXT_HD; $SSHFS ub1:/Volumes/EXT_HD /Volumes/EXT_HD -o ConnectTimeout=5'
 
 alias mp_check='f_mp_check'
 alias mp_clean_port_all='sudo port clean --all'
@@ -208,6 +219,7 @@ alias ng_stop='sudo nginx -s stop -p $SERV_HOME/run -c /usr/local/openresty/ngin
 alias ng_kill='sudo pkill -f nginx'
 
 alias pip_upgrade='pip install -U pip'
+alias pip_install='pip install --upgrade --allow-all-external --allow-unverified basemap'
 
 alias pf_load='sudo port load postfix'
 alias pf_unload='sudo port unload postfix'
@@ -222,12 +234,48 @@ alias pf_log='tail -n 50 /var/log/mail.log'
 
 alias pip_update='$HOME/.scripts/update_pip.sh'
 
+# ------------------------------->>>
+# -----pgSQL--------------------->>>
+
+#alias pg_PUSH_CONFIG='sudo cp -R $SERV_HOME/pgsql93/postgresql93 /etc/rc.d/init.d/'
+#alias pg_RESET='sudo chkconfig postgresql93 reset'
+#alias pg_SHUTDOWN='sudo su postgres -c "pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart"'
+
+alias pg_tmp_start_with_echo="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl start -D $PG_DATA_DIR -l /tmp/pgsql -o\" -i -E\"'"
+alias pg_tmp_start="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl start -D $PG_DATA_DIR -o\" -i\"'"
+alias pg_tmp_stop="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl stop -m fast -D $PG_DATA_DIR -o\" \"'"
+
+alias psql='sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres"'
+function psql_c() { sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres -c '$1'"; }
+function pg_load_dump_file() { \
+    OUT_FILE_NAME=echo "$1" | sed -r 's/(.*)\/([^/]*)(\.sql)$/\2_OUT/'; \
+    echo $OUT_FILE_NAME;}
+    #DB_NAME=echo $1 | sed -r 's/(.*)\/([^_]*)_([^_]*)([^/]*)(\.sql)$/\3/'; \
+    #sudo su postgres -c 'psql --host=0.0.0.0 --port=8800 --username=postgres -c "create database $DB_NAME;"'; \
+    #sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres --dbname=$DB_NAME -f $1" >> $OUT_FILE_NAME 2>&1; \
+    #unset OUT_FILE_NAME DB_NAME;}
+export PG_DATA_DIR=/var/lib/postgresql/9.4/main
+alias _pg_reload='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl reload -D $PG_DATA_DIR"'
+alias _pg_restart_smart='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m smart"'
+alias _pg_restart_fast='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
+alias _pg_restart_fast='sudo su postgres -c "source /home/ub2/SERVER2/ipython/ENV/bin/activate; /usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
+alias _pg_restart_immediate='sudo su postgres -c "source /home/ub2/SERVER2/ipython/ENV/bin/activate; /usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
+alias _pg_restart_fast_core='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl restart -c -w -D $PG_DATA_DIR -m fast"'
+alias _pg_configs='psql_c "show all;"'
+alias _pg_service_script='sudo emacs /etc/init.d/postgresql'
+alias _pg_service_stop='sudo service postgresql stop'
+alias _pg_service_start='sudo service postgresql start'
+alias _pg_service_restart='sudo service postgresql restart'
+alias _pg_service_reload='sudo service postgresql reload'
+alias _pg_service_unload='sudo service postgresql unload'
+alias _pg_pid="pid=$(ps -ef | grep '/usr/lib/postgresql/9.4/bin/postgres' | grep -E '^postgres' | sed 's/^postgres //g' | sed -E 's/([^[0-9]]*)([0-9]+)(.*)/\2/')"
+
+
 alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'
 alias ports_listen_3='nettop'
 alias ports_sockets='netstat -lx'
 alias ports_ssh='lsof -i tcp | grep ^ssh'
-
 
 alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
 alias pydoc='python -m pydoc'
@@ -246,21 +294,14 @@ alias rsync_test='python $BD/rsync_cmds.py test'
 alias scr_env='source $HOME/.scripts/ENV/bin/activate'
 alias scr_ed='scr_env; cd $HOME/.scripts'
 
+alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
+alias syslog_osx_config2='sudo emacs /etc/asl.conf'
 alias spotlight_off='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
 alias spotlight_on='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sudo_textedit='f_sudo_textedit'
 
-#-- SUPERVISOR --#
-alias sv_sudo_push_config='sl_push_config; sudo $SERV_HOME/supervisor_root/push_sv_config_root.bash'
-alias sv_load='sv_sudo_push_config; sudo service supervisord start'
-alias sv_unload='sudo service supervisord stop'
-alias sv_reload='sv_sudo_push_config; sudo service supervisord restart'
-alias sv_reset='sv_sudo_push_config && sv_ctl reread && sv_ctl update'
-alias sv_s='sv_ctl status'
-alias sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
-alias sv_ctl='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock'
-alias sv_update='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock reread && sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock update'
+
 
 alias topcpu='ps -ero pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
 alias topmem='ps -emo pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
@@ -284,7 +325,7 @@ alias T='curl http://0.0.0.0:8888/t1?b=2;'
 alias N='ng_push_config; ng_reload;'
 alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog; syslog_push_config; sudo syslog-ng;'alias z1='echo test'
 
-alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/'
+
 alias to_log='syslog -s -l error -k Message'
 function dl_unzip() { wget $1; tar -xzvf $1; }
 
@@ -296,7 +337,7 @@ function g-restore_local_f() { ln -s ~/.git/.gitignore ~/; \
 	 ln -s ~/$SERVER/local_config/.bash_profile ~/ ;}
 function g_add_commit_push() { git add --ignore-removal -- .; \
     if [ $(git diff --stat --name-only | wc -l) -gt 0 ]; then \
-        git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --; \
+        git diff --stat --name-only | xargs -0 git rm --cached --ignore-unmatch -f -r --; \
     fi;
     git commit -m "$1"; \
     sleep 1; \
@@ -338,3 +379,6 @@ alias g-not_staged="git diff --name-status | awk \'{print $2}\'"
 alias g-r-unstaged="g-not_staged | awk '{print $2}' | xargs git update-index --assume-unchanged --"
 alias g-restore_local='g-restore_local_f'
 alias g-X='g_add_commit_push'
+alias g-P='git pull sub_dest master; g-b'
+alias g-clean='git gc --prune=all --aggressive'
+

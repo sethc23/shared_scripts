@@ -2,3 +2,5 @@ System_Control.pyc
 ghostdriver.log
 .idea/
 ENV/
+system_settings.pyc
+*.pyc

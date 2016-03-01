@@ -4,18 +4,27 @@ function ap_remove() {              sudo apt-get purge $1 && sudo apt-get --purg
 function ib_konnect() {             sudo $IPY/ENV/bin/ipython console --existing \
     $HOME/.ipython/profile_default/security/kernel-$1.json; kill $1;}
 
+alias scr_env='source $HOME/.scripts/ENV/bin/activate'
+alias scr_ed='scr_env; cd $HOME/.scripts'
+
+function aporo_env() {              source $APORO/ENV/bin/activate; }
+function aporo() {                  cd $APORO; aporo_env; }
+function aporo_ib() {               aporo; ipython; }
+
+
 function aprinto() {                cd $APRINTO; source $APRINTO/ENV/bin/activate; }
 function aprinto_test() {           aprinto; behave tests/features/ > /dev/null 2>&1; }
-function aprinto_fwd_off() {        aprinto; cd celery; python document_processing.py settings aprinto fwd_order_false; }
-function aprinto_fwd_on() {         aprinto; cd celery; python document_processing.py settings aprinto fwd_order_true; }
+function aprinto_test_production() { aprinto; behave tests/features/ --tags=production > /dev/null 2>&1; }
+function aprinto_fwd_off() {        scr_ed; python System_Control.py settings aprinto fwd_order_false; }
+function aprinto_fwd_on() {         scr_ed; python System_Control.py settings aprinto fwd_order_true; }
 function aprinto_fwd_chk() {        cat $SERV_HOME/aprinto/aprinto_settings.py | grep FWD_ORDER; }
 
-function aprinto_behave_txt_off() { aprinto; cd celery; python document_processing.py settings aprinto behave_txt_false; }
-function aprinto_behave_txt_on() {  aprinto; cd celery; python document_processing.py settings aprinto behave_txt_true; }
+function aprinto_behave_txt_off() { scr_ed; python System_Control.py settings aprinto behave_txt_false; }
+function aprinto_behave_txt_on() {  scr_ed; python System_Control.py settings aprinto behave_txt_true; }
 function aprinto_behave_txt_chk() { cat $SERV_HOME/aprinto/aprinto_settings.py | grep BEHAVE_TXT; }
 
-function aprinto_celery_txt_off() { aprinto; cd celery; python document_processing.py settings aprinto celery_txt_false; }
-function aprinto_celery_txt_on() {  aprinto; cd celery; python document_processing.py settings aprinto celery_txt_true; }
+function aprinto_celery_txt_off() { scr_ed; python System_Control.py settings aprinto celery_txt_false; }
+function aprinto_celery_txt_on() {  scr_ed; python System_Control.py settings aprinto celery_txt_true; }
 function aprinto_celery_txt_chk() { cat $SERV_HOME/aprinto/aprinto_settings.py | grep CELERY_TXT; }
 
 function aprinto_txt_off() {        aprinto_behave_txt_off; aprinto_celery_txt_off; }
@@ -23,7 +32,9 @@ function aprinto_txt_on() {         aprinto_behave_txt_on; aprinto_celery_txt_on
 function aprinto_txt_chk() {        aprinto_behave_txt_chk; aprinto_celery_txt_chk; }
 
 function serv() {                   cd $GIT_SERV_HOME/celery; source ENV/bin/activate; }
+function serv_test_debug() {        serv; cd git_serv; behave tests/features/ --stop --tags=debug; }
 function serv_test_dev() {          serv; cd git_serv; behave tests/features/ --stop --tags=dev; }
+function serv_test_framework() {    serv; cd git_serv; behave tests/features/ --stop --tags=framework > /dev/null 2>&1; }
 function serv_test_production() {   serv; cd git_serv; behave tests/features/ --stop --tags=production > /dev/null 2>&1; }
 function serv_behave_on() {         serv; cd git_serv; python git_serv_tasks.py settings gitserv behave_verification_true; }
 function serv_behave_false() {      serv; cd git_serv; python git_serv_tasks.py settings gitserv behave_verification_false; }
@@ -72,30 +83,11 @@ alias ng_kill_2='sudo fuser -k 80/tcp'
 alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
 alias ng_tail_t_access='sudo tail -f /var/log/syslogs/tmp_ngx_access.log'
 alias ng_tail_t_err='sudo tail -f /var/log/syslogs/tmp_ngx_error.log'
-alias ng_tail_t_err_w='sudo tail -f /var/log/syslogs/tmp_ngx_error_warn.log'
 
-# ------------------------------->>>
-# -----pgSQL--------------------->>>
-
-#alias pg_PUSH_CONFIG='sudo cp -R $SERV_HOME/pgsql93/postgresql93 /etc/rc.d/init.d/'
-#alias pg_RESET='sudo chkconfig postgresql93 reset'
-#alias pg_SHUTDOWN='sudo su postgres -c "pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart"'
-
-alias pg_tmp_start="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl stop -m fast -D /var/lib/postgresql/9.4/main -l /tmp/pgsql -o \"-i -E\"'"
-alias pg_tmp_stop="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl start -D /var/lib/postgresql/9.4/main -l /tmp/pgsql -o \"-i -E\"'"
+function ng_tail_t_err_w() { sudo tail -n 0 -f /var/log/syslogs/tmp_ngx_error_warn.log | while read line; \
+    do echo $line | grep '#>>>' | sed -ur 's/.*(#>>>)(.*)(<<<#).*/\2/g'; done; }
 
 
-#alias pg_config='sudo emacs /opt/local/var/db/postgresql93/defaultdb/pg_hba.conf'
-#alias pg_config2='sudo emacs /opt/local/var/db/postgresql93/defaultdb/postgresql.conf'
-#alias pg_dump_rename='python $HOME/.scripts/api_pgsql.py rename_base_dump;'
-#alias pg_dump_put='/opt/local/lib/postgresql93/bin/pg_dump --dbname=routing --host=0.0.0.0 --port=8800 --username=postgres > ~/.pg_dump/db.sql'
-#alias pg_dump_all='/opt/local/lib/postgresql93/bin/pg_dump_put; pg_dump_rename'
-#alias pg_kill='sudo kill -KILL $(cat $HOME/postgres/pgsql93.pid); sudo rm /opt/local/var/db/postgresql93/defaultdb/postmaster.pid'
-#alias pg_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 routing'
-#alias pg_restore='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 -d routing -f db.sql'
-#alias pg_start='cd /tmp; sudo su postgres -c "/opt/local/lib/postgresql93/bin/pg_ctl start -D /opt/local/var/db/postgresql93/defaultdb"'
-#alias pg_stop='sudo su postgres -c "/opt/local/lib/postgresql93/bin/pg_ctl stop -D /opt/local/var/db/postgresql93/defaultdb -m smart"'
-#alias pg_stop_fast='sudo su postgres -c "/opt/local/lib/postgresql93/bin/pg_ctl stop -D /opt/local/var/db/postgresql93/defaultdb -m fast"'
 
 # -------------------------------<<<
 # -------------------------------<<<
@@ -119,8 +111,18 @@ alias sl_debug='sl_push_config; sudo /usr/local/sbin/syslog-ng -Fvvedt'
 alias sl_kill='kill_by syslog-ng'
 alias sl_tail_all='sudo tail -f /var/log/syslogs/all.log'
 alias sl_tail_internal='sudo tail -f /var/log/syslogs/syslog_internal.log'
-alias sl_tail_socat='sudo tail -f /var/log/syslogs/socat.log'
 alias sl_tail_resty='sudo tail -f /var/log/syslogs/resty_logger.log'
+alias sl_tail_socat='sudo tail -f /var/log/syslogs/socat.log'
+alias sl_tail_syslog='sudo tail -f /var/log/syslog'
+
+function sl_tail_syslog_statements() { sudo tail -n 0 -f /var/log/syslog | while read line; do echo $line \
+    | grep '#011#011' | sed -r 's/(.*)#011#011(.*)/\2/g'; done; }
+
+function sl_tail_syslog_logs() { sudo tail -n 0 -f /var/log/syslog | while read line; \
+    do echo $line | grep 'LOG:' | awk '{$1=$2=$3=$4=$5=$6=$7=""; print $0}' \
+    | sed 's/^\s*//g' | grep 'LOG:'; done; }
+
+alias sl_tail_syslog_all_else="sudo tail -f /var/log/syslog | grep -v '#011#011' | uniq"
 
 alias svc_pgsql_load='sudo service postgresql start'
 alias svc_pgsql_unload='sudo service postgresql stop'
@@ -129,6 +131,19 @@ alias svc_pgsql_restart='sudo service postgresql restart'
 alias svc_rsyslog_load='sudo service rsyslog start'
 alias svc_rsyslog_unload='sudo service rsyslog stop'
 alias svc_rsyslog_restart='sudo service rsyslog restart'
+
+
+#-- SUPERVISOR --#
+alias sv_push_config='sl_push_config; sudo $SERV_HOME/supervisor_root/push_sv_config_root.bash'
+alias sv_reset='sv_push_config && sv_ctl reread && sv_ctl update'
+alias sv_s='sv_ctl status'
+alias sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
+alias sv_ctl='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock'
+alias sv_update='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock reread && sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock update'
+alias sv_load='sv_push_config; sudo service supervisord start'
+alias sv_unload='sudo service supervisord stop'
+alias sv_reload='sv_push_config; sudo service supervisord restart'
+
 
 
 alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; sl_push_config; sudo syslog-ng;'
@@ -142,5 +157,7 @@ alias SK='sl_kill'
 alias ap_update='sudo apt-get update'
 alias ap_install='sudo apt-get install -y'
 alias ap_upgrade='sudo apt-get upgrade -y'
+alias ap_policy='sudo apt-cache policy'
+function ap_debug_install() { ap_install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
 alias ap_search='apt search'
 alias chkconfig='sudo sysv-rc-conf'
