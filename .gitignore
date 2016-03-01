@@ -9,3 +9,6 @@ k.sh
 files/git_commits.png
 *.rdb
 tmp/phantom_shot
+system_settings.py
+*.rdb
+files/tmp.txt
