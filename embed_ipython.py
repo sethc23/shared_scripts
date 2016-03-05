@@ -1,6 +1,7 @@
 
+from os import environ as os_env
 from sys import path as py_path
-py_path.append('/home/ub2/SERVER2/ipython/ipython')
+py_path.append('%s/ipython/ipython' % os_env['SERV_HOME'])
 from IPython import embed_kernel as embed
 ## not working -- from ipdb import set_trace as i_trace
 

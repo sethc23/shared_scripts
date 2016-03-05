@@ -1,4 +1,11 @@
 
+## iTerm2
+function iterm2_print_user_vars() {
+  iterm2_set_user_var gitBranch $((git branch 2> /dev/null) | grep \* | cut -c3-);
+  iterm2_set_user_var gitBranchTag $(git describe --abbrev=0 --tags 2> /dev/null);
+  iterm2_set_user_var gitRepo $(basename `git rev-parse --show-toplevel 2> /dev/null` 2> /dev/null);
+}
+
 function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 alias assign_help='echo "assign some_variable < <(some code)"'
 function gdiff() { git diff $@ | cdiff -s -w 110; }
@@ -66,6 +73,7 @@ function newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 function newalias_shared() { echo "alias "$1 >> $HOME/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
 function newalias_linux() { echo "alias "$1 >> $HOME/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 function f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
+function f_find_file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
 function f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 function f_find_folder() { sudo find -H -s $1 -type d -iregex "$2"; }
 function f_getJSON() { curl -H 'Accept: application/json; indent=4' $1; }
@@ -147,6 +155,7 @@ alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
 alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
 
 alias find_file='f_find_file'
+alias find_file_exec='f_find_file_exec'
 alias find_folder='f_find_folder'
 alias dir_size='du -sh'
 alias grep='grep -i --color=auto'
@@ -461,7 +470,7 @@ function g-c_DATE() { git show -s --format=%ai $1 | head -n 1; }
 function g-c_DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
 
 #  --  Git Blog (g-B*)
-alias g-B='sudo bundle install && bundle exec jekyll serve --drafts'
+alias gb-serve='bundle install && bundle exec jekyll serve --drafts'
 
 # Out Specific Lines
 # sed -n '20,40p' file_name
