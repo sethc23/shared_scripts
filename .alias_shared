@@ -1,4 +1,22 @@
 
+function cde_f() {
+    if [[ -z $1 ]]; then
+        if [[ -z `env ls | env grep ENV` ]]; then
+            echo "No virtualenv ENV"
+        else
+            source ENV/bin/activate
+        fi
+    else
+        if [[ -z `env ls $1 | env grep ENV` ]]; then
+            echo "No virtualenv ENV"
+        else
+            cd $1
+            source ENV/bin/activate
+        fi
+    fi
+}
+alias cde='cde_f'
+
 ## iTerm2
 function iterm2_print_user_vars() {
   iterm2_set_user_var gitBranch $((git branch 2> /dev/null) | grep \* | cut -c3-);
@@ -470,7 +488,7 @@ function g-c_DATE() { git show -s --format=%ai $1 | head -n 1; }
 function g-c_DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
 
 #  --  Git Blog (g-B*)
-alias gb-serve='bundle install && bundle exec jekyll serve --drafts'
+alias gb-serve='cd $BD/sethc23.github.io && rm -fr _site && bundle install && bundle exec jekyll serve --drafts'
 
 # Out Specific Lines
 # sed -n '20,40p' file_name
