@@ -66,7 +66,7 @@ function newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 function newalias_shared() { echo "alias "$1 >> $HOME/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
 function newalias_linux() { echo "alias "$1 >> $HOME/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 function f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
-function f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
+function f_find_in_files() { sudo find $1 -type f | xargs grep -niE "$2"; }
 function f_find_folder() { sudo find -H -s $1 -type d -iregex "$2"; }
 function f_getJSON() { curl -H 'Accept: application/json; indent=4' $1; }
 function f_kill_by() { sudo kill -9 `ps -awx | grep $1 | grep -v grep | awk '{print $1}'`; }
@@ -148,6 +148,7 @@ alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
 
 alias find_file='f_find_file'
 alias find_folder='f_find_folder'
+alias find_in_files='f_find_in_files'
 alias dir_size='du -sh'
 alias grep='grep -i --color=auto'
 alias fgrep='fgrep -i --color=auto'
