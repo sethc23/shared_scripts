@@ -431,7 +431,8 @@ alias gs-p='git pull && git submodule init && git submodule update && git submod
 
 
 #  --  Dev Branch (g-D*):
-function g_push_dev_and_master() { git push; \
+function g_push_dev_and_master() { \
+    g_add_commit_push; \
     dev_branch=`git rev-parse --abbrev-ref HEAD`; \
     git checkout master; \
     #git merge --stat --no-edit -X theirs \
