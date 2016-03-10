@@ -1,0 +1,70 @@
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $DIR/_linux_vars
+
+export SERVER_ID=`hostname | sed -r 's/SERVER//g'`
+export SERVER=`hostname`
+export SHELL_CONFIG=.bashrc
+export ROOT=root
+export ROOT_GRP=root
+export SSHFS=/usr/bin/sshfs
+
+non_root_user=`getent passwd 1000 | grep :1000: | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g'`
+export SERV_HOME=/home/$non_root_user/$SERVER
+
+export IPY=$SERV_HOME/ipy_jupyter/notebooks
+#export PYTHONPATH=$IPY/scripts/startup.py
+
+export PGCLUSTER='9.4/main'
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
+
+#export LUA_PATH=$LUA_PATH:$BD/Lua:$BD/Lua/luajit:$BD/Lua:$BD/Lua/lualib";/usr/local/openresty/luajit/share/lua/5.1/?.lua;"
+#export LUA_CPATH=$LUA_CPATH";/usr/local/openresty/luajit/lib/lua/5.1/socket/?.so;"
+#export LUAJIT_LIB=/usr/local/openresty/luajit/lib
+#export LUAJIT_INC=/usr/local/openresty/luajit/include/luajit-2.1
+#export LUA_DIR=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/include/lua5.1:/usr/local/openresty/luajit/bin/lua:/usr/lib/x86_64-linux-gnu/:/usr/local/openresty/luajit/:/usr/local/
+
+export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/rsyslog/
+#export LUA= /usr/local/openresty/luajit/bin/luajit-2.1.0-alpha
+#export LUAINC= /usr/local/openresty/luajit/include
+#export LUALIB= /usr/local/openresty/luajit/lib
+#export LUABIN= /usr/local/openresty/luajit/bin
+
+function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
+assign tmp < <(luarocks path --bin)
+eval $tmp
+
+
+# ---------------------------------------
+# Git
+#export GIT_CONFIG=$HOME/.gitconfig
+#export GIT_TRACE=$HOME/.git/trace_log.txt
+
+# ---------------------------------------
+# Amazon
+export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.2.4
+export PATH=/usr/local/aws:$EC2_HOME/bin:$PATH
+export AWS_ACCESS_KEY=AKIAIBP2K5VUV7PUEG2A
+export AWS_SECRET_KEY=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
+export EC2_URL=https://ec2.us-east-1.amazonaws.com
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+export AWS_HOME=$SERV_HOME/aws
+export AWS_CONFIG_FILE=$AWS_HOME/.aws/config
+
+# ---------------------------------------
+# RabbitMQ
+export RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.config
+export RABBITMQ_PID_FILE=$SERV_HOME/run/pids/sv_rabbitmq.pid
+export RABBITMQ_NODENAME="ub2@SERVER2"
+export RABBITMQ_SERVER_START_ARGS="--port=15672 --username=ub2 --password=mq_money --format=pretty_json"
+
+# ---------------------------------------
+# RVM
+export PATH="$PATH:$HOME/.rvm/bin"
+
+#<<<<<-------------------------------<<<<
+
+
+

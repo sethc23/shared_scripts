@@ -1,0 +1,23 @@
+
+
+alias c_f_red='echo -n $(tput setaf 1)'
+alias c_f_green='echo -n $(tput setaf 2)'
+alias c_f_yellow='echo -n $(tput setaf 3)'
+alias c_f_blue='echo -n $(tput setaf 4)'
+alias c_f_pink='echo -n $(tput setaf 5)'
+alias c_f_bluegreen='echo -n $(tput setaf 6)'
+alias c_f_grey='echo -n $(tput setaf 7)'
+
+alias c_b_red='echo -n $(tput setb 1)'
+alias c_b_green='echo -n $(tput setb 2)'
+alias c_b_yellow='echo -n $(tput setb 3)'
+alias c_b_blue='echo -n $(tput setb 4)'
+alias c_b_pink='echo -n $(tput setb 5)'
+alias c_b_bluegreen='echo -n $(tput setb 6)'
+alias c_b_grey='echo -n $(tput setb 7)'
+
+alias c_bold='echo -n $(tput bold)'
+alias c_dim='echo -n $(tput dim)'
+alias c_reverse='echo -n $(tput rev)'
+alias c_standout='echo -n $(tput smso)'
+alias c_reset='echo -n $(tput sgr0)'
