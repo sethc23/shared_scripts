@@ -165,6 +165,13 @@ alias svc_rsyslog_load='sudo service rsyslog start'
 alias svc_rsyslog_unload='sudo service rsyslog stop'
 alias svc_rsyslog_restart='sudo service rsyslog restart'
 
+#-- NGINX --#
+alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
+alias ng_reload='ng_push_config; sudo systemctl reload nginx.service'
+alias ng_start='ng_push_config; sudo systemctl start nginx.service'
+alias ng_stop='ng_push_config; sudo systemctl stop nginx.service'
+alias ng_kill='sudo pkill -f nginx'
+
 #-- SUPERVISOR --#
 function sv_push_config() { sl_push_config; sudo $SERV_HOME/supervisor_root/push_sv_config_root.bash; }
 alias sv_reset='sv_push_config && sv_ctl reread && sv_ctl update'

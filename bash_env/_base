@@ -1,14 +1,24 @@
+#!/bin/zsh
 
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-done
-DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+if [[ -n "$BASH_VERSION" ]]; then
+    SOURCE="${BASH_SOURCE[0]}"
+
+    while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+	SOURCE="$(readlink "$SOURCE")"
+	[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    done
+    
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+fi
+[[ -n "$ZSH_VERSION" ]] && DIR=${0:a:h}
 
 source $DIR/_bash
 source $DIR/_shared_vars
+
+#for i in `env ls $DIR/_completers`; do
+#    source $DIR/_completers/$i
+#done
 
 _env=$(uname -a)
 if [[ -n $(echo $_env | grep "Darwin") ]]; then
@@ -17,10 +27,13 @@ elif [[ -n $(echo $_env | grep "Linux") ]]; then
     source $DIR/_linux
 fi
 
-
+export SH=$SERV_HOME
 export ALIAS='.alias_s'$SERVER_ID
 export J=/home/jail/home/serv
 export CLIENT_HOST=$SERVER
+export BD=$HOME/BD_Scripts
+export GIT_REPOS=$HOME/GIT_REPOS
+export G=$GIT_REPOS
 
 # setup quick folders for sharing among ubuntu cluster
 for n in 1 2 4 5; do
@@ -28,7 +41,7 @@ for n in 1 2 4 5; do
     x=`printf "export SHARE%s=/Volumes/ub%s/home/ub%s" $n $n $n`
     eval $x
     x=`printf "export SHARE%s_SERVER=SERVER%s" $n $n`
-        eval $x
+    eval $x
     y=`printf "export SERV%s=/Volumes/ub%s/$J" $n $n`
     eval $y
     y=`printf "export SERV%s_SERVER=SERVER%s" $n $n`
@@ -38,17 +51,6 @@ done
 if [[ $SERVER_ID != 3 ]]; then
     export SHARE3=/Volumes/mbp2/Users/admin
     export SHARE3_SERVER=SERVER3
-fi
-
-export BD=$HOME/BD_Scripts
-export GIT_REPOS=$HOME/GIT_REPOS
-export G=$GIT_REPOS
-
-_dir=$HOME/.completers 
-if [[ -d $_dir ]]; then
-    for i in `env ls $_dir`; do
-        source $_dir/$i
-    done
 fi
 
 test ! -f $SERV_HOME/local_config/$ALIAS || source $SERV_HOME/local_config/$ALIAS
