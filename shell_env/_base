@@ -4,9 +4,9 @@ if [[ -n "$BASH_VERSION" ]]; then
     SOURCE="${BASH_SOURCE[0]}"
 
     while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-	SOURCE="$(readlink "$SOURCE")"
-	[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     done
     
     BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -23,9 +23,11 @@ elif [[ -n $(echo $_env | grep "Linux") ]]; then
     SUB_DIR="$BASE_DIR/linux"; for i in `env find $SUB_DIR -maxdepth 1 -type f | sort`; do source $i; done
 fi
 
-
 export SH=$SERV_HOME
 export ALIAS='.alias_s'$SERVER_ID
+
+[[ -f $SERV_HOME/local_config/$ALIAS ]] && source $SERV_HOME/local_config/$ALIAS
+
 export J=/home/jail/home/serv
 export CLIENT_HOST=$SERVER
 export BD=$HOME/BD_Scripts
@@ -35,19 +37,20 @@ export G=$GIT_REPOS
 # setup quick folders for sharing among ubuntu cluster
 for n in 1 2 4 5; do
     if [[ $n != $SERVER_ID ]]; then
-    x=`printf "export SHARE%s=/Volumes/ub%s/home/ub%s" $n $n $n`
-    eval $x
-    x=`printf "export SHARE%s_SERVER=SERVER%s" $n $n`
-    eval $x
-    y=`printf "export SERV%s=/Volumes/ub%s/$J" $n $n`
-    eval $y
-    y=`printf "export SERV%s_SERVER=SERVER%s" $n $n`
-    eval $y
-   fi
+        x=`printf "export SHARE%s=/Volumes/ub%s/home/ub%s" $n $n $n`
+        eval $x
+        x=`printf "export SHARE%s_SERVER=SERVER%s" $n $n`
+        eval $x
+        y=`printf "export SERV%s=/Volumes/ub%s/$J" $n $n`
+        eval $y
+        y=`printf "export SERV%s_SERVER=SERVER%s" $n $n`
+        eval $y
+    fi
 done
 if [[ $SERVER_ID != 3 ]]; then
     export SHARE3=/Volumes/mbp2/Users/admin
     export SHARE3_SERVER=SERVER3
 fi
 
-test ! -f $SERV_HOME/local_config/$ALIAS || source $SERV_HOME/local_config/$ALIAS
+
+

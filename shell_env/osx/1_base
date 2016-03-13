@@ -1,6 +1,6 @@
 
 
-source /etc/profile
+#source /etc/profile
 
 export PATH=/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin/:/opt/local/lib/postgresql95/bin:$PATH
 
@@ -9,11 +9,11 @@ export SERVER='SERVER'$SERVER_ID
 export ALIAS='.alias_s'$SERVER_ID
 export HOME=/Users/admin
 
-export SHELL_CONFIG=.bash_profile
+export SHELL_CONFIG=.zshrc
 export ROOT=root
 export ROOT_GRP=wheel
 export SSHFS=/opt/local/bin/sshfs
-
+export SERV_HOME=$HOME/$SERVER
 
 export PGDATA=/opt/local/var/db/postgresql93/defaultdb/
 export IPY=$HOME/$SERVER/ipython
@@ -24,7 +24,7 @@ export LUA_DIR=/opt/local/lib/pkgconfig:/opt/local/include/lua-5.1:/opt/local/li
 #export GIT_CONFIG=$HOME/.git/config
 #export GIT_CONFIG=$HOME/.gitconfig
 #export GIT_TRACE=$HOME/.git/trace_log.txt
-source $SERV_HOME/.git/git-completion.bash
+#source $SERV_HOME/.git/git-completion.bash
 
 # Amazon
 #export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.2.4
@@ -44,6 +44,8 @@ export AWS_CONFIG_FILE=$HOME/$SERVER/aws/.aws/config
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/local/lib:/usr/lib64/openmpi/lib/
 
 
-if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
-    . /opt/local/etc/profile.d/bash_completion.sh
+if [[ -n "$BASH_VERSION" ]]; then
+    if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+        source /opt/local/etc/profile.d/bash_completion.sh
+    fi
 fi
