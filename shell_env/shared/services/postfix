@@ -1,0 +1,9 @@
+
+alias pf_config='sudo emacs /opt/local/etc/postfix/main.cf'
+alias pf_test_smtp='openssl s_client -connect smtp.gmail.com:587 -starttls smtp | tail -f /var/log/mail.log'
+alias pf_get_cert="openssl s_client -connect smtp.gmail.com:587 -showcerts < /dev/null | sed -n '/-BEGIN /,/-END /p' | sudo sh -c 'cat > ~/.ssl/relayhost.pem'"
+alias pf_test_mail='echo "test from postfix" | mail -s "Test: Server $SERVER_ID -- Postfix" seth.t.chase@gmail.com'
+alias pf_queue='mailq'
+alias pf_queue_clean='sudo postsuper -d ALL; sudo postsuper -d ALL deferred'
+alias pf_params='postconf -n'
+alias pf_log='tail -n 50 /var/log/mail.log'

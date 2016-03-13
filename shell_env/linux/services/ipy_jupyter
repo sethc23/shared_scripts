@@ -1,0 +1,14 @@
+function ib_e() { cd $IPY; source ENV/bin/activate; }
+function ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}
+
+alias ib='$IPY/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ib_config='f_sudo_textedit ~/.ipython/profile_nbserver/ipython_config.py'
+alias ib_console='$SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+function ib_console_existing() { $SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent \
+    --color-info --colors=linux --confirm-exit \
+    --existing /home/ub2/SERVER2/ipython/config/.ipython/profile_default/security/$1; }
+alias ib_js='f_sudo_xcode ~/.ipython/profile_nbserver/static/custom/custom.js'
+alias ib_js_folder='open $HOME/.ipython/profile_nbserver/static/custom/'
+alias ib_BD='cd $BD; source $SERV_HOME/ipython/ENV/bin/activate; ipython'
+alias ib_scr='scr_ed; ipython'
+alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/python2.7/site-packages/; echo "/usr/lib/python2.7/dist-packages/"; echo "/usr/local/lib/python2.7/dist-packages"'

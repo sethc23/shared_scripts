@@ -1,0 +1,18 @@
+function aprinto() {                cd $APRINTO; source $APRINTO/ENV/bin/activate; }
+function aprinto_test() {           aprinto; behave tests/features/ > /dev/null 2>&1; }
+function aprinto_test_production() { aprinto; behave tests/features/ --tags=production > /dev/null 2>&1; }
+function aprinto_fwd_off() {        scr_ed; python System_Control.py settings aprinto fwd_order_false; }
+function aprinto_fwd_on() {         scr_ed; python System_Control.py settings aprinto fwd_order_true; }
+function aprinto_fwd_chk() {        cat $SERV_HOME/aprinto/aprinto_settings.py | grep FWD_ORDER; }
+
+function aprinto_behave_txt_off() { scr_ed; python System_Control.py settings aprinto behave_txt_false; }
+function aprinto_behave_txt_on() {  scr_ed; python System_Control.py settings aprinto behave_txt_true; }
+function aprinto_behave_txt_chk() { cat $SERV_HOME/aprinto/aprinto_settings.py | grep BEHAVE_TXT; }
+
+function aprinto_celery_txt_off() { scr_ed; python System_Control.py settings aprinto celery_txt_false; }
+function aprinto_celery_txt_on() {  scr_ed; python System_Control.py settings aprinto celery_txt_true; }
+function aprinto_celery_txt_chk() { cat $SERV_HOME/aprinto/aprinto_settings.py | grep CELERY_TXT; }
+
+function aprinto_txt_off() {        aprinto_behave_txt_off; aprinto_celery_txt_off; }
+function aprinto_txt_on() {         aprinto_behave_txt_on; aprinto_celery_txt_on; }
+function aprinto_txt_chk() {        aprinto_behave_txt_chk; aprinto_celery_txt_chk; }

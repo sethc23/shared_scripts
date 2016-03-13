@@ -1,0 +1,14 @@
+function serv() {                   cd $GIT_SERV_HOME/celery; source ENV/bin/activate; }
+function serv_test_debug() {        serv; cd git_serv; behave tests/features/ --stop --tags=debug; }
+function serv_test_dev() {          serv; cd git_serv; behave tests/features/ --stop --tags=dev; }
+function serv_test_framework() {    serv; cd git_serv; behave tests/features/ --stop --tags=framework > /dev/null 2>&1; }
+function serv_test_production() {   serv; cd git_serv; behave tests/features/ --stop --tags=production > /dev/null 2>&1; }
+function serv_behave_on() {         serv; cd git_serv; python git_serv_tasks.py settings gitserv behave_verification_true; }
+function serv_behave_false() {      serv; cd git_serv; python git_serv_tasks.py settings gitserv behave_verification_false; }
+function serv_behave_chk() {        cat $GIT_SERV_HOME/celery/git_serv/git_serv_settings.py | grep BEHAVE_VERIFICATION; }
+function serv_txt_on() {            serv; cd git_serv; python git_serv_tasks.py settings gitserv gitserv_txt_true; }
+function serv_txt_false() {         serv; cd git_serv; python git_serv_tasks.py settings gitserv gitserv_txt_false; }
+function serv_txt_chk() {           cat $GIT_SERV_HOME/celery/git_serv/git_serv_settings.py | grep GITSERV_TXT; }
+function serv_growl_on() {          serv; cd git_serv; python git_serv_tasks.py settings gitserv gitserv_growl_true; }
+function serv_growl_false() {       serv; cd git_serv; python git_serv_tasks.py settings gitserv gitserv_growl_false; }
+function serv_growl_chk() {         cat $GIT_SERV_HOME/celery/git_serv/git_serv_settings.py | grep GITSERV_GROWL; }

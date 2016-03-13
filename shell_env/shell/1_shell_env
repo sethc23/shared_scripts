@@ -1,9 +1,4 @@
 
-[[ -n "$BASH_VERSION" ]] && DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-[[ -n "$ZSH_VERSION" ]] && DIR=${0:a:h}
-
-source $DIR/_colors
-
 #export TERM=screen-256color
 #export TERM=xterm-256color tmux
 export TERM=xterm-color

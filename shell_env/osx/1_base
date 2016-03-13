@@ -1,5 +1,4 @@
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source /etc/profile
 
@@ -44,13 +43,7 @@ export AWS_CONFIG_FILE=$HOME/$SERVER/aws/.aws/config
 #export PATH=$PATH:/Users/admin/votca
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/local/lib:/usr/lib64/openmpi/lib/
 
-function f_sudo_emacs() { sudo emacs $1; }
-function f_sudo_textedit() { sudo open -a "/Applications/Textedit.app/Contents/MacOS/TextEdit" $1; }
-function f_sudo_xcode() { sudo open -a "/Applications/Xcode.app/Contents/MacOS/XCode" $1; }
-
 
 if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
     . /opt/local/etc/profile.d/bash_completion.sh
 fi
-
-test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_integration.bash
