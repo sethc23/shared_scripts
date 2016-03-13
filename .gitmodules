@@ -1,0 +1,9 @@
+[submodule "shell_env/zsh/OMZ"]
+	path = shell_env/zsh/OMZ
+	url = https://github.com/robbyrussell/oh-my-zsh.git
+[submodule "shell_env/zsh/antigen"]
+	path = shell_env/zsh/antigen
+	url = https://github.com/zsh-users/antigen.git
+[submodule "shell_env/zsh/custom_plugins/zsh-completions"]
+	path = shell_env/zsh/custom_plugins/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions.git
