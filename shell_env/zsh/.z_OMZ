@@ -25,6 +25,6 @@ plugins=()
 
 source $ZSH/oh-my-zsh.sh
 
-plugins+=(git-completion)
-plugins+=(zsh-completions)
-autoload -U compinit && compinit
+#plugins+=(git-completion)
+#plugins+=(zsh-completions)
+#Qautoload -U compinit && compinit

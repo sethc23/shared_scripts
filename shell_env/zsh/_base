@@ -1,11 +1,10 @@
 
-source ~/.scripts/shell_env/_base
-
 case $- in
     *i*) ;;
-      *) return;;
+      *) source ~/.profile && source ~/.scripts/shell_env/_base && return;;
 esac
 
 source ~/.profile
 source ~/.scripts/shell_env/zsh/_env
+source ~/.scripts/shell_env/_base
 
