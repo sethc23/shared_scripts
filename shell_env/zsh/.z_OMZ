@@ -1,0 +1,30 @@
+
+export ZSH=~/.scripts/shell_env/zsh/OMZ
+
+#ZSH_THEME="robbyrussell"  # see ~/.oh-my-zsh/themes/
+ZSH_THEME="candy"
+
+# CASE_SENSITIVE="true"
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+# DISABLE_AUTO_UPDATE="true"        #   bi-weekly auto-update checks.
+# export UPDATE_ZSH_DAYS=13         #   how often to auto-update (in days).
+# DISABLE_LS_COLORS="true"
+# DISABLE_AUTO_TITLE="true"
+# ENABLE_CORRECTION="true"
+# COMPLETION_WAITING_DOTS="true"
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# ZSH_CUSTOM=/path/to/new-custom-folder
+#plugins=(python last-working-dir dirhistory) # added to ~/.oh-my-zsh/custom/plugins/
+plugins=()
+
+source $ZSH/oh-my-zsh.sh
+
+plugins+=(git-completion)
+plugins+=(zsh-completions)
+autoload -U compinit && compinit

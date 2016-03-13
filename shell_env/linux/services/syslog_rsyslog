@@ -15,6 +15,8 @@ alias sl_tail_resty='sudo tail -f /var/log/syslogs/resty_logger.log'
 alias sl_tail_socat='sudo tail -f /var/log/syslogs/socat.log'
 alias sl_tail_syslog='sudo tail -f /var/log/syslog'
 
+alias sl_logs='ls -tr /var/log/syslogs'
+
 function sl_tail_syslog_statements() { sudo tail -n 0 -f /var/log/syslog | while read line; do echo $line \
     | grep '#011#011' | sed -r 's/(.*)#011#011(.*)/\2/g'; done; }
 

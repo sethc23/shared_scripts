@@ -1,0 +1,11 @@
+
+source ~/.scripts/shell_env/_base
+
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+source ~/.profile
+source ~/.scripts/shell_env/zsh/_env
+

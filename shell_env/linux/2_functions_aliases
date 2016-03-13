@@ -79,8 +79,3 @@ alias dns_update='$SERV_HOME/dns/godaddy.py'
 alias disable_wifi='sudo ifconfig wlan0 down'
 
 alias blog_serv_local='github-pages check-health && bundle update && bundle exec jekyll serve --baseurl "" --port 4000'
-
-
-#<<< --- LOAD SERVICE ALIASES/FUNCTIONS --- >>>
-DIR=${0:a:h}
-for i in `env find $DIR/services/ -maxdepth 1 -type f | sort`; do source $i; done

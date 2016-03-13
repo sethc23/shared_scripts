@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#echo "start hook" >> /tmp/git_hook_res
+#echo `whoami` >> /tmp/git_hook_res  # --> 'serv'
+
+sh -c 'exec /home/jail/home/serv/system_config/SERVER5/celery/git_serv/run.bash /home/jail/home/serv/system_config master tmp tmp'
+
+exec git update-server-info

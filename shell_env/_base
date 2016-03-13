@@ -1,32 +1,46 @@
 #!/bin/zsh
 
+source_sub_dir() {
+    for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
+        for j in `env find $d -maxdepth 1 -type f | sort`; do 
+            source $j
+        done
+    done
+}
+source_files(){
+    for i in `env find $1 -maxdepth 1 -type f | sort`; do source $i; done
+}
+source_files_and_sub_dirs() {
+    source_files "$1"
+    source_sub_dir "$1"
+}
+
+
 if [[ -n "$BASH_VERSION" ]]; then
     SOURCE="${BASH_SOURCE[0]}"
-
     while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-    SOURCE="$(readlink "$SOURCE")"
-    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+        DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+        SOURCE="$(readlink "$SOURCE")"
+        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     done
-    
     BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 fi
 [[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
 
-SUB_DIR="$BASE_DIR/shell"; for i in `env find $SUB_DIR -maxdepth 1 -type f | sort`; do source $i; done
-SUB_DIR="$BASE_DIR/shared"; for i in `env find $SUB_DIR -maxdepth 1 -type f | sort`; do source $i; done
 
+source_files_and_sub_dirs "$BASE_DIR/shell"
+source_files_and_sub_dirs "$BASE_DIR/shared"
 _env=$(uname -a)
 if [[ -n $(echo $_env | grep "Darwin") ]]; then
-    SUB_DIR="$BASE_DIR/osx"; for i in `env find $SUB_DIR -maxdepth 1 -type f | sort`; do source $i; done
+    source_files_and_sub_dirs "$BASE_DIR/osx"
 elif [[ -n $(echo $_env | grep "Linux") ]]; then
-    SUB_DIR="$BASE_DIR/linux"; for i in `env find $SUB_DIR -maxdepth 1 -type f | sort`; do source $i; done
+    source_files_and_sub_dirs "$BASE_DIR/linux"
 fi
 
 export SH=$SERV_HOME
 export ALIAS='.alias_s'$SERVER_ID
 
-[[ -f $SERV_HOME/local_config/$ALIAS ]] && source $SERV_HOME/local_config/$ALIAS
+[[ -f $SERV_HOME/local_config/shell/$ALIAS ]] && source $SERV_HOME/local_config/shell/$ALIAS
 
 export J=/home/jail/home/serv
 export CLIENT_HOST=$SERVER

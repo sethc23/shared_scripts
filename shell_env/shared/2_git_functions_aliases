@@ -34,6 +34,7 @@ alias g-CLONE='git clone --recursive'
 alias g-SPARSE_UPDATE='git read-tree -mu HEAD'
 alias g-RESTORE_LOCAL='g-restore_local_f'
 alias g-UNTRACK='git update-index --remove --ignore-missing --force-remove --assume-unchanged -q --'
+alias g-CLEAN='git clean -dfx'
 function g_add_commit_push() { git add --ignore-removal -- .; \
     if [ $(git diff --stat --name-only | wc -l) -gt 0 ]; then \
         git diff --stat --name-only | xargs -0 git rm --cached --ignore-unmatch -f -r --; \

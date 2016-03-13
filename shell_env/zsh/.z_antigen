@@ -1,0 +1,11 @@
+
+source antigen/antigen.zsh
+antigen use oh-my-zsh
+antigen bundle command-not-found
+antigen bundle zsh-users/zsh-syntax-highlighting
+
+# Load the theme.
+#antigen theme robbyrussell
+antigen theme candy
+
+antigen apply
