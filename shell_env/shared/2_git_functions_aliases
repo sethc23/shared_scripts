@@ -47,8 +47,15 @@ function g_add_commit_push() { git add --ignore-removal -- .; \
 alias g-X='g_add_commit_push'
 
 #  --  Git Submodules (gs-*):
-alias gs-s='git submodule foreach --recursive git branch -avv'
-alias gs-p='git pull && git submodule init && git submodule update && git submodule status'
+gs_recursive_pull() { \
+    git submodule foreach --recursive git submodule init;
+    git submodule foreach --recursive git submodule update;
+    git submodule foreach --recursive git pull origin master;
+    git submodule foreach --recursive git checkout master master;
+}
+alias gs-init_all='gs_recursive_pull'
+alias gs-status='git submodule foreach --recursive git branch -avv'
+alias gs-update='git pull && git submodule init && git submodule update && git submodule status'
 
 # new submodule example
 # git submodule add --name seamless_yelp_scraping -- git@github.com:sethc23/seamless_yelp_scrapi
