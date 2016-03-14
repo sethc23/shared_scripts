@@ -19,3 +19,7 @@ alias svc_ipy_disable='sudo systemctl disable /home/ub2/SERVER2/ipy_jupyter/jupy
 alias svc_ipy_start='sudo systemctl start jupyter-notebook.service'
 alias svc_ipy_stop='sudo systemctl stop jupyter-notebook.service'
 alias svc_ipy_status='sudo systemctl status jupyter-notebook.service'
+
+alias ib_test='/home/ub2/SERVER2/ipy_jupyter/ENV/bin/jupyter-notebook \
+    --config=/home/ub2/.jupyter/jupyter_notebook_config.py \
+    --no-browser --debug'

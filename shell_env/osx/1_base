@@ -19,6 +19,7 @@ export PGDATA=/opt/local/var/db/postgresql93/defaultdb/
 export IPY=$HOME/$SERVER/ipython
 export LUA_DIR=/opt/local/lib/pkgconfig:/opt/local/include/lua-5.1:/opt/local/lib/lua-5.1:/opt/local/bin:/usr/local/openresty/luajit/
 
+export WIKI=/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_wiki
 
 # Git
 #export GIT_CONFIG=$HOME/.git/config

@@ -110,8 +110,10 @@ alias JSON='f_getJSON'
 alias RD_e='cd $BD/RD/src'
 alias RDt='RDt'
 
-alias z_config="emacs ~/.zshrc_base"
-alias z_omz="emacs ~/.zshrc_OMZ"
+alias z_omz="emacs ~/.scripts/shell_env/zsh/.z_OMZ"
+alias z_local="emacs $SH/local_config/shell/.shell_local"
+alias z_source="source ~/.scripts/shell_env/zsh/.z_OMZ; source ~/.scripts/shell_env/_base"
+
 
 #alias aprinto_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 aprinto'
 

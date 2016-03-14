@@ -2,7 +2,9 @@
 export ZSH=~/.scripts/shell_env/zsh/OMZ
 
 #ZSH_THEME="robbyrussell"  # see ~/.oh-my-zsh/themes/
-ZSH_THEME="random"
+ZSH_THEME="cobalt2"
+
+#source /local_config/shell/.shell_local
 
 # CASE_SENSITIVE="true"
 # Uncomment the following line to use hyphen-insensitive completion. Case
@@ -25,6 +27,5 @@ plugins=()
 
 source $ZSH/oh-my-zsh.sh
 
-plugins+=(git-completion)
-plugins+=(zsh-completions)
-Qautoload -U compinit && compinit
+plugins+=(zsh-completions lwd git-completion)
+autoload -U compinit && compinit
