@@ -17,7 +17,7 @@ alias ap_fix_local_install='sudo apt-get -f install'
 
 alias ap_force_install_local='sudo gdebi'
 
-function ap_upgrade_list() { sudo apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t; }
+function ap_upgrade_list() { sudo apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t | sort; }
 alias ap_policy='sudo apt-cache policy'
 
 function ap_debug_install() { ap_install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
