@@ -3,11 +3,12 @@
 alias ng_kill_2='sudo fuser -k 80/tcp'
 alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
 
-alias ng_enable='sudo systemctl enable /home/ub2/SERVER2/nginx/nginx.service; sudo systemctl daemon-reload'
-alias ng_disable='sudo systemctl disable /home/ub2/SERVER2/nginx/nginx.service; sudo systemctl daemon-reload'
-alias ng_reload='ng_push_config; sudo systemctl reload nginx.service'
-alias ng_start='ng_push_config; sudo systemctl start nginx.service'
-alias ng_stop='ng_push_config; sudo systemctl stop nginx.service'
+alias svc_ng_enable='sudo systemctl enable /home/ub2/SERVER2/nginx/nginx.service; sudo systemctl daemon-reload'
+alias svc_ng_disable='sudo systemctl disable /home/ub2/SERVER2/nginx/nginx.service; sudo systemctl daemon-reload'
+alias svc_ng_reload='ng_push_config; sudo systemctl reload nginx.service'
+alias svc_ng_start='ng_push_config; sudo systemctl start nginx.service'
+alias svc_ng_stop='ng_push_config; sudo systemctl stop nginx.service'
+alias svc_ng_status='ng_push_config; sudo systemctl status nginx.service'
 alias ng_kill='sudo pkill -f nginx'
 
 alias ng_tail_t_access='sudo tail -f /var/log/syslogs/tmp_ngx_access.log'
