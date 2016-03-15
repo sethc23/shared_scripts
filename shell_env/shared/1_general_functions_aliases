@@ -208,6 +208,8 @@ alias ports_listen_2='sudo netstat -ltnp'
 alias ports_listen_3='nettop'
 alias ports_sockets='netstat -lx'
 alias ports_ssh='lsof -i tcp | grep ^ssh'
+function dig_simple_f() { dig $1 +nostats +nocomments +nocmd; }
+alias dig_simple='dig_simple_f'
 
 alias pydoc='python -m pydoc'
 alias pyprofileread='pyprofileread'

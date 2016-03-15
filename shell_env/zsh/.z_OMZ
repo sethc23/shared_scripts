@@ -17,7 +17,7 @@
 HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 #plugins=(python last-working-dir dirhistory) # added to ~/.oh-my-zsh/custom/plugins/
-plugins=(zsh-completions autojump last-working-dir git-completion)
+plugins=(zsh-completions autojump last-working-dir git)
 
 # ------------------------
 # ------------------------

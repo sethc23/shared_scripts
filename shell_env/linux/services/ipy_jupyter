@@ -14,12 +14,13 @@ alias ib_scr='scr_ed; ipython'
 alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/python2.7/site-packages/; echo "/usr/lib/python2.7/dist-packages/"; echo "/usr/local/lib/python2.7/dist-packages"'
 
 
-alias svc_ipy_enable='sudo systemctl enable /home/ub2/SERVER2/ipy_jupyter/jupyter-notebook.service; sudo systemctl daemon-reload'
-alias svc_ipy_disable='sudo systemctl disable /home/ub2/SERVER2/ipy_jupyter/jupyter-notebook.service; sudo systemctl daemon-reload'
+alias svc_ipy_enable='sudo systemctl enable /home/ub2/SERVER2/ipy_jupyter/jupyter/jupyter-notebook.service; sudo systemctl daemon-reload'
+alias svc_ipy_disable='sudo systemctl disable /home/ub2/SERVER2/ipy_jupyter/jupyter/jupyter-notebook.service; sudo systemctl daemon-reload'
 alias svc_ipy_start='sudo systemctl start jupyter-notebook.service'
+alias svc_ipy_restart='sudo systemctl restart jupyter-notebook.service'
 alias svc_ipy_stop='sudo systemctl stop jupyter-notebook.service'
 alias svc_ipy_status='sudo systemctl status jupyter-notebook.service'
 
-alias ib_test='/home/ub2/SERVER2/ipy_jupyter/ENV/bin/jupyter-notebook \
+alias ib_test='jupyter-notebook \
     --config=/home/ub2/.jupyter/jupyter_notebook_config.py \
     --no-browser --debug'
