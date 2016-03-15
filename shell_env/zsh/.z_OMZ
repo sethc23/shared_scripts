@@ -24,6 +24,8 @@ plugins=(zsh-completions autojump last-working-dir git)
 # ------------------------
 export ZSH=~/.scripts/shell_env/zsh/OMZ
 
+source $ZSH/oh-my-zsh.sh
+
 [[ -L ~/.shell_local ]] && source ~/.shell_local
 [[ -z "$ZSH_THEME" ]] && ZSH_THEME="candy"
 
