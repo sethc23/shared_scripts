@@ -1,12 +1,9 @@
 #!/bin/bash
 
-x="_"
-_dir=`pwd`
-cd /usr/local/bin
-files=`env ls $_dir`
-sudo sh -c """ \
-    for i in ${files}; do \
-        if [[ '${i:0:1}' != '$x' ]]; then \
-            echo $_dir/$i ; \
-        fi \
-    done;"""
+DIR=`pwd`
+for i in `env ls $DIR`; do
+    if [[ "${i:0:1}" != "_" ]]; then
+        chmod +x $i
+        ln -nfs $DIR/$i /usr/local/bin/$i
+    fi
+done
