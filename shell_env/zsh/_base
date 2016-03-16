@@ -1,14 +1,21 @@
-#!/bin/zsh
+#!/bin/bash
+env|sort
+if [[ -n "$SUDO_USER" ]]; then
+    export HOME_ENV=$(eval echo ~$SUDO_USER)
+else
+    export HOME_ENV=$(eval echo ~$USER)
+fi
 
 case $- in
     *i*) ;;
-      *) source ~/.profile && source ~/.scripts/shell_env/_base && return;;
+      *) source $HOME_ENV/.profile && source $HOME_ENV/.scripts/shell_env/_base && return;;
 esac
 
-source ~/.profile
-source ~/.scripts/shell_env/zsh/_env
-source ~/.scripts/shell_env/_base
+echo $HOME_ENV
+
+source $HOME_ENV/.profile
+source $HOME_ENV/.scripts/shell_env/zsh/_env
+source $HOME_ENV/.scripts/shell_env/_base
 source $SH/local_config/shell/.shell_local
 
-
-for i in `env find ~/.scripts/shell_env/zsh/completers -maxdepth 1 -type f`; do source $i; done
+for i in `env find $HOME_ENV/.scripts/shell_env/zsh/completers -maxdepth 1 -type f`; do source $i; done

@@ -37,7 +37,7 @@ alias open_color_picker='open_color_picker_f'
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
 
-unalias ls
+unalias ls > /dev/null 2>&1
 alias ls='ls -AlBcuFUhG --color=tty'
 alias ps='ps -awx'
 

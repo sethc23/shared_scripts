@@ -1,3 +1,10 @@
+#!/bin/bash
+
+if [[ -n "$SUDO_USER" ]]; then
+    export HOME_ENV=$(eval echo ~$SUDO_USER)
+else
+    export HOME_ENV=$(eval echo ~$USER)
+fi
 
 case $- in
     *i*) ;;

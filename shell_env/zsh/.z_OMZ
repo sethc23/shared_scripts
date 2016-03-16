@@ -1,5 +1,5 @@
 
-# ZSH_THEME="robbyrussell"  # see ~/.oh-my-zsh/themes/
+# ZSH_THEME="robbyrussell"  # see $HOME_ENV/.oh-my-zsh/themes/
 # CASE_SENSITIVE="true"
 # Uncomment the following line to use hyphen-insensitive completion. Case
 # sensitive completion must be off. _ and - will be interchangeable.
@@ -16,17 +16,20 @@
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
-#plugins=(python last-working-dir dirhistory) # added to ~/.oh-my-zsh/custom/plugins/
+#plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/.oh-my-zsh/custom/plugins/
+
 plugins=(zsh-completions autojump last-working-dir git)
 
 # ------------------------
 # ------------------------
 # ------------------------
-export ZSH=~/.scripts/shell_env/zsh/OMZ
+export ZSH=$HOME_ENV/.scripts/shell_env/zsh/OMZ
 
 source $ZSH/oh-my-zsh.sh
+[[ $USER = "root" ]] && alias compinit='compinit -i'
 
-[[ -L ~/.shell_local ]] && source ~/.shell_local
+[[ -L $HOME_ENV/.shell_local ]] && source $HOME_ENV/.shell_local
 [[ -z "$ZSH_THEME" ]] && ZSH_THEME="candy"
 
 source $ZSH/oh-my-zsh.sh
+[[ $USER = "root" ]] && alias compinit='compinit -i'
