@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cmds="${@:1}"
+/usr/bin/emacs -nw $cmds
