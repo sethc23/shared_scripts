@@ -7,7 +7,8 @@ function link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framewor
 function link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
 function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
 
-alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"alias sublime='open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text '
+alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
+
 
 
 
