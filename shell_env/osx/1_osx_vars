@@ -1,4 +1,4 @@
-
+#!/bin/zsh
 
 export PATH=/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin/:/opt/local/lib/postgresql95/bin:$PATH
 
@@ -15,7 +15,12 @@ export SERV_HOME=$HOME/$SERVER
 
 export PGDATA=/opt/local/var/db/postgresql93/defaultdb/
 export IPY=$HOME/$SERVER/ipython
-export LUA_DIR=/opt/local/lib/pkgconfig:/opt/local/include/lua-5.1:/opt/local/lib/lua-5.1:/opt/local/bin:/usr/local/openresty/luajit/
+
+#function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
+#assign tmp < <(luarocks path --bin)
+#eval $tmp
+
+eval $(luarocks path --bin)
 
 export WIKI=/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_wiki
 

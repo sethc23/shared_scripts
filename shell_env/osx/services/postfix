@@ -1,0 +1,6 @@
+
+# <<< --- POSTFIX --- >>>
+alias pf_load='sudo port load postfix'
+alias pf_unload='sudo port unload postfix'
+alias pf_reload='pf_unload; pf_load;'
+alias pf_dir='cd /opt/local/etc/postfix/'

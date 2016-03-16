@@ -1,0 +1,52 @@
+#!/bin/zsh
+
+alias mp_check='f_mp_check'
+alias mp_clean_port_all='sudo port clean --all'
+alias mp_clean_port_safe='sudo port clean'
+alias mp_clean_db='port echo leaves'
+#alias mp_clean_db_confirmed="while sudo port uninstall leaves --follow-dependencies; do :; done"
+alias mp_contents_exe='f_mp_contents_exe'
+alias mp_contents_files='port contents'
+alias mp_dependents='port dependents'
+alias mp_info='port info'
+alias mp_install='sudo port install'
+alias mp_installed='port installed'
+alias mp_livecheck='port livecheck'
+alias mp_outdated_get='port outdated'
+alias mp_py_dir='ls /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/'
+alias mp_saveports='port -qv installed > $HOME/Desktop/myports.txt'
+alias mp_search='port search --name --line'
+alias mp_search_full='port search --name'
+alias mp_search_group='port search --glob'
+alias mp_uninstall_follow='sudo port uninstall --follow-dependents'
+alias mp_uninstall_safe='sudo port uninstall'
+alias mp_update='sudo port selfupdate'
+alias mp_upgrade='sudo port upgrade outdated'
+alias mp_upgrade_all='sudo port upgrade outdated'
+alias mp_upgrade_list='port outdated'
+alias mp_variant='port variant'
+
+function mp_variant_install_f() {
+    function get_opts() {
+        opt_grp=()
+        for i in $opts; do
+            read -p "Include variant: '$i'?" yn
+            case $yn in
+                [Yy]* ) opt_grp+=($i);;
+                [Nn]* ) ;;
+                * ) echo "Please select yes or no.";;
+            esac
+        done
+    }
+
+    variants=`mp_variant $1`
+    opts=$(echo $variants | tail -n +2 | sed -r 's/^ *//')
+    choices=(${=opts})
+    echo "Do you wish to adjust for variants?"
+    case $yn in
+        [1Yy]* ) get_opts; break;;
+        [2Nn]* ) mp_install $1;;
+        * ) echo "Please select yes or no.";;
+    esac
+}
+alias mp_variant_install='mp_variant_install_f'

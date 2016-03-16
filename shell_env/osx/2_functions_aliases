@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 function link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
     $IPY/ENV/lib/python2.7/site-packages/; }
 function link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
@@ -5,4 +7,114 @@ function link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framewor
 function link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
 function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
 
-alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
+alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"alias sublime='open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text '
+
+
+
+# <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>
+#sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
+alias locate_update='sudo /opt/local/libexec/gnubin/updatedb'
+
+
+# <<< --- OSX WIFI --- >>>
+alias wifi_renew='sudo ipconfig set en1 DHCP'
+alias wifi_hardware='networksetup -listallhardwareports'
+alias wifi_off='networksetup -setairportpower en1 off'
+alias wifi_on='networksetup -setairportpower en1 on'
+alias wifi_scan='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport scan'
+alias wifi_connect='networksetup -setairportnetwork en1'
+alias wifi_log_tail='tail -f /var/log/wifi.log'
+
+
+function open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
+alias open_color_picker='open_color_picker_f'
+
+# <<< --- OSX SETTINGS --- >>>
+
+
+# <<< --- OSX_IPYTHON --- >>>
+alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
+
+unalias ls
+alias ls='ls -AlBcuFUhG --color=tty'
+alias ps='ps -awx'
+
+alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
+
+alias rt_update_fw='cd $SERV_HOME/local_config/cisco && scp jffs/etc/config/fw.if cisco:/jffs/etc/config/ 2> /dev/null && rt_ /jffs/etc/config/fw.if 2> /dev/null'
+
+alias apache_load='sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist'
+alias apache_unload='sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist'
+
+alias ib_load='sudo launchctl load -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
+alias ib_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
+
+alias load_locate='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist'
+alias unload_locate='sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.locate.plist'
+alias load_standard_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
+alias unload_standard_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
+alias load_custom_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl start custom.syslogd'
+alias unload_custom_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl stop custom.syslogd'
+alias load_sshd='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
+alias unload_sshd='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
+
+alias load_mysql='echo "money" | sudo launchctl load -w /Library/LaunchDaemons/org.macports.mysql55-server.plist'
+alias unload_mysql='echo "money" | sudo launchctl unload -w /Library/LaunchDaemons/org.macports.mysql55-server.plist'
+
+# <<< -- Nginx -- >>>
+alias ng_load='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
+alias ng_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
+
+
+
+alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
+alias syslog_osx_config2='sudo emacs /etc/asl.conf'
+alias spotlight_off='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
+alias spotlight_on='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
+alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
+alias sudo_textedit='f_sudo_textedit'
+
+
+alias syslog_push_config='sudo cp -R $HOME/$SERVER/syslog-ng/syslog-ng.conf /opt/local/etc/'
+alias syslog_load='syslog_push_config; sudo launchctl load -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
+alias syslog_unload='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
+alias syslog_config='sudo emacs /opt/local/etc/syslog-ng.conf'
+alias syslog_reload='syslog_push_config; syslog_unload; syslog_load;'
+alias syslog_kill='kill_by syslog'
+alias sys_log="tail -f /var/log/system.log"
+
+alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
+
+function test_acro_js() {
+    js_content="\
+from appscript import app 
+app(u'Adobe Acrobat Pro').activate()
+print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
+    js_file=$(cat /Volumes/ub2/home/ub2/gDrive/Reference/PDF/acrobat_js_test.js);\
+    js_content=$(echo "$js_content$js_file")
+    js_content="$js_content\"\"\");";\
+    #echo "$js_content"; \
+    echo "$js_content" > /tmp/test_acro_js.py;
+    ~/.scripts/ENV/bin/python /tmp/test_acro_js.py ;\
+    #rm -fr /tmp/test_acro_js.py; \
+    }
+
+
+alias xcode='f_sudo_xcode'
+
+alias T_out_4='curl http://0.0.0.0:12204/?b=2;'
+alias T_out_3='curl http://0.0.0.0:12204/t3;'
+alias T_out_2='curl http://0.0.0.0:12204/t2;'
+alias T_out_1='curl http://0.0.0.0:12204/t1;'
+alias T_in_2='curl http://0.0.0.0:8888/t2;'
+alias T_in_1='curl http://0.0.0.0:8888/t1?b=2;'
+alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; syslog_push_config; sudo syslog-ng;'
+alias P='echo test'
+alias SK='syslog_kill'
+alias syslog_debug='syslog_push_config; sudo /opt/local/sbin/syslog-ng -Fvedt'
+alias saved_grep="cat redis.conf | grep -n -v '^\w'"
+alias SLd='sudo launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist'
+alias SLu='sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist'
+alias SLca='sudo emacs /etc/asl.conf'
+alias SLcs='sudo emacs /etc/syslog.conf'

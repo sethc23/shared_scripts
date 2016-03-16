@@ -1,4 +1,4 @@
-
+#!/bin/zsh
 
 export SERVER_ID=`hostname | sed -r 's/SERVER//g'`
 export SERVER=`hostname`
@@ -22,20 +22,14 @@ export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
 
 export LUA_PATH=$LUA_PATH:$BD/Lua:$BD/Lua/luajit:$BD/Lua:$BD/Lua/lualib";/usr/local/openresty/luajit/share/lua/5.1/?.lua;"
 export LUA_CPATH=$LUA_CPATH";/usr/local/openresty/luajit/lib/lua/5.1/socket/?.so;"
-#export LUAJIT_LIB=/usr/local/openresty/luajit/lib
-#export LUAJIT_INC=/usr/local/openresty/luajit/include/luajit-2.1
-#export LUA_DIR=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/include/lua5.1:/usr/local/openresty/luajit/bin/lua:/usr/lib/x86_64-linux-gnu/:/usr/local/openresty/luajit/:/usr/local/
 
 export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/rsyslog/
-#export LUA= /usr/local/openresty/luajit/bin/luajit-2.1.0-alpha
-#export LUAINC= /usr/local/openresty/luajit/include
-#export LUALIB= /usr/local/openresty/luajit/lib
-#export LUABIN= /usr/local/openresty/luajit/bin
 
-function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
-assign tmp < <(luarocks path --bin)
-eval $tmp
+#function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
+#assign tmp < <(luarocks path --bin)
+#eval $tmp
+eval $(luarocks path --bin)
 
 
 # ---------------------------------------

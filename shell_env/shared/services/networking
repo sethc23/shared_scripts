@@ -1,0 +1,18 @@
+#!/bin/zsh
+
+alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
+alias ports_listen_2='sudo netstat -ltnp'
+alias ports_listen_3='nettop'
+alias ports_sockets='netstat -lx'
+alias ports_ssh='lsof -i tcp | grep ^ssh'
+
+function net_dig_simple_f() { dig $1 +nostats +nocomments +nocmd; }
+alias net_dig_simple='dig_simple_f'
+
+function net_port_check_f(){
+    nmap -p $1 $2
+}
+alias net_port_check='net_port_check_f'
+alias net_port_check_help='echo "alias net_port_check <port> <ip/url>"'
+alias net_route_v4='route -A inet'
+alias net_route_v6='route -A inet6'

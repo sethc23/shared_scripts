@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+<< -- SYSTEMCTL -- >>
+
+alias sysd_all='sudo systemctl -all'
+function sysd_show_unit_path_f() {
+    sudo systemctl show $1 | grep FragmentPath | sed 's/FragmentPath=//g';   
+}
+alias sysd_show_unit_path='sysd_show_unit_path_f'
+alias sysd_reload='sudo systemctl daemon-reload'

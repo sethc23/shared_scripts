@@ -1,0 +1,17 @@
+
+
+alias disable_bt='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 0'
+alias enable_bt='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 1'
+alias disable_hidden='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'
+alias enable_hidden='defaults write com.apple.finder AppleShowAllFiles -bool false; killall Finder'
+alias enable_screen_share='sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -off -restart -agent -privs -all -allowAccessFor -allUsers -clientopts'
+alias disable_lid='sudo nvram boot-args="niog=1"'
+alias enable_lid='sudo nvram -d boot-args'
+function enable_softwareupdate_f() { \
+    sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\
+    sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdate_download_service.plist; }
+alias enable_softwareupdate='enable_softwareupdate_f'
+function disable_softwareupdate_f() { \
+    sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\
+    sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.softwareupdate_download_service.plist; }
+alias disable_softwareupdate='disable_softwareupdate_f'
