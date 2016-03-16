@@ -37,7 +37,7 @@ alias ipt_proxy_2='sudo iptables -t nat -I PREROUTING 1 -o eth0 -m owner \! --gi
 function f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
 alias kill_by='f_kill_by'
 
-alias mail_old='mail -f ~/mbox'
+alias mail_old='mail -f $HOME_ENV/mbox'
 
 alias locate_update='sudo /usr/bin/updatedb'
 alias ls='ls --color --almost-all --classify --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'

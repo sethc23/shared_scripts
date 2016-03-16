@@ -1,19 +1,15 @@
 
 case $- in
     *i*) ;;
-      *) source ~/.profile && source ~/.scripts/shell_env/_base && return;;
+      *) source $HOME_ENV/.profile && source $HOME_ENV/.scripts/shell_env/_base && return;;
 esac
 
 
-source ~/.profile
-#source ~/.scripts/shell_env/bash/_env
-source ~/.scripts/shell_env/_base
+source $HOME_ENV/.profile
+#source $HOME_ENV/.scripts/shell_env/bash/_env
+source $HOME_ENV/.scripts/shell_env/_base
 
 if [[ -n "$BASH_VERSION" ]]; then
-    DIR="~/.scripts/shell_env/bash/completers"
-    for i in `env find $DIR -maxdepth 1 -type f`; do 
-        echo $i
-        source $i; 
-
-    done
+    DIR="$HOME_ENV/.scripts/shell_env/bash/completers"
+    for i in `env find $DIR -maxdepth 1 -type f`; do source $i; done
 fi

@@ -49,7 +49,7 @@ function diff_files_left() { colordiff --side-by-side --suppress-common-lines --
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]<[^a-zA-Z0-9]/ {print}'; }
 function diff_files_right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; }
-function source_bash() { _orig=`pwd`; source $HOME/$SHELL_CONFIG; cd $_orig; }
+function source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 function get_my_ip_int_f() { \
     if [ `uname` = 'Darwin' ]; then
         _test=`ipconfig getifaddr en0`
@@ -71,19 +71,19 @@ function get_my_ip_ext_f() { \
     sed -r 's/^([0-9]{,3}\.[0-9]{,3}\.[0-9]{,3}\.[0-9]{,3})/\1/g'; }
 alias get_my_ip_int='get_my_ip_int_f'
 alias get_my_ip_ext='get_my_ip_ext_f'
-function pull_shared_scripts() { a=`pwd`; cd $HOME/.scripts; git pull sub_dest master; source_bash; cd $a;}
-function push_shared_scripts() { cd $HOME/.scripts;\
+function pull_shared_scripts() { a=`pwd`; cd $HOME_ENV/.scripts; git pull sub_dest master; source_bash; cd $a;}
+function push_shared_scripts() { cd $HOME_ENV/.scripts;\
     git add -- .alias_shared;\
     git add -- .alias_linux;\
     git commit -m "updating aliases";\
     git push sub_dest master; }
 function edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
-function edit_bash_share() { $EDITOR $HOME/.scripts/.alias_shared; source_bash; }
-function edit_linux_share() { $EDITOR $HOME/.scripts/.alias_linux; source_bash; }
-function edit_bash_prof() { $EDITOR "$HOME/$SHELL_CONFIG"; source_bash; }
+function edit_bash_share() { $EDITOR $HOME_ENV/.scripts/.alias_shared; source_bash; }
+function edit_linux_share() { $EDITOR $HOME_ENV/.scripts/.alias_linux; source_bash; }
+function edit_bash_prof() { $EDITOR "$HOME_ENV/$SHELL_CONFIG"; source_bash; }
 function newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
-function newalias_shared() { echo "alias "$1 >> $HOME/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
-function newalias_linux() { echo "alias "$1 >> $HOME/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
+function newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
+function newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 function f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
 function f_find_file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
 function f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
@@ -110,9 +110,9 @@ alias JSON='f_getJSON'
 alias RD_e='cd $BD/RD/src'
 alias RDt='RDt'
 
-alias z_omz="emacs ~/.scripts/shell_env/zsh/.z_OMZ"
+alias z_omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
 alias z_local="emacs $SH/local_config/shell/.shell_local"
-alias z_source="source ~/.scripts/shell_env/zsh/.z_OMZ; source ~/.scripts/shell_env/_base"
+alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
 
 
 #alias aprinto_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 aprinto'
@@ -120,10 +120,10 @@ alias z_source="source ~/.scripts/shell_env/zsh/.z_OMZ; source ~/.scripts/shell_
 
 alias pull_shared_scripts='pull_shared_scripts'
 alias push_shared_scripts='push_shared_scripts'
-alias push_ssh_config='mnt; cp -R ~/.ssh/config /Volumes/mb/Users/admin/.ssh/; cp -R ~/.ssh/config /Volumes/ubuntu/home/ubuntu/.ssh/'
-alias ssh_config='emacs ~/.ssh/config; push_ssh_config'
+alias push_ssh_config='mnt; cp -R $HOME_ENV/.ssh/config /Volumes/mb/Users/admin/.ssh/; cp -R $HOME_ENV/.ssh/config /Volumes/ubuntu/home/ubuntu/.ssh/'
+alias ssh_config='emacs $HOME_ENV/.ssh/config; push_ssh_config'
 
-function copy_back_aliases() { cp -R $HOME/.alias_shared $HOME/.scripts/.alias_shared; }
+function copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
 
 alias BD_env='cd $BD; source ENV/bin/activate'
 
@@ -139,7 +139,7 @@ alias cy_clean='cd $BD/RD/src/cython_exts/; sudo python cy-build.py clean;'
 alias cy_folder='cd $BD/RD/src/cython_exts/;'
 alias cy_help='cd $BD/RD/src/cython_exts/; python cy-build.py --help-commands;'
 
-alias ec2="ssh -i ~/.ssh/grp1.pem ec2-user@ec2-54-164-189-68.compute-1.amazonaws.com -p 10101"
+alias ec2="ssh -i $HOME_ENV/.ssh/grp1.pem ec2-user@ec2-54-164-189-68.compute-1.amazonaws.com -p 10101"
 alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
 alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
 
@@ -152,7 +152,7 @@ alias egrep='egrep -i --color=auto'
 
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
 
-alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME/django/Dropbox/aporo/static/sencha'
+alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME_ENV/django/Dropbox/aporo/static/sencha'
 alias grep_folder='grep -r "$1" *'
 
 alias grok_app='ngrok -hostname app.aporodelivery.com 80'
@@ -201,7 +201,7 @@ alias pb='pastebincl -n'
 alias pip_upgrade='pip install -U pip'
 alias pip_install='pip install --upgrade --allow-all-external --allow-unverified basemap'
 
-alias pip_update='$HOME/.scripts/update_pip.sh'
+alias pip_update='$HOME_ENV/.scripts/update_pip.sh'
 
 alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'
@@ -230,10 +230,10 @@ alias rt_nat='rt_ "iptables -t nat -L -v" 2> /dev/null'
 alias rt_tbl='rt_ "iptables -L -v" 2> /dev/null'
 alias rt_ps='rt_ "ps" 2> /dev/null'
 
-alias scr_env='source $HOME/.scripts/ENV/bin/activate'
-alias scr_ed='scr_env; cd $HOME/.scripts'
+alias scr_env='source $HOME_ENV/.scripts/ENV/bin/activate'
+alias scr_ed='scr_env; cd $HOME_ENV/.scripts'
 alias scr_d='scr_ed'
-alias scr_sync='$HOME/.scripts/sync_scripts.bash'
+alias scr_sync='$HOME_ENV/.scripts/sync_scripts.bash'
 
 alias SH='cd $SERV_HOME'
 
@@ -241,7 +241,7 @@ function sn4_ar_msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?
 alias sn4_ar_key='echo "APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw"'
 function sn4_backup() { \
     sn4_ar_msg ssh_droid_start > /dev/null 2>&1;
-    RES=$($HOME/.scripts/ENV/bin/celery --workdir=$HOME/.scripts/worker --app=sys_serv \
+    RES=$($HOME_ENV/.scripts/ENV/bin/celery --workdir=$HOME_ENV/.scripts/worker --app=sys_serv \
     call --queue=sys_serv_tasks sys_serv_tasks.sn4_backup --args='[]' \
     --countdown=20 | xargs -I '{}' printf 'sn4_backup [%s %s] expecting git task ID -- %s\n' $(date +%Y-%m-%d\ %H:%M:%S) {});
     echo $RES >> /var/sockets/supervisor_relay.log;
@@ -265,13 +265,13 @@ alias retar_help='echo retar archive.tar.gz directory/'
 function dl_unzip() { wget $1; tar -xzvf $1; }
 
 #function g-RESTORE_LOCAL_F() { \
-#    cd ~/$SERVER/local_config/ \
-#    ln -s ~/.git/.gitignore ./; \
-#   ln -s ~/.git/.gitignore_global ./; \
-#   ln -s ~/$SERVER/local_config/.bashrc ./ ; \
-#   ln -s ~/$SERVER/local_config/.iterm2 ./ ; \
-#   ln -s ~/$SERVER/local_config/.profile ./ ; \
-#   ln -s ~/$SERVER/local_config/.bash_profile ./ ;}
+#    cd $HOME_ENV/$SERVER/local_config/ \
+#    ln -s $HOME_ENV/.git/.gitignore ./; \
+#   ln -s $HOME_ENV/.git/.gitignore_global ./; \
+#   ln -s $HOME_ENV/$SERVER/local_config/.bashrc ./ ; \
+#   ln -s $HOME_ENV/$SERVER/local_config/.iterm2 ./ ; \
+#   ln -s $HOME_ENV/$SERVER/local_config/.profile ./ ; \
+#   ln -s $HOME_ENV/$SERVER/local_config/.bash_profile ./ ;}
 
 # Out Specific Lines
 # sed -n '20,40p' file_name

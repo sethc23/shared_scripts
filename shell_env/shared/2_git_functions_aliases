@@ -79,7 +79,7 @@ alias g-DX='g_push_dev_and_master'
 
 
 function g-init_w_descr() { git init; rm .git/config; cd .git; \
-    cp ~/.gitconfig ./config; cd ..; emacs .git/config; \
+    cp $HOME_ENV/.gitconfig ./config; cd ..; emacs .git/config; \
     git-hub create --desc="$1"; \
     pwd | sed -r 's/.*\/([^\/]+)$/\1/g' | xargs -I '{}' git remote add github git@github.com:sethc23/{}.git; \
     git push github master; \

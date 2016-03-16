@@ -77,7 +77,7 @@ alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/F
 alias sudo_textedit='f_sudo_textedit'
 
 
-alias syslog_push_config='sudo cp -R $HOME/$SERVER/syslog-ng/syslog-ng.conf /opt/local/etc/'
+alias syslog_push_config='sudo cp -R $HOME_ENV/$SERVER/syslog-ng/syslog-ng.conf /opt/local/etc/'
 alias syslog_load='syslog_push_config; sudo launchctl load -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
 alias syslog_unload='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
 alias syslog_config='sudo emacs /opt/local/etc/syslog-ng.conf'
@@ -97,7 +97,7 @@ print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
     js_content="$js_content\"\"\");";\
     #echo "$js_content"; \
     echo "$js_content" > /tmp/test_acro_js.py;
-    ~/.scripts/ENV/bin/python /tmp/test_acro_js.py ;\
+    $HOME_ENV/.scripts/ENV/bin/python /tmp/test_acro_js.py ;\
     #rm -fr /tmp/test_acro_js.py; \
     }
 

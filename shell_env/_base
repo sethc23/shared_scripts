@@ -16,6 +16,9 @@ source_files_and_sub_dirs() {
 }
 
 
+[[ -n "$SUDO_USER" ]] && HOME_ENV=$(eval echo ~$SUDO_USER) || HOME_ENV=$(eval echo ~$USER)
+
+
 if [[ -n "$BASH_VERSION" ]]; then
     SOURCE="${BASH_SOURCE[0]}"
     while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -42,7 +45,7 @@ export ALIAS='.alias_s'$SERVER_ID
 
 [[ -f $SERV_HOME/local_config/shell/$ALIAS ]] && source $SERV_HOME/local_config/shell/$ALIAS
 
-export GIT_CONFIG=~/.gitconfig
+export GIT_CONFIG=$HOME_ENV/.gitconfig
 export J=/home/jail/home/serv
 export CLIENT_HOST=$SERVER
 export BD=$HOME/BD_Scripts

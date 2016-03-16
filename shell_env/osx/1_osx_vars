@@ -11,10 +11,10 @@ export SHELL_CONFIG=.zshrc
 export ROOT=root
 export ROOT_GRP=wheel
 export SSHFS=/opt/local/bin/sshfs
-export SERV_HOME=$HOME/$SERVER
+export SERV_HOME=$HOME_ENV/$SERVER
 
 export PGDATA=/opt/local/var/db/postgresql93/defaultdb/
-export IPY=$HOME/$SERVER/ipython
+export IPY=$HOME_ENV/$SERVER/ipython
 
 #function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 #assign tmp < <(luarocks path --bin)
@@ -25,9 +25,9 @@ eval $(luarocks path --bin)
 export WIKI=/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_wiki
 
 # Git
-#export GIT_CONFIG=$HOME/.git/config
-#export GIT_CONFIG=$HOME/.gitconfig
-#export GIT_TRACE=$HOME/.git/trace_log.txt
+#export GIT_CONFIG=$HOME_ENV/.git/config
+#export GIT_CONFIG=$HOME_ENV/.gitconfig
+#export GIT_TRACE=$HOME_ENV/.git/trace_log.txt
 #source $SERV_HOME/.git/git-completion.bash
 
 # Amazon
@@ -38,7 +38,7 @@ export AWS_SECRET_KEY=m7YuraScUryW264xb6hd/Nf+4nK8PPw6DK+e1VQS
 #export EC2_URL=https://ec2.us-east-1.amazonaws.com
 #export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
 export JAVA_HOME=/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home
-export AWS_CONFIG_FILE=$HOME/$SERVER/aws/.aws/config
+export AWS_CONFIG_FILE=$HOME_ENV/$SERVER/aws/.aws/config
 
 #export PATH=$PATH:/Users/admin/bin/Sencha/Cmd/5.0.0.160
 #export SENCHA_CMD_3_0_0="/Users/admin/bin/Sencha/Cmd/5.0.0.160"
