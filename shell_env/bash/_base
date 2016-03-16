@@ -11,5 +11,9 @@ source ~/.scripts/shell_env/_base
 
 if [[ -n "$BASH_VERSION" ]]; then
     DIR="~/.scripts/shell_env/bash/completers"
-    for i in `env find $DIR -maxdepth 1 -type f`; do source $i; done
+    for i in `env find $DIR -maxdepth 1 -type f`; do 
+        echo $i
+        source $i; 
+
+    done
 fi
