@@ -200,8 +200,8 @@ alias pb='pastebincl -n'
 
 alias pip_upgrade='pip install -U pip'
 alias pip_install='pip install --upgrade --allow-all-external --allow-unverified basemap'
-
 alias pip_update='$HOME_ENV/.scripts/update_pip.sh'
+
 
 alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'

@@ -1,0 +1,105 @@
+#!/home/ub2/.virtualenvs/devenv/bin/python
+
+REPO_DIR='/home/ub2/BD_Scripts/sethc23.github.io'
+REPO_POST_DIR='_posts'
+WIKI_DIR='_wiki'
+WIKI_POST_DIR='1_POSTS'
+
+POST_HEADER='\n'.join([ '---',
+                        'title: %(title)s',
+                        'layout: post',
+                        'comments: true',
+                        '---\n'])
+DOC_HEADER='---\n'
+
+
+import os,re
+from subprocess import Popen as sub_popen
+from subprocess import PIPE as sub_PIPE
+
+
+def run_cmd(cmd):
+    p = sub_popen(cmd,stdout=sub_PIPE,shell=True)
+    (_out,_err) = p.communicate()
+    assert _err is None
+    return _out
+def growl(msg):
+    growl = ' '.join(['timeout --kill-after=5 4s',
+                    'ssh mbp2 -F /home/ub2/.ssh/config',
+                    '"/usr/local/bin/growlnotify --sticky --message \'%s\'"'])
+
+    run_cmd(growl % msg)
+    raise SystemExit
+def proper_filenames(files):
+    try:
+        for it in files:
+            re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z-]+\.md',f1).group()
+        return True
+    except:
+        growl("blog post issue: filename")
+def update_contents_and_push(files):
+    def fix_code_block_spacing(lines):
+        pt = 0
+        p1 = lines[pt]
+        code=False
+        while True:
+            try:
+                pt += 1
+                p2 = lines[pt]
+
+                if code==True and p2.find('```')==0:
+                    code=False
+                elif code==False and p2.find('```')==0:
+                    code=True
+
+                    if p1.strip():
+                        lines.insert(pt,'')
+                        pt += 1
+
+                elif code==False and p1.find('```')==0:
+
+                    if p2.strip():
+                        lines.insert(pt,'')
+                        pt += 1
+
+                p1 = p2
+            
+            except:
+                break
+        return lines
+    
+    base_wiki_path = os.path.join(REPO_DIR,WIKI_DIR)
+    base_post_path = os.path.join(REPO_DIR,REPO_POST_DIR)
+
+    for it in files:
+        fname = os.path.basename(it)
+        lines = open(os.path.join(base_wiki_path,it)).read().splitlines()
+        title=' '.join(fname[11:-3].split('-')).title()
+        new_doc = ""
+        new_doc += POST_HEADER % {'title' : title }
+        new_doc += '\n'.join( fix_code_block_spacing(lines) )
+        with open(os.path.join(base_post_path,fname),'w') as new_f:
+            new_f.write(new_doc)
+
+    add_new_files = ';'.join( [ 'cd %s' % REPO_DIR,
+                                'git add -- %s/ > /dev/null 2>&1' % 
+                                    REPO_POST_DIR] )
+    run_cmd(add_new_files)
+
+def main(args):
+    commit,msg,files = args
+    files = files.split('\n')
+
+    blog_posts = [os.path.basename(it) for it in files 
+                    if it.find(WIKI_POST_DIR)==0]
+    
+    # assert blog_posts
+    # assert proper_filenames(files)
+
+    update_contents_and_push(files)
+
+
+from sys import argv
+if __name__ == '__main__':
+    main(argv[1:])
+

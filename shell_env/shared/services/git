@@ -1,4 +1,7 @@
-#  --  Git Status (g-s*):
+#  --  REPOS (g-r*)
+alias g-r-name='basename `git rev-parse --show-toplevel`'
+
+#  --  STATUSES (g-s*)
 alias g-s='git status'
 alias g-s-STAGED='git diff --name-only --cached | more'
 alias g-s-p='git status --porcelain'
@@ -10,10 +13,42 @@ alias g-NOT_STAGED-MOD="git diff --name-status | more | grep ^M | sed 's/^M\s*//
 function g-S-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g';}
 # git diff 7f7a2a7 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g' | xargs -I '{}' git checkout 7f7a2a7 -- {}
 function g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*//g';}
+
+#  --  BRANCHES (g-b*)
 alias g-b='git branch -avv'
 alias g-b-DELETE='git branch -d'
 alias g-b-r-DELETE='git branch --remotes --delete'
+alias g-b-last_tag='git describe --abbrev=0 --tags'
+
+
+#  --  DEV BRANCH (g-D*):
+function g_push_dev_and_master() { \
+    g_add_commit_push; \
+    dev_branch=`git rev-parse --abbrev-ref HEAD`; \
+    git checkout master; \
+    #git merge --stat --no-edit -X theirs \
+    #    $(git branch -v | sed -r 's/(\*|\s) //' | \
+    #        grep ^dev | sed -r 's/^(dev\s*)([A-Za-z0-9]+)\s(.*)$/\2/'); \
+    git merge `git log --pretty=format:'%h' -n 1` $dev_branch; \
+    git push; \
+    git checkout dev;\
+    git branch -avv; }
+alias g-DX='g_push_dev_and_master'
+
+
+#  --  COMMITS (g-c*)
 alias g-c='git commit -m'
+function g-c_EMAIL() { git show -s --format=%ce $1 | head -n 1; }
+function g-c_DATE() { git show -s --format=%ai $1 | head -n 1; }
+function g-c_DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
+alias g-c-latest='git log --abbrev-commit --pretty=oneline | head -n 1 | cut -d \  -f 1'
+function  g-c-between(){
+    git log $1..$2 --pretty=oneline | wc -l;
+}
+
+#  --  FILES (g-f*)
+alias g-f-latest='git diff-tree --no-commit-id --name-only -r $(g-c-latest)'
+
 alias g-ch-n='git checkout -b'
 alias g-f-MODIFIED="g-s-p | grep '^ M ' | awk '{print $2}'"
 alias g-i='git update-index --assume-unchanged --'
@@ -46,7 +81,7 @@ function g_add_commit_push() { git add --ignore-removal -- .; \
     git status; }
 alias g-X='g_add_commit_push'
 
-#  --  Git Submodules (gs-*):
+#  --  SUBMODULES (gs-*):
 gs_recursive_pull() { \
     git submodule foreach --recursive git submodule init;
     git submodule foreach --recursive git submodule update;
@@ -63,19 +98,7 @@ alias gs-update='git pull && git submodule init && git submodule update && git s
 # git submodule add -- git@github.com:sethc23/aporo aporo
 
 
-#  --  Dev Branch (g-D*):
-function g_push_dev_and_master() { \
-    g_add_commit_push; \
-    dev_branch=`git rev-parse --abbrev-ref HEAD`; \
-    git checkout master; \
-    #git merge --stat --no-edit -X theirs \
-    #    $(git branch -v | sed -r 's/(\*|\s) //' | \
-    #        grep ^dev | sed -r 's/^(dev\s*)([A-Za-z0-9]+)\s(.*)$/\2/'); \
-    git merge `git log --pretty=format:'%h' -n 1` $dev_branch; \
-    git push; \
-    git checkout dev;\
-    git branch -avv; }
-alias g-DX='g_push_dev_and_master'
+
 
 
 function g-init_w_descr() { git init; rm .git/config; cd .git; \
@@ -89,13 +112,11 @@ function g-init_w_descr() { git init; rm .git/config; cd .git; \
     git branch -avv; }
     
 
-#  --  Git Commit (g-c_*):
-function g-c_EMAIL() { git show -s --format=%ce $1 | head -n 1; }
-function g-c_DATE() { git show -s --format=%ai $1 | head -n 1; }
-function g-c_DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
 
-#  --  Git Blog (g-B*)
-alias gb-serve='cd $BD/sethc23.github.io && rm -fr _site && bundle install && bundle exec jekyll serve --drafts'
+
+
+#  --  BLOG (g-B*)
+alias gb-serve='cd $BD/sethc23.github.io && rm -fr _site && bundle install && bundle exec jekyll serve --drafts --incremental'
 
 # Exemplar Gist
 # -- Update Gist

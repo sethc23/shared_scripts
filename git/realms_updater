@@ -1,0 +1,23 @@
+#!/bin/zsh
+
+# Directory of script
+DIR=${0:a:h}
+
+# Get latest message from wiki
+cd /home/ub2/BD_Scripts/sethc23.github.io/_wiki
+msg=$(git log -1 --pretty=%B)
+commit=$(git log --abbrev-commit --pretty=oneline | head -n 1 | cut -d \  -f 1)
+files=$(git diff-tree --no-commit-id --name-only -r $commit)
+
+# Run script to handle blog entries
+$DIR/blog_post_updater $commit $msg $files || exit 1
+
+# Update data file
+/home/ub2/BD_Scripts/sethc23.github.io/_data/data_file_generator.py wiki
+
+# Move up to parent and add all new files
+cd ..
+git add -- _wiki/ > /dev/null 2>&1
+git add -- _data/ > /dev/null 2>&1
+git commit -m """$msg"""  > /dev/null 2>&1
+git push  > /dev/null 2>&1
