@@ -74,7 +74,8 @@ def update_contents_and_push(files):
     for it in files:
         fname = os.path.basename(it)
         lines = open(os.path.join(base_wiki_path,it)).read().splitlines()
-        title=' '.join(fname[11:-3].split('-')).title()
+        title = ' '.join(fname[11:-3].split('-')).title()
+
         new_doc = ""
         new_doc += POST_HEADER % {'title' : title }
         new_doc += '\n'.join( fix_code_block_spacing(lines) )

@@ -1,0 +1,36 @@
+#!/bin/sh
+
+THIS_FILE=/home/ub2/BD_Scripts/sethc23.github.io/.git/hooks/blog_post_commit
+
+
+run_this(){
+
+    API_BASE="https://api.github.com"
+    GIT_TOKEN="$(cat /home/ub2/.scripts/git/git_token)"
+    PAGES_STATUS_URL="repos/sethc23/sethc23.github.io/pages"
+
+    STATUS="$(curl -s $API_BASE/$PAGES_STATUS_URL\?access_token=$GIT_TOKEN | \
+        jq -r '.status')"
+
+    CHECK_URL="https://github.com/sethc23/sethc23.github.io/settings"
+
+    if [ "$STATUS" = "built" ]; then
+        PARAMS=""
+        MESSAGE="sethc23 pages seems OK"
+    else
+        PARAMS="--sticky --url $CHECK_URL"
+        MESSAGE="Check status of sethc23 pages (status='$STATUS')"
+    fi
+
+    MESSAGE="--message '$MESSAGE'"
+    timeout --kill-after=5 4s \
+        ssh mbp2 -F /home/ub2/.ssh/config \
+        "/usr/local/bin/growlnotify $PARAMS $MESSAGE"
+}
+
+
+if [ "$1" = "queue" ]; then
+    at NOW + 1 minute < $THIS_FILE > /dev/null 2>&1
+else
+    run_this
+fi
