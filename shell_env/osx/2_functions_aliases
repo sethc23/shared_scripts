@@ -9,7 +9,12 @@ function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | g
 
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 
-
+alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
+function s2_f(){
+    [[ -n "$(ls_mounts | grep ub2 | wc -l)" ]] && sudo umount -f /Volumes/ub2;
+    mkdir -p /Volumes/ub2 && sshfs ub2:/ /Volumes/ub2;
+}
+alias s2='s2_f'
 
 
 # <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>
