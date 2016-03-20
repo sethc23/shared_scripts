@@ -61,6 +61,8 @@ def update_repo(args):
     #                             '[[ -n "$ORIG_BRANCH" ]] && git symbolic-ref HEAD $ORIG_BRANCH && unset ORIG_BRANCH',
     #                             'exit 0'])
 
+    # reverting back to orig branch always leaves the remote repo dirty...
+
     cmd_template = '; '.join([  'cd %(repo_path)s',
                                 '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
                                 '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
@@ -130,15 +132,15 @@ if __name__ == '__main__':
         raise SystemExit
 
     if args[0]=='queue':
-        run_cmd("echo 'queueing' > /dev/pts/0")
+        # run_cmd("echo 'queueing' > /dev/pts/0")
         cmd = """echo 'su ub2 -c "/home/ub2/.scripts/git/webhooks \'%s\' > /dev/null 2>&1"' \
                     | at NOW + 1 minute""" % str(args[1])
         run_cmd(cmd)
     elif args[0].isdigit():
-        run_cmd("echo 'trying again' > /dev/pts/0")
+        # run_cmd("echo 'trying again' > /dev/pts/0")
         try_update_again(args)
     else:
-        run_cmd("echo 'updating' > /dev/pts/0")
+        # run_cmd("echo 'updating' > /dev/pts/0")
         update_repo(args)
 
 
