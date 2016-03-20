@@ -4,6 +4,8 @@ import os,re
 from subprocess import Popen as sub_popen
 from subprocess import PIPE as sub_PIPE
 
+MAX_ATTEMPTS=3
+
 def run_cmd(cmd,return_exit_code=False):
     p = sub_popen(cmd,stdout=sub_PIPE,shell=True,executable='/bin/zsh')
     (_out,_err), exit_code = p.communicate(), p.returncode
@@ -13,7 +15,23 @@ def run_cmd(cmd,return_exit_code=False):
     else:
         return _out
 
+def growl(msg):
+    growl = ' '.join(['timeout --kill-after=5 4s',
+                    'ssh mbp2 -F /home/ub2/.ssh/config',
+                    '"/usr/local/bin/growlnotify --sticky --message \'%s\'"'])
+
+    run_cmd(growl % msg)
+    raise SystemExit
+
+def clear_webhook_atq():
+    cmd = '; '.join(['ATQ=$(atq | cut -f1)',
+                     'for i in $ATQ; do [[ -n "$(at -c $i | grep webhook)" ]] && atrm $i; done',
+                     'unset ATQ'])
+    run_cmd(cmd)
+
 def update_repo(args):
+
+    clear_webhook_atq()
 
     data_file = args[0]
     with open(data_file,'r') as f:
@@ -39,24 +57,60 @@ def update_repo(args):
                                     ORIG_BRANCH="$(git symbolic-ref HEAD)" && \
                                     git symbolic-ref HEAD %(ref)s',                                 # save head ref if not being updated
                                 'git pull',
-                                '[[ -z "$ORIG_BRANCH" ]] && git symbolic-ref HEAD "$ORIG_BRANCH"',
+                                '[[ -n "$ORIG_BRANCH" ]] && git symbolic-ref HEAD $ORIG_BRANCH && unset ORIG_BRANCH',
                                 'exit 0'])
         
     # exit 0 --> success OR server branch already at commit
-    # exit 1 --> server not connected
     # exit 99 --> branch dirty
+    # exit 255 --> server not connected
 
     for i,r in df.iterrows():
         if THIS_SERVER_USERS.count(r.server):
             cmd = cmd_template % r
-            # _out,exit_code = run_cmd(cmd,True)
+            _out,exit_code = run_cmd(cmd,True)
         else:
             cmd = ' '.join(["ssh %(server)s" % r,
-                            "'%s'" % cmd_template % r])
+                            "'%s'" % cmd_template % r,
+                            "2>&1"])
             _out,exit_code = run_cmd(cmd,True)
             
-            import ipdb as I; I.set_trace()
+            if exit_code==255:
 
+                from uuid import uuid4 as uuid
+                callback_file = '/tmp/%s' % uuid().hex
+
+                with open(callback_file,'w') as f:
+                    f.write(cmd)
+
+                cmd = """echo '/home/ub2/.scripts/git/webhooks 1 \'%s\' > /dev/null 2>&1"' \
+                    | at NOW + 10 minutes""" % callback_file
+                run_cmd(cmd)
+
+            elif exit_code==99:
+
+                growl('DIRTY REPO:  %(server)s:%(repo_path)s' % r)
+
+def try_update_again(args):
+    attempt_num = args[0]
+    callback_file = args[1]
+
+    with open(callback_file,'r'):
+        cmd = f.read()
+
+    _out,exit_code = run_cmd(cmd,True)
+
+    if exit_code==255:
+        if attempt_num>=MAX_ATTEMPTS:
+            raise SystemExit
+        cmd = """echo '/home/ub2/.scripts/git/webhooks 1 \'%s\' > /dev/null 2>&1"' \
+                    | at NOW + 10 minutes""" % callback_file
+        run_cmd(cmd)
+
+    elif exit_code==99:
+        growl('DIRTY REPO: see %s' % callback_file)
+
+    else:
+        run_cmd("rm %s" % callback_file)
 
 
 
@@ -69,12 +123,14 @@ if __name__ == '__main__':
         raise SystemExit
 
     if args[0]=='queue':
-        run_cmd("echo 'queueing' > /dev/pts/0")
+        # run_cmd("echo 'queueing' > /dev/pts/0")
         cmd = """echo 'su ub2 -c "/home/ub2/.scripts/git/webhooks \'%s\' > /dev/null 2>&1"' \
                     | at NOW + 1 minute""" % str(args[1])
-        # run_cmd(cmd)
+        run_cmd(cmd)
+    elif args[0].isdigit():
+        try_update_again(args)
     else:
-        run_cmd("echo 'updating' > /dev/pts/0")
-        # update_repo(args)
+        # run_cmd("echo 'updating' > /dev/pts/0")
+        update_repo(args)
 
 
