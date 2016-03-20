@@ -77,7 +77,6 @@ def update_repo(args):
             cmd = cmd_template % r
             _out,exit_code = run_cmd(cmd,True)
         else:
-            run_cmd("echo 'updating osx' > /dev/pts/0")
             cmd = ' '.join(["ssh %(server)s" % r,
                             "'%s'" % cmd_template % r,
                             "2>&1"])
