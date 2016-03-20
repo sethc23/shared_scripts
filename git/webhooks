@@ -31,7 +31,7 @@ def clear_webhook_atq():
 
 def update_repo(args):
 
-    # clear_webhook_atq()
+    clear_webhook_atq()
 
     data_file = args[0]
     with open(data_file,'r') as f:
@@ -40,7 +40,7 @@ def update_repo(args):
     import pandas as pd
     import os
 
-    df = pd.read_csv('./repo_server_info')
+    df = pd.read_csv('/home/ub2/.scripts/git/repo_server_info')
     
     assert not df.columns.isin(D.keys()).any()
     for k,v in D.iteritems():
@@ -50,16 +50,22 @@ def update_repo(args):
     df = df.drop(idx,axis=0).reset_index(drop=True)
 
     THIS_SERVER_USERS = run_cmd('cat /etc/passwd | cut -d : -f1').split('\n')
+
+    # cmd_template = '; '.join([  'cd %(repo_path)s',
+    #                             '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
+    #                             '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
+    #                             '[[ "$(git symbolic-ref HEAD)" != "%(ref)s" ]] && \
+    #                                 ORIG_BRANCH="$(git symbolic-ref HEAD)" && \
+    #                                 git symbolic-ref HEAD %(ref)s',                                 # save head ref if not being updated
+    #                             'git pull',
+    #                             '[[ -n "$ORIG_BRANCH" ]] && git symbolic-ref HEAD $ORIG_BRANCH && unset ORIG_BRANCH',
+    #                             'exit 0'])
+
     cmd_template = '; '.join([  'cd %(repo_path)s',
                                 '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
                                 '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
-                                '[[ "$(git symbolic-ref HEAD)" != "%(ref)s" ]] && \
-                                    ORIG_BRANCH="$(git symbolic-ref HEAD)" && \
-                                    git symbolic-ref HEAD %(ref)s',                                 # save head ref if not being updated
                                 'git pull',
-                                '[[ -n "$ORIG_BRANCH" ]] && git symbolic-ref HEAD $ORIG_BRANCH && unset ORIG_BRANCH',
                                 'exit 0'])
-        
     # exit 0 --> success OR server branch already at commit
     # exit 99 --> branch dirty
     # exit 255 --> server not connected
