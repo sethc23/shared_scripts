@@ -14,7 +14,10 @@ function s2_f(){
     [[ -n "$(ls_mounts | grep ub2 | wc -l)" ]] && sudo umount -f /Volumes/ub2;
     mkdir -p /Volumes/ub2 && sshfs ub2:/ /Volumes/ub2;
 }
-alias s2='s2_f'
+
+alias ssh_s2='s2_f'
+alias ssh_zero='ssh -nN -R 8172:localhost:8172 ub2 &'
+
 
 
 # <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>

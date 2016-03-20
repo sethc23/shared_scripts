@@ -1,0 +1,72 @@
+#!/bin/zsh
+
+GIT_TOKEN=$(cat ~/.scripts/git/git_token)
+API_BASE="https://api.github.com"
+WEBHOOK_URL="http://git.sanspaper.com/webhook"
+
+
+get_repos(){
+    git-hub repos --no-forks sethc23 | cut -d \  -f-1
+}
+
+create_push_webhook(){
+
+    CREATE_HOOK_URL="repos/$REPO_OWNER/$1/hooks"
+    RESULT=$(echo '{ 
+      "name": "web",
+      "active": true,
+      "events": [
+        "push"
+      ],
+      "config": {
+        "url": "'"$WEBHOOK_URL"'",
+        "content_type": "json"
+      }
+    }' | jq -c -M '.' | curl -s -d @- $API_BASE/$CREATE_HOOK_URL\?access_token=$GIT_TOKEN)
+    if [[ -n "$(echo $RESULT | jq -M -c '.errors')" ]]; then
+        first_error_msg="$(echo $RESULT | jq -M -c '.errors[0].message')"
+        if [[ "$first_error_msg" = "Hook already exists on this repository" ]]; then
+            echo "true"
+        fi
+    fi
+    echo $RESULT
+}
+list_webhooks(){
+    LIST_HOOK_URL="repos/$REPO_OWNER/$1/hooks"
+    echo $WEBHOOK_URL
+    RESULT=$(echo '{ 
+      "name": "web",
+      "active": true,
+      "events": [
+        "push"
+      ],
+      "config": {
+        "url": "'"$WEBHOOK_URL"'",
+        "content_type": "json"
+      }
+    }' | jq -c -M '.' | curl -s $API_BASE/$LIST_HOOK_URL\?access_token=$GIT_TOKEN)
+    echo $RESULT
+}
+test_webhook(){
+    TEST_HOOK_URL="repos/$REPO_OWNER/$1/hooks/$2/tests"
+    RESULT=$(curl -s -X "POST" $API_BASE/$TEST_HOOK_URL\?access_token=$GIT_TOKEN)
+    echo $RESULT
+}
+delete_webhook(){
+    DELETE_HOOK_URL="repos/$REPO_OWNER/$1/hooks/$2"
+    RESULT=$(curl -s -X "DELETE" $API_BASE/$DELETE_HOOK_URL\?access_token=$GIT_TOKEN)
+    echo $RESULT
+}
+
+#POST /repos/:owner/:repo/hooks/:id/tests
+
+REPO_OWNER="sethc23"
+REPO="shared_scripts"
+
+# create_push_webhook "$REPO"
+# list_webhooks "$REPO"
+
+HOOK_ID="7737822"
+
+test_webhook "$REPO" "$HOOK_ID"
+# delete_webhook "$REPO" "$HOOK_ID"

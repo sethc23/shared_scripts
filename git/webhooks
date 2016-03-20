@@ -1,0 +1,81 @@
+#!/home/ub2/.virtualenvs/devenv/bin/python
+
+import os,re
+from subprocess import Popen as sub_popen
+from subprocess import PIPE as sub_PIPE
+
+def run_cmd(cmd,return_exit_code=False):
+    p = sub_popen(cmd,stdout=sub_PIPE,shell=True,executable='/bin/zsh')
+    (_out,_err), exit_code = p.communicate(), p.returncode
+    assert _err is None
+    if return_exit_code:
+        return _out,exit_code
+    else:
+        return _out
+
+def update_repo(args):
+
+    data_file = args[0]
+    with open(data_file,'r') as f:
+        D = eval(f.read())
+
+    import pandas as pd
+    import os
+
+    df = pd.read_csv('./repo_server_info')
+    
+    assert not df.columns.isin(D.keys()).any()
+    for k,v in D.iteritems():
+        df[k] = v
+    
+    idx = df[ (df.remote_url!=df.https_url) & (df.remote_url!=df.ssh_url) ].index.tolist()
+    df = df.drop(idx,axis=0).reset_index(drop=True)
+
+    THIS_SERVER_USERS = run_cmd('cat /etc/passwd | cut -d : -f1').split('\n')
+    cmd_template = '; '.join([  'cd %(repo_path)s',
+                                '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
+                                '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
+                                '[[ "$(git symbolic-ref HEAD)" != "%(ref)s" ]] && \
+                                    ORIG_BRANCH="$(git symbolic-ref HEAD)" && \
+                                    git symbolic-ref HEAD %(ref)s',                                 # save head ref if not being updated
+                                'git pull',
+                                '[[ -z "$ORIG_BRANCH" ]] && git symbolic-ref HEAD "$ORIG_BRANCH"',
+                                'exit 0'])
+        
+    # exit 0 --> success OR server branch already at commit
+    # exit 1 --> server not connected
+    # exit 99 --> branch dirty
+
+    for i,r in df.iterrows():
+        if THIS_SERVER_USERS.count(r.server):
+            cmd = cmd_template % r
+            # _out,exit_code = run_cmd(cmd,True)
+        else:
+            cmd = ' '.join(["ssh %(server)s" % r,
+                            "'%s'" % cmd_template % r])
+            _out,exit_code = run_cmd(cmd,True)
+
+            import ipdb as I; I.set_trace()
+
+
+
+
+from sys import argv
+if __name__ == '__main__':
+
+    args = argv[1:]
+
+    if not args:
+        raise SystemExit
+
+    if args[0]=='queue':
+        run_cmd("echo 'queueing' > /dev/pts/0")
+        cmd = """echo 'su ub2 -c "/home/ub2/.scripts/git/webhooks \'%s\' > /dev/null 2>&1"' \
+                    | at NOW + 1 minute""" % str(args[1])
+        run_cmd(cmd)
+    else:
+        run_cmd("echo 'updating' > /dev/pts/0")
+        # update_repo(args)
+        pass
+
+
