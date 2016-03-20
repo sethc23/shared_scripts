@@ -54,7 +54,7 @@ def update_repo(args):
             cmd = ' '.join(["ssh %(server)s" % r,
                             "'%s'" % cmd_template % r])
             _out,exit_code = run_cmd(cmd,True)
-
+            
             import ipdb as I; I.set_trace()
 
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
         run_cmd("echo 'queueing' > /dev/pts/0")
         cmd = """echo 'su ub2 -c "/home/ub2/.scripts/git/webhooks \'%s\' > /dev/null 2>&1"' \
                     | at NOW + 1 minute""" % str(args[1])
-        run_cmd(cmd)
+        # run_cmd(cmd)
     else:
         run_cmd("echo 'updating' > /dev/pts/0")
         # update_repo(args)
