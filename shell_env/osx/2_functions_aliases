@@ -11,7 +11,7 @@ alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text
 
 alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
 function ssh_f(){
-    [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1;
+    [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
     mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1;
 }
 
