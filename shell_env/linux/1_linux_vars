@@ -13,10 +13,6 @@ export SERV_HOME=/home/$non_root_user/$SERVER
 export IPY=$SERV_HOME/ipy_jupyter/notebooks
 #export PYTHONPATH=$IPY/scripts/startup.py
 
-export WORKON_HOME=$HOME/.virtualenvs
-export PROJECT_HOME=$HOME/.dev
-source /usr/local/bin/virtualenvwrapper.sh
-
 export PGCLUSTER='9.4/main'
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
 

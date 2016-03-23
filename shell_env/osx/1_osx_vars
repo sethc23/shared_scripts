@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-export PATH=/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin/:/opt/local/lib/postgresql95/bin:$PATH
+export PATH=/usr/local/bin:/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin/:/opt/local/lib/postgresql95/bin:$PATH
 
 export SERVER_ID='3'
 export SERVER='SERVER'$SERVER_ID
