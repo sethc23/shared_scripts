@@ -17,7 +17,10 @@ function ssh_f(){
 
 alias ssh-s1='ssh_f ub1'
 alias ssh-s2='ssh_f ub2'
-alias ssh_zero='ssh -nN -R 8172:localhost:8172 ub2 &'
+alias ssh-s6='ssh_f ub6'
+alias ssh-s7='ssh_f ub7'
+alias ssh_zero='ssh -nNR 8172:localhost:8172 ub2 &'
+alias ssh_psql='ssh -nNL localhost:8800:localhost:8800 ub2 &'
 
 
 
