@@ -28,10 +28,12 @@ function sl_tail_syslog_logs() { sudo tail -n 0 -f /var/log/syslog | while read 
 
 alias sl_tail_syslog_all_else="sudo tail -f /var/log/syslog | grep -v '#011#011' | uniq"
 
-function sl_logs_last_f() {
+function sl_last_log_f() {
     DIR=/var/log/syslogs
-    [[ -n $1 ]] && log_num=$1 || log_num=1
-    log=$(env ls -t $DIR | head -n +$log_num | tail -n 1)
+    TAG="$1"
+    [[ -n "$2" ]] && log_num=$2 || log_num=1
+    log="$(env ls -t $DIR | grep $TAG | head -n +$log_num | tail -n 1)"
     echo "\n\n" | sudo tail -n 20 -f $DIR/$log
 }
-alias sl_logs_last='sl_logs_last_f'
+alias sl_last_log='sl_last_log_f ""'
+alias ng_last_log='sl_last_log_f "ngx"'

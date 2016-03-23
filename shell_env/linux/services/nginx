@@ -1,4 +1,4 @@
-
+#!/bin/zsh
 
 alias ng_kill_2='sudo fuser -k 80/tcp'
 alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
@@ -19,3 +19,4 @@ function ng_tail_t_err_logger() { sudo tail -n 0 -f /var/log/syslogs/tmp_ngx_err
     
 function ng_tail_t_err_logger_w() { sudo tail -n 0 -f /var/log/syslogs/tmp_ngx_error_warn.log | while read line; \
     do echo $line | grep '#>>>' | sed -ur 's/.*(#>>> )(.*)( <<<#).*/\2/g'; done; }
+
