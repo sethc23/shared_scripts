@@ -7,7 +7,7 @@ export ROOT=root
 export ROOT_GRP=root
 export SSHFS=/usr/bin/sshfs
 
-non_root_user=`getent passwd 1000 | grep :1000: | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g'`
+non_root_user=`getent passwd | grep ^ub | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g'`
 export SERV_HOME=/home/$non_root_user/$SERVER
 
 export IPY=$SERV_HOME/ipy_jupyter/notebooks
