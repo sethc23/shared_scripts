@@ -1,6 +1,6 @@
 
-alias svc_rw_enable='sudo systemctl enable /home/ub2/SERVER2/realms_wiki/realms_wiki.service; sudo systemctl daemon-reload'
-alias svc_rw_disable='sudo systemctl disable /home/ub2/SERVER2/realms_wiki/realms_wiki.service; sudo systemctl daemon-reload'
+alias svc_rw_enable='sudo systemctl enable $SERV_HOME/realms_wiki/realms_wiki.service; sudo systemctl daemon-reload'
+alias svc_rw_disable='sudo systemctl disable $SERV_HOME/realms_wiki/realms_wiki.service; sudo systemctl daemon-reload'
 alias svc_rw_start='sudo systemctl start realms_wiki.service'
 alias svc_rw_stop='sudo systemctl stop realms_wiki.service; sudo systemctl daemon-reload'
 alias svc_rw_status='sudo systemctl status realms_wiki.service'

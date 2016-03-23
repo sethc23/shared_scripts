@@ -30,8 +30,8 @@ alias _pg_restart_immediate='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bi
 
 #alias _pg_restart_smart='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m smart"'
 #alias _pg_restart_fast='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
-#alias _pg_restart_fast='sudo su postgres -c "source /home/ub2/SERVER2/ipython/ENV/bin/activate; /usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
-#alias _pg_restart_immediate='sudo su postgres -c "source /home/ub2/SERVER2/ipython/ENV/bin/activate; /usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
+#alias _pg_restart_fast='sudo su postgres -c "source $SERV_HOME/ipython/ENV/bin/activate; /usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
+#alias _pg_restart_immediate='sudo su postgres -c "source $SERV_HOME/ipython/ENV/bin/activate; /usr/lib/postgresql/9.4/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
 alias _pg_restart_fast_core='sudo su postgres -c "/usr/lib/postgresql/9.4/bin/pg_ctl restart -c -w -D $PG_DATA_DIR -m fast"'
 alias _pg_configs='psql_c "show all;"'
 alias _pg_configs_edit='semacs /etc/postgresql/9.4/main/postgresql.conf'

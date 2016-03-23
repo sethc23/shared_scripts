@@ -1,6 +1,6 @@
 
-alias svc_es_enable='sudo systemctl daemon-reload && sudo systemctl enable /home/ub2/SERVER2/elasticsearch/RUN/elasticsearch.service'
-alias svc_es_disable='sudo systemctl disable /home/ub2/SERVER2/elasticsearch/RUN/elasticsearch.service && sudo systemctl daemon-reload'
+alias svc_es_enable='sudo systemctl daemon-reload && sudo systemctl enable $SERV_HOME/elasticsearch/RUN/elasticsearch.service'
+alias svc_es_disable='sudo systemctl disable $SERV_HOME/elasticsearch/RUN/elasticsearch.service && sudo systemctl daemon-reload'
 alias svc_es_start='sudo systemctl start elasticsearch.service'
 alias svc_es_stop='sudo systemctl stop elasticsearch.service'
 alias svc_es_reload='sudo systemctl reload elasticsearch.service'

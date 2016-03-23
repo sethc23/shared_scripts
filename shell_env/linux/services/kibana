@@ -1,7 +1,7 @@
 
 
-alias svc_kb_enable='sudo systemctl daemon-reload && sudo systemctl enable /home/ub2/SERVER2/kibana/RUN/kibana.service'
-alias svc_kb_disable='sudo systemctl disable /home/ub2/SERVER2/kibana/RUN/kibana.service && sudo systemctl daemon-reload'
+alias svc_kb_enable='sudo systemctl daemon-reload && sudo systemctl enable $SERV_HOME/kibana/RUN/kibana.service'
+alias svc_kb_disable='sudo systemctl disable $SERV_HOME/kibana/RUN/kibana.service && sudo systemctl daemon-reload'
 alias svc_kb_start='sudo systemctl start kibana.service'
 alias svc_kb_stop='sudo systemctl stop kibana.service'
 alias svc_kb_reload='sudo systemctl reload kibana.service'

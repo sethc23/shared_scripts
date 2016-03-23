@@ -22,7 +22,7 @@ alias chk_filesystem_types='sudo blkid'
 alias emacs='emacs -nw'
 alias semacs='sudo emacs -nw'
 
-alias jupyter_nbconvert='jupyter-nbconvert --to=notebook --nbformat=3 --inplace /home/ub2/SERVER2/ipython/notebooks/'
+alias jupyter_nbconvert='jupyter-nbconvert --to=notebook --nbformat=3 --inplace $SERV_HOME/ipython/notebooks/'
 
 alias ipt='sudo iptables -nL -v'
 alias ipt_flush='sudo iptables -F'
