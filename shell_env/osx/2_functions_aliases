@@ -10,12 +10,13 @@ function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | g
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 
 alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
-function s2_f(){
-    [[ -n "$(ls_mounts | grep ub2 | wc -l)" ]] && sudo umount -f /Volumes/ub2;
-    mkdir -p /Volumes/ub2 && sshfs ub2:/ /Volumes/ub2;
+function ssh_f(){
+    [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1;
+    mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1;
 }
 
-alias ssh_s2='s2_f'
+alias ssh-s1='ssh_f ub1'
+alias ssh-s2='ssh_f ub2'
 alias ssh_zero='ssh -nN -R 8172:localhost:8172 ub2 &'
 
 
