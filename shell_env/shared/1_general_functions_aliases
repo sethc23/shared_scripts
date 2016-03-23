@@ -90,7 +90,7 @@ function f_find_file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '
 function f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 function f_find_folder() { sudo find -H -s $1 -type d -iregex "$2"; }
 function f_getJSON() { curl -H 'Accept: application/json; indent=4' $1; }
-function f_kill_by() { sudo kill -9 `ps -awx | grep $1 | grep -v grep | awk '{print $1}'`; }
+function f_kill_by() { sudo kill -9 `ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
 function f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
 function f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
 function f_mp_py() { sudo port select python python$1; }
