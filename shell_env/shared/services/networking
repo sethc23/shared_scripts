@@ -16,3 +16,5 @@ alias net_port_check='net_port_check_f'
 alias net_port_check_help='echo "alias net_port_check <port> <ip/url>"'
 alias net_route_v4='route -A inet'
 alias net_route_v6='route -A inet6'
+
+#arp -- address resolution protocol

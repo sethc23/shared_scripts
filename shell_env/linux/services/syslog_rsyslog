@@ -1,8 +1,33 @@
 #!/bin/zsh
-
-alias svc_rsyslog_load='sudo service rsyslog start'
-alias svc_rsyslog_unload='sudo service rsyslog stop'
+alias svc_rsyslog_disable='sudo systemctl disable rsyslog.service syslog.socket'
+alias svc_rsyslog_enable='sudo systemctl enable /lib/systemd/system/rsyslog.service /lib/systemd/system/syslog.socket'
+alias svc_rsyslog_start='sudo systemctl start rsyslog.service'
+alias svc_rsyslog_stop='sudo systemctl stop rsyslog.service syslog.socket'
 alias svc_rsyslog_restart='sudo service rsyslog restart'
+alias svc_rsyslog_status='sudo systemctl status rsyslog.service syslog.socket'
+alias svc_rsyslog_debug='sudo /usr/local/sbin/rsyslogd -d -f $SH/rsyslog/config/debug.conf -n'
+alias svc_rsyslog_debug_check='logger --priority=local0.debug "test"'
+
+rsyslog_debug() {
+    CMD="sudo /usr/local/sbin/rsyslogd -d -f $SH/rsyslog/config/debug.conf > /tmp/rsyslog_debug"
+
+    eval("$CMD")
+    DEBUG_PID="$(echo $!)"
+
+    if [[ ! -S /dev/log ]]; then
+        while true; do
+            sleep 2
+            [[ -S /dev/log ]] && break
+        done
+    fi
+    sudo kill $DEBUG_PID
+    eval("$CMD")
+    DEBUG_PID="$(echo $!)"
+
+
+
+}
+
 
 alias sl_push_config='sudo $SERV_HOME/syslog-ng/push_syslog_config.bash'
 alias sl_start='sl_push_config; sudo /usr/local/sbin/syslog-ng'
@@ -32,8 +57,12 @@ function sl_last_log_f() {
     DIR=/var/log/syslogs
     TAG="$1"
     [[ -n "$2" ]] && log_num=$2 || log_num=1
-    log="$(env ls -t $DIR | grep $TAG | head -n +$log_num | tail -n 1)"
+    if [[ -n "$TAG" ]]; then
+        log="$(env ls -t $DIR | grep $TAG | head -n +$log_num | tail -n 1)"
+    else
+        log="$(env ls -t $DIR | head -n +$log_num | tail -n 1)"
+    fi
     echo "\n\n" | sudo tail -n 20 -f $DIR/$log
 }
 alias sl_last_log='sl_last_log_f ""'
-alias ng_last_log='sl_last_log_f "ngx"'
+

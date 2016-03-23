@@ -6,13 +6,8 @@
 
 
 
-
-
-
-
-
-
-
+# without checking out dev, force master branch to sync with dev (current) branch ...
+# git push -f . dev:master 
 
 
 # git clone --recursive git@github.com:opsengine/cpulimit.git --origin github
@@ -30,10 +25,11 @@ alias g-r-name='basename `git rev-parse --show-toplevel`'
 #  --  STATUSES (g-s*)
 alias g-s='git status'
 alias g-s-STAGED='git diff --name-only --cached | more'
+alias g-s-UNSTAGED-TRACKED='git ls-files -m'
+alias g-s-UNSTAGED-ALL='git diff --stat --name-only'
+alias g-s-UNTRACKED='git status --porcelain | grep -E "\?\?" | awk '\''{print }'\'' | tr '\''??'\'' '\'' '\'''
 alias g-s-p='git status --porcelain'
 alias g-s-p-STAGED='git diff --name-status --cached | more'
-alias g-s-UNSTAGED_ALL='git diff --stat --name-only'
-alias g-s-UNTRACKED='git status --porcelain | grep -E "\?\?" | awk '\''{print }'\'' | tr '\''??'\'' '\'' '\'''
 alias g-NOT_STAGED="git diff --name-only | more"
 alias g-NOT_STAGED-MOD="git diff --name-status | more | grep ^M | sed 's/^M\s*//g'"
 function g-S-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g';}
