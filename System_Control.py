@@ -1,4 +1,4 @@
-#! ENV/bin/python
+#!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
 # _ARC_DEBUG
 """
@@ -1932,7 +1932,7 @@ class System_Servers:
         return
 
     @arg('shares',nargs='+',default='',choices=parse_choices_from_exec("""
-                                                                    echo `ls /Volumes`;
+                                                                    echo `ls /Volumes > /dev/null 2>&1`;
                                                                  """).strip('\n').split()+['ALL'],
             help='share dirs on this server')
     def umnt(self,dirs=['ALL'],local=True):
@@ -2058,7 +2058,7 @@ class System_Status:
 ### ---                      ---
 
 if __name__ == '__main__':
-    # run_custom_argparse()
+    run_custom_argparse()
     import os
     f                                       =   __file__
     THIS_MODULE                             =   os.path.dirname(os.path.abspath(f)) + f[f.rfind('/'):]

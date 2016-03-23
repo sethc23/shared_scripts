@@ -68,7 +68,8 @@ function get_my_ip_int_f() { \
     fi;}
 function get_my_ip_ext_f() { \
     curl -s 'http://ipv4.nsupdate.info/myip' | \
-    sed -r 's/^([0-9]{,3}\.[0-9]{,3}\.[0-9]{,3}\.[0-9]{,3})/\1/g'; }
+    sed -r 's/^([0-9]{,3}\.[0-9]{,3}\.[0-9]{,3}\.[0-9]{,3})/\1/g' | \
+    xargs -I '{}' printf '%s\n' {}; }
 alias get_my_ip_int='get_my_ip_int_f'
 alias get_my_ip_ext='get_my_ip_ext_f'
 function pull_shared_scripts() { a=`pwd`; cd $HOME_ENV/.scripts; git pull sub_dest master; source_bash; cd $a;}

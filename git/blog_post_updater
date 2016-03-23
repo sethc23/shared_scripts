@@ -17,7 +17,6 @@ import os,re
 from subprocess import Popen as sub_popen
 from subprocess import PIPE as sub_PIPE
 
-
 def run_cmd(cmd):
     p = sub_popen(cmd,stdout=sub_PIPE,shell=True)
     (_out,_err) = p.communicate()

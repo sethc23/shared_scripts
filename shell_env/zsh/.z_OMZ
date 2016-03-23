@@ -1,3 +1,4 @@
+#!/bin/zsh
 
 # ZSH_THEME="robbyrussell"  # see $HOME_ENV/.oh-my-zsh/themes/
 # CASE_SENSITIVE="true"
@@ -16,9 +17,9 @@
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
-#plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/.oh-my-zsh/custom/plugins/
+#plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
 
-plugins=(zsh-completions autojump last-working-dir git)
+plugins=(zsh-completions autojump last-working-dir git python)
 
 # ------------------------
 # ------------------------
@@ -33,3 +34,8 @@ source $ZSH/oh-my-zsh.sh
 
 source $ZSH/oh-my-zsh.sh
 [[ $USER = "root" ]] && alias compinit='compinit -i'
+
+# autoload bashcompinit
+# bashcompinit
+# source ~/.scripts/shell_env/zsh/completers/py-argcomplete.sh
+# eval "$(register-python-argcomplete /home/ub2/.scripts/System_Control.py)"

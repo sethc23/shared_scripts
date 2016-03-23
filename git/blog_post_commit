@@ -30,7 +30,7 @@ run_this(){
 
 
 if [ "$1" = "queue" ]; then
-    at NOW + 1 minute < $THIS_FILE > /dev/null 2>&1
+    at NOW + 2 minutes < $THIS_FILE > /dev/null 2>&1
 else
     run_this
 fi

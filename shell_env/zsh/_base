@@ -16,4 +16,10 @@ source $HOME_ENV/.scripts/shell_env/zsh/_env
 source $HOME_ENV/.scripts/shell_env/_base
 source $SH/local_config/shell/.shell_local
 
+autoload bashcompinit
+bashcompinit
 for i in `env find $HOME_ENV/.scripts/shell_env/zsh/completers -maxdepth 1 -type f`; do source $i; done
+
+
+# source ~/.scripts/shell_env/zsh/completers/py-argcomplete.sh
+# eval "$(register-python-argcomplete /home/ub2/.scripts/System_Control.py)"

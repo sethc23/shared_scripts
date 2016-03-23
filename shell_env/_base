@@ -41,7 +41,9 @@ export ALIAS='.alias_s'$SERVER_ID
 
 [[ -f $SERV_HOME/local_config/shell/$ALIAS ]] && source $SERV_HOME/local_config/shell/$ALIAS
 
-export GIT_CONFIG=$HOME_ENV/.gitconfig
+# Enabling sets all repo configs to same, so submodules get mixed'
+#export GIT_CONFIG=$HOME_ENV/.gitconfig
+
 export J=/home/jail/home/serv
 export CLIENT_HOST=$SERVER
 export BD=$HOME/BD_Scripts
