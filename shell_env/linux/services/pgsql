@@ -20,7 +20,9 @@ alias pg_tmp_start_with_echo_and_debug='pg_tmp_start_with_echo_and_debug'
 alias pg_tmp_start="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl start -D $PG_DATA_DIR -o\" -i\"'"
 alias pg_tmp_stop="sudo su postgres -c '/usr/lib/postgresql/9.4/bin/pg_ctl stop -m fast -D $PG_DATA_DIR -o\" \"'"
 
-alias psql='sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres"'
+alias psql94='sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres"'
+alias psql95='sudo su postgres -c "psql --host=0.0.0.0 --port=8801 --username=postgres"'
+
 function psql_c() { sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres -c '$1'"; }
 function pg_load_dump_file() { \
     OUT_FILE_NAME=echo "$1" | sed -r 's/(.*)\/([^/]*)(\.sql)$/\2_OUT/'; \

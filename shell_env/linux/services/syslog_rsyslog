@@ -11,7 +11,7 @@ alias svc_rsyslog_debug_check='logger --priority=local0.debug "test"'
 rsyslog_debug() {
     CMD="sudo /usr/local/sbin/rsyslogd -d -f $SH/rsyslog/config/debug.conf > /tmp/rsyslog_debug"
 
-    eval("$CMD")
+    exec $CMD
     DEBUG_PID="$(echo $!)"
 
     if [[ ! -S /dev/log ]]; then
@@ -21,7 +21,7 @@ rsyslog_debug() {
         done
     fi
     sudo kill $DEBUG_PID
-    eval("$CMD")
+    exec $CMD
     DEBUG_PID="$(echo $!)"
 
 

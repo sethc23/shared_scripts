@@ -13,8 +13,8 @@ esac
 
 
 source $HOME_ENV/.profile
-#source $HOME_ENV/.scripts/shell_env/bash/_env
 source $HOME_ENV/.scripts/shell_env/_base
+source ~/.shell_local
 
 if [[ -n "$BASH_VERSION" ]]; then
     DIR="$HOME_ENV/.scripts/shell_env/bash/completers"

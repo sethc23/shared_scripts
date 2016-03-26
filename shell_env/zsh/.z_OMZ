@@ -39,3 +39,7 @@ source $ZSH/oh-my-zsh.sh
 # bashcompinit
 # source ~/.scripts/shell_env/zsh/completers/py-argcomplete.sh
 # eval "$(register-python-argcomplete /home/ub2/.scripts/System_Control.py)"
+
+export WORKON_HOME=$HOME_ENV/.virtualenvs
+export PROJECT_HOME=$HOME_ENV/.dev
+source /usr/local/bin/virtualenvwrapper.sh
