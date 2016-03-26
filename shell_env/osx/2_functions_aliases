@@ -50,7 +50,7 @@ alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profi
 unalias ls > /dev/null 2>&1
 alias ls='ls -AlBcuFUhG --color=tty'
 
-ps_cut(){ "$@"  | cut -c -$(tput cols) ; }
+ps_cut(){ bash -c "ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2}" | cut -c -$(tput cols) ; }
 alias ps='ps_cut ps'
 alias ps-mem='ps -m'
 alias ps-cpu='ps -r'
