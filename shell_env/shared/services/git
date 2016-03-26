@@ -8,6 +8,7 @@
 
 # without checking out dev, force master branch to sync with dev (current) branch ...
 # git push -f . dev:master 
+# git clean -dfx
 
 
 # git clone --recursive git@github.com:opsengine/cpulimit.git --origin github

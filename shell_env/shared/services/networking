@@ -7,7 +7,7 @@ alias ports_sockets='netstat -lx'
 alias ports_ssh='lsof -i tcp | grep ^ssh'
 
 function net_dig_simple_f() { dig $1 +nostats +nocomments +nocmd; }
-alias net_dig_simple='dig_simple_f'
+alias net_dig_simple='net_dig_simple_f'
 
 function net_port_check_f(){
     nmap -p $1 $2

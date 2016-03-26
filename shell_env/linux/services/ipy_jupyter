@@ -17,7 +17,7 @@ alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/pytho
 
 
 alias svc_ipy_enable='sudo systemctl link $SERV_HOME/ipy_jupyter/jupyter/jupyter-notebook.service; sudo systemctl daemon-reload'
-alias svc_ipy_disable='sudo systemctl disable $SERV_HOME/ipy_jupyter/jupyter/jupyter-notebook.service; sudo systemctl daemon-reload'
+alias svc_ipy_disable='sudo systemctl disable jupyter-notebook.service; sudo systemctl daemon-reload'
 alias svc_ipy_start='sudo systemctl start jupyter-notebook.service'
 alias svc_ipy_restart='sudo systemctl restart jupyter-notebook.service'
 alias svc_ipy_stop='sudo systemctl stop jupyter-notebook.service'

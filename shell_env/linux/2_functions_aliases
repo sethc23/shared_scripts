@@ -48,7 +48,14 @@ alias cel_env='cd $SERV_HOME/aprinto; source ENV/bin/activate'
 
 alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'
-alias ps='ps -ef'
+
+alias ps-command='ps --sort=comm'
+alias ps-cpu='ps --sort=+%cpu'
+alias ps-mem='ps --sort=+%mem'
+alias ps-latest='ps --sort=-etime'
+alias ps-pid='ps --sort=+ppid,+pid'
+alias ps-threads='ps -f --sort=+ppid,+pid'
+
 alias pydoc='python -m pydoc'
 alias show_temp='sensors'
 alias uuid_random='uuidgen -r'

@@ -116,6 +116,7 @@ alias z_local="emacs $SH/local_config/shell/.shell_local"
 alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
 
 
+
 #alias aprinto_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 aprinto'
 
 
@@ -181,7 +182,7 @@ function iterm2_print_user_vars() {
     iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
 
 }
-
+alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
 
 
 alias kill_by='f_kill_by'
@@ -211,8 +212,9 @@ alias ports_listen_2='sudo netstat -ltnp'
 alias ports_listen_3='nettop'
 alias ports_sockets='netstat -lx'
 alias ports_ssh='lsof -i tcp | grep ^ssh'
-function dig_simple_f() { dig $1 +nostats +nocomments +nocmd; }
-alias dig_simple='dig_simple_f'
+
+alias ps='ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args'
+alias ps-threads-full='pstree'
 
 alias pydoc='python -m pydoc'
 alias pyprofileread='pyprofileread'
