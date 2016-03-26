@@ -39,13 +39,15 @@ function g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*
 alias g-b='git branch -avv'
 alias g-b-DELETE='git branch -d'
 alias g-b-r-DELETE='git branch --remotes --delete'
-alias g-b-last_tag='git describe --abbrev=0 --tags'
-
+alias g-b-name='git rev-parse --abbrev-ref HEAD'
+g_b_sync(){ git push -f . $(g-b-name):$1; }
+alias g-b-sync-force='g_b_sync'
+alias g-b-push-other=''
 
 #  --  DEV BRANCH (g-D*):
 function g_push_dev_and_master() { \
     g_add_commit_push; \
-    dev_branch=`git rev-parse --abbrev-ref HEAD`; \
+    dev_branch=$(g-b-name); \
     git checkout master; \
     #git merge --stat --no-edit -X theirs \
     #    $(git branch -v | sed -r 's/(\*|\s) //' | \
@@ -56,16 +58,18 @@ function g_push_dev_and_master() { \
     git branch -avv; }
 alias g-DX='g_push_dev_and_master'
 
-
 #  --  COMMITS (g-c*)
 alias g-c='git commit -m'
-function g-c_EMAIL() { git show -s --format=%ce $1 | head -n 1; }
-function g-c_DATE() { git show -s --format=%ai $1 | head -n 1; }
-function g-c_DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
+function g-c-EMAIL() { git show -s --format=%ce $1 | head -n 1; }
+function g-c-DATE() { git show -s --format=%ai $1 | head -n 1; }
+function g-c-DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
 alias g-c-latest='git log --abbrev-commit --pretty=oneline | head -n 1 | cut -d \  -f 1'
 function  g-c-between(){
     git log $1..$2 --pretty=oneline | wc -l;
 }
+
+#  --  COMMITS (g-t*)
+alias g-t-last='git describe --abbrev=0 --tags'
 
 #  --  FILES (g-f*)
 alias g-f-latest='git diff-tree --no-commit-id --name-only -r $(g-c-latest)'

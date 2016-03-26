@@ -27,13 +27,12 @@ plugins=(zsh-completions autojump last-working-dir git python)
 export ZSH=$HOME_ENV/.scripts/shell_env/zsh/OMZ
 
 source $ZSH/oh-my-zsh.sh
-[[ $USER = "root" ]] && alias compinit='compinit -i'
 
 [[ -L $HOME_ENV/.shell_local ]] && source $HOME_ENV/.shell_local
 [[ -z "$ZSH_THEME" ]] && ZSH_THEME="candy"
 
 source $ZSH/oh-my-zsh.sh
-[[ $USER = "root" ]] && alias compinit='compinit -i'
+
 
 # autoload bashcompinit
 # bashcompinit
