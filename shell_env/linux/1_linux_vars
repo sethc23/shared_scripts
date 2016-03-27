@@ -11,15 +11,14 @@ export SSHFS=/usr/bin/sshfs
 
 non_root_user=$(getent passwd | grep "^ub" | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g')
 export SERV_HOME=/home/$non_root_user/$SERVER
-
 export IPY=$SERV_HOME/ipy_jupyter/notebooks
+
 #export PYTHONPATH=$IPY/scripts/startup.py
 
-export PGCLUSTER='9.4/main'
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
 
-export LUA_PATH=$LUA_PATH:$BD/Lua:$BD/Lua/luajit:$BD/Lua:$BD/Lua/lualib";/usr/local/openresty/luajit/share/lua/5.1/?.lua;"
-export LUA_CPATH=$LUA_CPATH";/usr/local/openresty/luajit/lib/lua/5.1/socket/?.so;"
+# export LUA_PATH=$LUA_PATH:$BD/Lua:$BD/Lua/luajit:$BD/Lua:$BD/Lua/lualib";/usr/local/openresty/luajit/share/lua/5.1/?.lua;"
+# export LUA_CPATH=$LUA_CPATH";/usr/local/openresty/luajit/lib/lua/5.1/socket/?.so;"
 
 export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/rsyslog/
@@ -55,7 +54,7 @@ export RABBITMQ_SERVER_START_ARGS="--port=15672 --username=ub2 --password=mq_mon
 
 # ---------------------------------------
 # RVM
-export PATH="$PATH:$HOME/.rvm/bin"
+# export PATH="$PATH:$HOME_ENV/.rvm/bin"
 
 #<<<<<-------------------------------<<<<
 

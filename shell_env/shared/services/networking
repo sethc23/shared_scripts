@@ -55,12 +55,14 @@ alias dn_remote_tunnel_open="echo \"$(cat /etc/ssh/sshd_config | grep \^Port | c
 alias dn_remote_tunnel_close="echo '$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)' | xargs -I '{}' kill -9 `ps -awx | grep 1{} | grep -v grep | cut -d \  -f1` > /dev/null 2>&1"
 dn_update_ip(){ \
     URL="http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID";
-    curl -s -H "Content-Type: application/json" --url $URL -X POST -d \
-"'"+\
-'{"local_addr":"'+\
-"$(get_my_ip_int_f)"+\
-'","ext_addr":"'+\
-"$(get_my_ip_ext_f)"+\
-'"}'+\
-"'";
+
+    JSON_1=$(printf '{"s_user":"%s","s_host":"%s"}' "$USER" "$(hostname)");\
+    JSON_2=$(printf '{"home_env":"%s"}' "$HOME_ENV" );\
+    JSON_3=$(printf '{"local_port":"%s"}' "$(cat $HOME_ENV/.shell_local | grep local_port | cut -d = -f2)");\
+    JSON_4=$(printf '{"local_ip":"%s","ext_ip":"%s"}' "$(get_my_ip_int_f)" "$(get_my_ip_ext_f)");\
+    JSON_5=$(printf '{"git_sync":%s}' "$(cat $HOME_ENV/.shell_local | grep git_sync | cut -d = -f2)")
+    JSONS=($JSON_1 $JSON_2 $JSON_3 $JSON_4 $JSON_5)
+    a='{}'; for i in $JSONS; do a=$(jq -M -n "$a * $i"); done
+    
+    curl -s -H "Content-Type: application/json" --url $URL -X POST -d $a
 }
