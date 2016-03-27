@@ -54,13 +54,13 @@ alias net_route_v6='route -A inet6'
 alias dn_remote_tunnel_open="echo \"$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)\" | xargs -I '{}' ssh -nNR 1{}:localhost:{} ub2  > /dev/null 2>&1 &"
 alias dn_remote_tunnel_close="echo '$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)' | xargs -I '{}' kill -9 `ps -awx | grep 1{} | grep -v grep | cut -d \  -f1` > /dev/null 2>&1"
 dn_update_ip(){ \
-    'curl -s -H "Content-Type: application/json" -X POST -d '\
-    "'"\
-    '{"local_addr":"'\
-    "$(get_my_ip_int_f)"\
-    '","ext_addr":"'\
-    "$(get_my_ip_ext_f)"\
-    '"}'\
-    "'"\
-    ' --url "http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID"';
+    URL="http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID";
+    curl -s -H "Content-Type: application/json" --url $URL -X POST -d \
+"'"+\
+'{"local_addr":"'+\
+"$(get_my_ip_int_f)"+\
+'","ext_addr":"'+\
+"$(get_my_ip_ext_f)"+\
+'"}'+\
+"'";
 }
