@@ -24,15 +24,6 @@ alias semacs='sudo emacs -nw'
 
 alias jupyter_nbconvert='jupyter-nbconvert --to=notebook --nbformat=3 --inplace $SERV_HOME/ipython/notebooks/'
 
-alias ipt='sudo iptables -nL -v'
-alias ipt_flush='sudo iptables -F'
-alias ipt_nat='sudo iptables -t nat -nL -v'
-alias ipt_nat_flush='sudo iptables -t nat -F'
-alias ipt_proxy='sudo iptables -t nat -I OUTPUT 1 -o eth0 -m owner \! --gid-owner 1003 -p tcp --match multiport --dports 80,443 -j REDIRECT --to-port 10052'
-alias ipt_proxy_2='sudo iptables -t nat -I PREROUTING 1 -o eth0 -m owner \! --gid-owner 1003 -p tcp --match multiport --dports 80,443 -j REDIRECT --to-port 10052'
-
-
-
 
 function f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
 alias kill_by='f_kill_by'

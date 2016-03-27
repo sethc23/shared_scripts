@@ -1,5 +1,36 @@
 #!/bin/zsh
 
+function get_my_ip_int_f() { \
+    if [ `uname` = 'Darwin' ]; then
+        _test=`ipconfig getifaddr en0`
+        if [ -z $_test ]; then
+            _test=`ipconfig getifaddr en1`
+            if [ -z $_test ]; then
+                echo 'No ethernet or wireless internal IP.'
+            else
+                echo $_test
+            fi
+        else
+            echo $_test
+        fi
+    else
+        ip route get 8.8.8.8 | awk '{print $NF; exit}'
+    fi;}
+function get_my_ip_ext_f() { \
+    curl -s 'http://ipv4.nsupdate.info/myip' | \
+    sed -r 's/^([0-9]{,3}\.[0-9]{,3}\.[0-9]{,3}\.[0-9]{,3})/\1/g' | \
+    xargs -I '{}' printf '%s\n' {}; }
+alias get_my_ip_int='get_my_ip_int_f'
+alias get_my_ip_ext='get_my_ip_ext_f'
+
+alias ipt='sudo iptables -nL -v'
+alias ipt_flush='sudo iptables -F'
+alias ipt_nat='sudo iptables -t nat -nL -v'
+alias ipt_nat_flush='sudo iptables -t nat -F'
+alias ipt_proxy='sudo iptables -t nat -I OUTPUT 1 -o eth0 -m owner \! --gid-owner 1003 -p tcp --match multiport --dports 80,443 -j REDIRECT --to-port 10052'
+alias ipt_proxy_2='sudo iptables -t nat -I PREROUTING 1 -o eth0 -m owner \! --gid-owner 1003 -p tcp --match multiport --dports 80,443 -j REDIRECT --to-port 10052'
+
+
 alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'
 alias ports_listen_3='nettop'
@@ -22,12 +53,14 @@ alias net_route_v6='route -A inet6'
 # <<<   ---   DISTRIBUTED NETWORK (dn_*)   ---   >>>
 alias dn_remote_tunnel_open="echo \"$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)\" | xargs -I '{}' ssh -nNR 1{}:localhost:{} ub2  > /dev/null 2>&1 &"
 alias dn_remote_tunnel_close="echo '$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)' | xargs -I '{}' kill -9 `ps -awx | grep 1{} | grep -v grep | cut -d \  -f1` > /dev/null 2>&1"
-alias dn_update_ip='curl -s -H "Content-Type: application/json" -X POST -d '\
-"'"\
-'{"local_addr":"'\
-"$(get_my_ip_int)"\
-'","ext_addr":"'\
-"$(get_my_ip_ext)"\
-'"}'\
-"'"\
-' --url "http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID"'
+dn_update_ip(){ \
+    'curl -s -H "Content-Type: application/json" -X POST -d '\
+    "'"\
+    '{"local_addr":"'\
+    "$(get_my_ip_int_f)"\
+    '","ext_addr":"'\
+    "$(get_my_ip_ext_f)"\
+    '"}'\
+    "'"\
+    ' --url "http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID"';
+}

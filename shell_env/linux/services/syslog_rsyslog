@@ -5,7 +5,7 @@ alias svc_rsyslog_start='sudo systemctl start rsyslog.service'
 alias svc_rsyslog_stop='sudo systemctl stop rsyslog.service syslog.socket'
 alias svc_rsyslog_restart='sudo service rsyslog restart'
 alias svc_rsyslog_status='sudo systemctl status rsyslog.service syslog.socket'
-alias svc_rsyslog_debug='sudo /usr/local/sbin/rsyslogd -d -f $SH/rsyslog/config/debug.conf -n'
+alias svc_rsyslog_debug='sudo /usr/local/sbin/rsyslogd -d -f /etc/rsyslog.d/rsyslog.conf -n'
 alias svc_rsyslog_debug_check='logger --priority=local0.debug "test"'
 
 rsyslog_debug() {

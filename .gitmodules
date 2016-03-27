@@ -7,3 +7,6 @@
 [submodule "shell_env/zsh/custom_plugins/zsh-completions"]
 	path = shell_env/zsh/custom_plugins/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
+[submodule "syscontrol"]
+	path = syscontrol
+	url = git@github.com:sethc23/syscontrol.git

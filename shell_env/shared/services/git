@@ -3,12 +3,7 @@
 
 
 
-
-
-
 # without checking out dev, force master branch to sync with dev (current) branch ...
-# git push -f . dev:master 
-# git clean -dfx
 
 
 # git clone --recursive git@github.com:opsengine/cpulimit.git --origin github
@@ -22,6 +17,18 @@
 
 #  --  REPOS (g-r*)
 alias g-r-name='basename `git rev-parse --show-toplevel`'
+function g-r-init_w_descr() { \
+    git init; rm .git/config; cd .git;
+    cp $HOME_ENV/.gitconfig ./config; cd ..; emacs .git/config;
+    git-hub create --desc="$1";
+    #pwd | sed -r 's/.*\/([^\/]+)$/\1/g' | xargs -I '{}' git remote add github git@github.com:sethc23/{}.git;
+    [[ -n "echo $(git remote show) | grep origin" ]] && git remote remove origin;
+    git push github dev; git branch --set-upstream-to=github/dev;
+    git checkout -b master; git push github master; git branch --set-upstream-to=github/master;
+    git checkout -b dev;
+    git branch -avv; \
+}
+
 
 #  --  STATUSES (g-s*)
 alias g-s='git status'
@@ -41,9 +48,12 @@ alias g-b='git branch -avv'
 alias g-b-DELETE='git branch -d'
 alias g-b-r-DELETE='git branch --remotes --delete'
 alias g-b-name='git rev-parse --abbrev-ref HEAD'
-g_b_sync(){ git push -f . $(g-b-name):$1; }
-alias g-b-sync-force='g_b_sync'
-alias g-b-push-other=''
+g_b_sync(){ \
+    git push -f . $(g-b-name):$1; 
+    REMOTE_NAME=$(git rev-parse --abbrev-ref --symbolic-full-name @{upstream} | cut -d / -f1);
+    git push $REMOTE_NAME $1; }
+alias g-b-push-other='g_b_sync'
+alias g-b-clean='git clean -dfx'
 
 #  --  DEV BRANCH (g-D*):
 function g_push_dev_and_master() { \
@@ -126,22 +136,6 @@ alias gs-update='git pull && git submodule init && git submodule update && git s
 # git submodule add --name seamless_yelp_scraping -- git@github.com:sethc23/seamless_yelp_scrapi
 # git submodule add -b custom --name PastebinPython -f -- git@github.com:sethc23/PastebinPython.
 # git submodule add -- git@github.com:sethc23/aporo aporo
-
-
-
-
-
-function g-init_w_descr() { git init; rm .git/config; cd .git; \
-    cp $HOME_ENV/.gitconfig ./config; cd ..; emacs .git/config; \
-    git-hub create --desc="$1"; \
-    pwd | sed -r 's/.*\/([^\/]+)$/\1/g' | xargs -I '{}' git remote add github git@github.com:sethc23/{}.git; \
-    git push github master; \
-    git branch --set-upstream-to=github/master; \
-    git checkout -b dev && git push github dev; \
-    git branch --set-upstream-to=github/dev; \
-    git branch -avv; }
-    
-
 
 
 
