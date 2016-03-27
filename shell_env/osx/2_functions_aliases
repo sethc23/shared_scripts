@@ -35,6 +35,7 @@ alias wifi_on='networksetup -setairportpower en1 on'
 alias wifi_scan='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport scan'
 alias wifi_connect='networksetup -setairportnetwork en1'
 alias wifi_log_tail='tail -f /var/log/wifi.log'
+alias wifi_bssid='airport-bssid'
 
 
 function open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
