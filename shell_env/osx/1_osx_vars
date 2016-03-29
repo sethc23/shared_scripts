@@ -13,7 +13,7 @@ export ROOT_GRP=wheel
 export SSHFS=/opt/local/bin/sshfs
 export SERV_HOME=$HOME_ENV/$SERVER
 
-export PGDATA=/opt/local/var/db/postgresql93/defaultdb/
+export PGDATA=/opt/local/var/db/postgresql95/defaultdb/
 export IPY=$HOME_ENV/$SERVER/ipython
 
 #function assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}

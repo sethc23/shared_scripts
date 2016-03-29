@@ -1,9 +1,11 @@
-#! /Users/admin/.scripts/ENV/bin/python
+#!/Users/admin/.virtualenvs/devenv/bin/python
 
 from time                                   import sleep
 from bs4                                    import BeautifulSoup            as BS
 import                                          pandas                      as pd
 from sqlalchemy                             import create_engine
+import os,sys
+sys.path.append(os.environ['HOME_ENV']+'/.scripts')
 from system_settings                        import DB_HOST,DB_PORT
 from subprocess                             import Popen                    as sub_popen
 from subprocess                             import PIPE                     as sub_PIPE
@@ -14,7 +16,8 @@ py_path.append(                                 os_environ['BD'] + '/html')
 from webpage_scrape                         import scraper
 D                                           =   scraper('phantom').browser.window
 
-username,pw                                 =   'sethc23','ferrarif50'
+from secrets                                import github
+username,pw                                 =   'sethc23',github
 login                                       =   'https://github.com/session'
 homepage                                    =   'https://github.com/sethc23'
 
@@ -39,7 +42,7 @@ D.get(                                          homepage)
 src                                         =   D.page_source
 D.quit()
 
-h                                   =   BS(src)
+h                                   =   BS(src, "html.parser")
 t                                   =   h.findAll('svg',attrs={'class':"js-calendar-graph-svg"})[0]
 x                                   =   str(t).replace('\n','')
 
@@ -58,15 +61,18 @@ st_date                             =   x[t:t+10]
 t                                   =   x.rfind('data-date')+11
 end_date                            =   x[t:t+10]
 
+DB_HOST                             =   '0.0.0.0'
+DB_PORT                             =   '8800'
+
 conn                                =   create_engine(r'postgresql://postgres:postgres@%s:%s/seth' % (DB_HOST,DB_PORT),
                                                        encoding='utf-8',
                                                        echo=False)
 q                                   =   """
-                                        select to_char(attendance_date,'YYYY-MM-DD') date,lift,cardio
-                                        from gym
-                                        where attendance_date between date '%(st_date)s'
-                                        and (date '%(end_date)s' + time '23:59')
-                                        order by attendance_date asc
+                                        SELECT TO_CHAR(attendance_date,'YYYY-MM-DD') date,lift,cardio
+                                        FROM gym
+                                        WHERE attendance_date BETWEEN date '%(st_date)s'
+                                        AND (date '%(end_date)s' + time '23:59')
+                                        ORDER BY attendance_date ASC
                                         """ % {'st_date':st_date,'end_date':end_date}
 df                                  =   pd.read_sql(q,conn)
 
