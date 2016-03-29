@@ -20,7 +20,7 @@ alias ssh-s2='ssh_f ub2'
 alias ssh-s6='ssh_f ub6'
 alias ssh-s7='ssh_f ub7'
 alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
-alias ssh-psql='ssh -nNL localhost:8800:localhost:8800 ub2 &'
+alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
 
 # <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>
 #sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
@@ -32,7 +32,7 @@ alias wifi_renew='sudo ipconfig set en1 DHCP'
 alias wifi_hardware='networksetup -listallhardwareports'
 alias wifi_off='networksetup -setairportpower en1 off'
 alias wifi_on='networksetup -setairportpower en1 on'
-alias wifi_scan='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport scan'
+alias wifi_scan='airport scan'
 alias wifi_connect='networksetup -setairportnetwork en1'
 alias wifi_log_tail='tail -f /var/log/wifi.log'
 alias wifi_bssid='airport-bssid'
