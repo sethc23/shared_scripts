@@ -12,4 +12,4 @@
 	url = https://github.com/sethc23/syscontrol.git
 [submodule "sysparse"]
         path = sysparse
-        url = https://github.com/sethc23/syscontrol.git
+        url = https://github.com/sethc23/sysparse.git
