@@ -1,16 +1,19 @@
 #!/bin/zsh
 
-function link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
     $IPY/ENV/lib/python2.7/site-packages/; }
-function link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
     $APRINTO/ENV/lib/python2.7/site-packages/; }
-function link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
-function link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
+link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
+link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
+f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
+f_mp_py() { sudo port select python python$1; }
+f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
 
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 
 alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
-function ssh_f(){
+ssh_f(){
     [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
     mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1 > /dev/null 2>&1;
 }
@@ -21,6 +24,7 @@ alias ssh-s6='ssh_f ub6'
 alias ssh-s7='ssh_f ub7'
 alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
 alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
+# ssh -nNL localhost:12501:localhost:12501 ub1 &
 
 # <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>
 #sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
@@ -38,7 +42,7 @@ alias wifi_log_tail='tail -f /var/log/wifi.log'
 alias wifi_bssid='airport-bssid'
 
 
-function open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
+open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 alias open_color_picker='open_color_picker_f'
 
 # <<< --- OSX SETTINGS --- >>>
@@ -104,7 +108,7 @@ alias sys_log="tail -f /var/log/system.log"
 
 alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
 
-function test_acro_js() {
+test_acro_js() {
     js_content="\
 from appscript import app 
 app(u'Adobe Acrobat Pro').activate()
