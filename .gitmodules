@@ -9,4 +9,7 @@
 	url = https://github.com/zsh-users/zsh-completions.git
 [submodule "syscontrol"]
 	path = syscontrol
-	url = git@github.com:sethc23/syscontrol.git
+	url = https://github.com/sethc23/syscontrol.git
+[submodule "sysparse"]
+        path = sysparse
+        url = https://github.com/sethc23/syscontrol.git
