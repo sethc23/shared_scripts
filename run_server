@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+# ONLY RUN IF ROOT
+[ "$(whoami)" != "root" ] && echo "Run as root" && exit
+
+source "$HOME_ENV/.scripts/shell_env/_base"
+
+get_services(){
+    [[ "$SERVER_ID" = "2" ]] && \
+        START_SERVICES=('rsyslog' 'pgsql' 'ng' 'ipy' 'rw') && \
+        STOP_SERVICES=('pgsql' 'ng' 'ipy' 'rw')
+    }
+
+disable_all() {
+    get_services
+    for i in $STOP_SERVICES; do
+        cmd=svc_"$i"_stop
+        eval ${cmd}
+        cmd=svc_"$i"_disable
+        eval ${cmd}
+    done
+
+    }
+[[ "$1" = "disable_all" ]] && disable_all
+
+enable_all() {
+    get_services
+    for i in $START_SERVICES; do
+        cmd=svc_"$i"_enable
+        eval ${cmd}
+        cmd=svc_"$i"_start
+        eval ${cmd}
+    done
+    }
+[[ "$1" = "enable_all" ]] && enable_all
+
+status_all() {
+    get_services
+    for i in $START_SERVICES; do
+        cmd=svc_"$i"_status
+        eval ${cmd}
+    done
+    }
+[[ "$1" = "status_all" ]] && status_all
+

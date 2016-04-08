@@ -1,0 +1,4 @@
+#!/bin/bash
+
+PID="$(env ps -awx | grep $1 | grep -v 'grep' | column -t | tr -s ' ' | cut -d \  -f1)"
+[[ -n "$PID" ]] && sudo kill -9 $PID
