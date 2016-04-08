@@ -43,7 +43,7 @@ alias wifi_on='networksetup -setairportpower en1 on'
 alias wifi_scan='airport scan'
 alias wifi_connect='networksetup -setairportnetwork en1'
 alias wifi_log_tail='tail -f /var/log/wifi.log'
-alias wifi_bssid='airport-bssid'
+alias wifi_bssid='airport-bssid en1'
 
 
 open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
