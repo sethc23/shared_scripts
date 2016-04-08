@@ -1,8 +1,10 @@
 #!/bin/zsh
 
-alias sysd_all='sudo systemctl -all'
-function sysd_show_unit_path_f() {
+sysd_show_unit_path_f() {
     sudo systemctl show $1 | grep FragmentPath | sed 's/FragmentPath=//g';   
 }
-alias sysd_show_unit_path='sysd_show_unit_path_f'
+alias sysd_all='sudo systemctl -all'
 alias sysd_reload='sudo systemctl daemon-reload'
+alias sysd_show_unit_path='sysd_show_unit_path_f'
+alias sysd_process_tree_recent='sudo systemd-analyze critical-chain --fuzz 1h'
+alias sysd_process_hog='sudo systemd-analyze blame'
