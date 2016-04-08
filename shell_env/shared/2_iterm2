@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+# load special functions and aliases if shell controlled by iTerm2
+#if [ "$(( `printenv ITERM_PROFILE | wc -l` ))" -ne 0 ]; then
+#    echo $'\e]50;SetProfile=$USER\007'
+#fi
+#function iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
+export iterm2_hostname="$USER"
+iterm2_print_user_vars() {
+    iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
+    iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-);
+    iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
+}
+alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"

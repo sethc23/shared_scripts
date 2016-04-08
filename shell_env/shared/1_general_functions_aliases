@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 cde_f() {
     if [[ -z $1 ]]; then
         if [[ -z `env ls | env grep ENV` ]]; then
@@ -16,16 +17,11 @@ cde_f() {
         fi
     fi
 }
-alias cde='cde_f'
-
-assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
-alias assign_help='echo "assign some_variable < <(some code)"'
-gdiff() { git diff $@ | cdiff -s -w 110; }
-djJSON() { f_getJSON http://0.0.0.0/api_view/$1/?format=json; }
+copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
 diff_dir_all() { colordiff --brief --recursive $1 $2; }
 diff_dir_left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 diff_dir_right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
-diff_dir_right_copy_left { 
+diff_dir_right_copy_left() { 
     here=$(echo $(pwd))
     f=$(diff_dir_right $1 $2 | awk '{print $3$4}' | sed 's/:/\//g' | sed 's/\/\//\//g');
     repl_part=$(echo $2 | sed 's/\//\\\//g');
@@ -49,177 +45,111 @@ diff_files_left() { colordiff --side-by-side --suppress-common-lines --ignore-al
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]<[^a-zA-Z0-9]/ {print}'; }
 diff_files_right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; }
+djJSON() { f_getJSON http://0.0.0.0/api_view/$1/?format=json; }
 dl_unzip() { wget $1; tar -xzvf $1; }
-source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
-
-pull_shared_scripts() { a=`pwd`; cd $HOME_ENV/.scripts; git pull sub_dest master; source_bash; cd $a;}
-push_shared_scripts() { cd $HOME_ENV/.scripts;\
-    git add -- .alias_shared;\
-    git add -- .alias_linux;\
-    git commit -m "updating aliases";\
-    git push sub_dest master; }
-edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
+edit_bash_prof() { $EDITOR "$HOME_ENV/$SHELL_CONFIG"; source_bash; }
 edit_bash_share() { $EDITOR $HOME_ENV/.scripts/.alias_shared; source_bash; }
 edit_linux_share() { $EDITOR $HOME_ENV/.scripts/.alias_linux; source_bash; }
-edit_bash_prof() { $EDITOR "$HOME_ENV/$SHELL_CONFIG"; source_bash; }
-newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
-newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
-newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
+edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
 f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
 f_find_file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
-f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 f_find_folder() { sudo find -H -s $1 -type d -iregex "$2"; }
+f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 f_getJSON() { curl -H 'Accept: application/json; indent=4' $1; }
-f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
-f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
-f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
-f_mp_py() { sudo port select python python$1; }
-f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
 f_sencha_build() { cd $APORO/static/sencha; sudo sencha app build production; }
-mp_py_select() { echo "admin" | sudo port select python python$1; }
-pyprofilewrite() { kernprof.py -l $1; }
+gdiff() { git diff $@ | cdiff -s -w 110; }
+jq_merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
+newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
+newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
+newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
 pyprofileread() { python -m line_profiler $1.lprof; }
+pyprofilewrite() { kernprof.py -l $1; }
 RD() { cd $BD/RD/src; python seamless.py; }
 RDt() { cd $BD/RD/src; python seamless_test.py; }
+retar() { tar -zcvf $1 $2; }
+source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 
 
 alias AP_android='cd $APORO/static/sencha/phonegap/platforms/android/'
 alias AP_phonegap_build_android='AP_android; sudo phonegap build android --release;'
 alias AP_sencha='cd $APORO/static/sencha/'
 alias AP_sencha_build='AP_sencha; sudo sencha app build package;'
-alias JSON='f_getJSON'
-alias RD_e='cd $BD/RD/src'
-alias RDt='RDt'
-
-alias z_omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
-alias z_local="emacs $SH/local_config/shell/.shell_local"
-alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
-
-
-
-#alias aprinto_psql='/opt/local/lib/postgresql93/bin/psql -U postgres -h 0.0.0.0 --port=8800 aprinto'
-
-
-alias pull_shared_scripts='pull_shared_scripts'
-alias push_shared_scripts='push_shared_scripts'
-alias push_ssh_config='mnt; cp -R $HOME_ENV/.ssh/config /Volumes/mb/Users/admin/.ssh/; cp -R $HOME_ENV/.ssh/config /Volumes/ubuntu/home/ubuntu/.ssh/'
-alias ssh_config='emacs $HOME_ENV/.ssh/config; push_ssh_config'
-
-copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
-
+alias assign_help='echo "assign some_variable < <(some code)"'
 alias BD_env='cd $BD; source ENV/bin/activate'
-
+alias cde='cde_f'
 alias chmod_num='stat -c "%a"'
-alias cmd='compgen -a | grep'
 alias close_tcp='fuser -k -n tcp'
+alias cmd='compgen -a | grep'
 alias colordiff='colordiff --minimal --strip-trailing-cr --text --ignore-blank-lines --ignore-space-change --ignore-all-space --ignore-tab-expansion --ignore-trailing-space --suppress-common-lines --side-by-side'
+alias columns='column -t | tr -s " "'
 alias convert_pdf='pdftohtml -i -c -xml'
-
 alias countF='ls | wc -l'
 alias cy_build='cd $BD/RD/src/cython_exts/; python cy-build.py build_ext -i;'
 alias cy_clean='cd $BD/RD/src/cython_exts/; sudo python cy-build.py clean;'
 alias cy_folder='cd $BD/RD/src/cython_exts/;'
 alias cy_help='cd $BD/RD/src/cython_exts/; python cy-build.py --help-commands;'
-
+alias dir_size='du -sh'
 alias ec2="ssh -i $HOME_ENV/.ssh/grp1.pem ec2-user@ec2-54-164-189-68.compute-1.amazonaws.com -p 10101"
-alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
 alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
-
+alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
+alias egrep='egrep -i --color=auto'
+alias fgrep='fgrep -i --color=auto'
 alias find_file='f_find_file'
 alias find_folder='f_find_folder'
-alias dir_size='du -sh'
-alias grep='grep -i --color=auto'
-alias fgrep='fgrep -i --color=auto'
-alias egrep='egrep -i --color=auto'
-
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
-
 alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME_ENV/django/Dropbox/aporo/static/sencha'
+alias grep='grep -i --color=auto'
 alias grep_folder='grep -r "$1" *'
-
 alias grok_app='ngrok -hostname app.aporodelivery.com 80'
 alias grok_mysql='ngrok -proto tcp 3306'
 alias grok_printer='ngrok -hostname printer.aporodelivery.com 80'
-
 alias hist_cmds="history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"
-
-# history | sed -e 's/^[ \t]*//' | sort -u -k4 | sort -k1
-# need to standardize column separation and re-split
-
-
-jq_merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
-
-
-# load special functions and aliases if shell controlled by iTerm2
-#if [ "$(( `printenv ITERM_PROFILE | wc -l` ))" -ne 0 ]; then
-#    echo $'\e]50;SetProfile=$USER\007'
-#fi
-#function iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
-export iterm2_hostname="$USER"
-iterm2_print_user_vars() {
-    iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
-    iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-);
-    iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
-}
-alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
-
-
-alias kill_by='f_kill_by'
-alias kill_by_port='f_kill_by_port'
-
-alias locate_info='locate -S'
+alias JSON='f_getJSON'
+alias l-test="printf 'package.loaded.tmp=nil\nt=require\"tmp\"\nt.test()' | luap --"
 alias locate='locate -i'
+alias locate_info='locate -S'
 alias locate_update='sudo /usr/libexec/locate.updatedb'
-
 alias mnt='scr_ed; ./System_Control.py servers mnt'
 alias mnt_EXT_HD='mkdir -p /Volumes/EXT_HD; $SSHFS ub1:/Volumes/EXT_HD /Volumes/EXT_HD -o ConnectTimeout=5'
-alias umnt='sudo umount -f /Volumes/'
-
 alias mysql_cmd='mysql -uroot -pDelivery100%'
 alias mysql_config1='echo "money" | sudo emacs /opt/local/etc/mysql55/macports-default.cnf'
 alias mysql_config2='echo "money" | sudo emacs /opt/local/etc/mysql55/my.cnf'
-
 alias pb='pastebincl -n'
-
-alias pip_upgrade='pip install -U pip'
 alias pip_install='pip install --upgrade --allow-all-external --allow-unverified basemap'
 alias pip_update='$HOME_ENV/.scripts/update_pip.sh'
-
-
+alias pip_upgrade='pip install -U pip'
 alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'
 alias ports_listen_3='nettop'
 alias ports_sockets='netstat -lx'
 alias ports_ssh='lsof -i tcp | grep ^ssh'
-
-alias ps='ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args'
 alias ps-threads-full='pstree'
-
+alias ps='ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args'
+alias pull_shared_scripts='pull_shared_scripts'
+alias push_shared_scripts='push_shared_scripts'
+alias push_ssh_config='mnt; cp -R $HOME_ENV/.ssh/config /Volumes/mb/Users/admin/.ssh/; cp -R $HOME_ENV/.ssh/config /Volumes/ubuntu/home/ubuntu/.ssh/'
 alias pydoc='python -m pydoc'
 alias pyprofileread='pyprofileread'
 alias pyprofilewrite='pyprofilewrite'
-
+alias RD_e='cd $BD/RD/src'
+alias RDt='RDt'
 alias redis_config='sudo emacs /opt/local/etc/redis.conf'
-alias redis_run='redis-server /opt/local/etc/redis.conf'
 alias redis_kill='pkill -f redis-server'
-
+alias redis_run='redis-server /opt/local/etc/redis.conf'
 alias restart='sudo shutdown -r now'
-
+alias retar_help='echo retar archive.tar.gz directory/'
 alias rsync_all='python $BD/rsync_cmds.py all'
 alias rsync_test='python $BD/rsync_cmds.py test'
-
 alias rt_='ssh cisco'
-alias rt_reboot='rt_ reboot'
 alias rt_nat='rt_ "iptables -t nat -L -v" 2> /dev/null'
-alias rt_tbl='rt_ "iptables -L -v" 2> /dev/null'
 alias rt_ps='rt_ "ps" 2> /dev/null'
-
-alias scr_env='source $HOME_ENV/.scripts/ENV/bin/activate'
-alias scr_ed='scr_env; cd $HOME_ENV/.scripts'
+alias rt_reboot='rt_ reboot'
+alias rt_tbl='rt_ "iptables -L -v" 2> /dev/null'
 alias scr_d='scr_ed'
+alias scr_ed='scr_env; cd $HOME_ENV/.scripts'
+alias scr_env='source $HOME_ENV/.scripts/ENV/bin/activate'
 alias scr_sync='$HOME_ENV/.scripts/sync_scripts.bash'
-
-alias SH='cd $SERV_HOME'
+alias ssh_config='emacs $HOME_ENV/.ssh/config; push_ssh_config'
 
 sn4_ar_msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw&message=$1"; }
 alias sn4_ar_key='echo "APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw"'
@@ -236,15 +166,24 @@ alias sn4_ssh_droid_stop='curl "https://autoremotejoaomgcd.appspot.com/sendmessa
 alias sn4_teamviewer_start='adb shell monkey -p com.teamviewer.quicksupport.market -c android.intent.category.LAUNCHER 1'
 alias sn4_copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
 
-alias topcpu='ps -ero pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
-alias topmem='ps -emo pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
-
 alias test_nginx_socket='socat - UNIX-CLIENT:/var/log/nginx.sock'
 alias to_log='syslog -s -l error -k Message'
-
+alias topcpu='ps -ero pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
+alias topmem='ps -emo pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
+alias umnt='sudo umount -f /Volumes/'
 alias untar='tar -zxvf'
-retar() { tar -zcvf $1 $2; }
-alias retar_help='echo retar archive.tar.gz directory/'
+alias z_local="emacs $SH/local_config/shell/.shell_local"
+alias z_omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
+alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
+
+
+
+
+# --------------------------------------------------------------------------
+#
+#   TODO
+#
+# --------------------------------------------------------------------------
 
 #function g-RESTORE_LOCAL_F() { \
 #    cd $HOME_ENV/$SERVER/local_config/ \
@@ -259,4 +198,6 @@ alias retar_help='echo retar archive.tar.gz directory/'
 # sed -n '20,40p' file_name
 # awk 'FNR>=20 && FNR<=40' file_name
 
-alias l-test="printf 'package.loaded.tmp=nil\nt=require\"tmp\"\nt.test()' | luap --"
+# history | sed -e 's/^[ \t]*//' | sort -u -k4 | sort -k1
+# need to standardize column separation and re-split --> see alias 'columns'
+

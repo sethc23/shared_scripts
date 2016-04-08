@@ -9,6 +9,10 @@ link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1
 f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
 f_mp_py() { sudo port select python python$1; }
 f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
+mp_py_select() { echo "admin" | sudo port select python python$1; }
+f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
+f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
+
 
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 
@@ -88,12 +92,13 @@ alias unload_mysql='echo "money" | sudo launchctl unload -w /Library/LaunchDaemo
 alias ng_load='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
 alias ng_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
 
-
+alias disable_ipv6='sudo networksetup -setv6off Ethernet && sudo networksetup -setv6off Wi-Fi'
+alias enable_ipv6='sudo networksetup -setv6automatic Ethernet && sudo networksetup -setv6automatic Wi-Fi'
 
 alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
 alias syslog_osx_config2='sudo emacs /etc/asl.conf'
-alias spotlight_off='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
-alias spotlight_on='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
+alias disable_spotlight='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
+alias enable_spotlight='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sudo_textedit='f_sudo_textedit'
 
