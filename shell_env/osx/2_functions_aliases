@@ -35,17 +35,6 @@ alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
 alias locate_update='sudo /opt/local/libexec/gnubin/updatedb'
 
 
-# <<< --- OSX WIFI --- >>>
-alias wifi_renew='sudo ipconfig set en1 DHCP'
-alias wifi_hardware='networksetup -listallhardwareports'
-alias wifi_off='networksetup -setairportpower en1 off'
-alias wifi_on='networksetup -setairportpower en1 on'
-alias wifi_scan='airport scan'
-alias wifi_connect='networksetup -setairportnetwork en1'
-alias wifi_log_tail='tail -f /var/log/wifi.log'
-alias wifi_bssid='airport-bssid en1'
-
-
 open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 alias open_color_picker='open_color_picker_f'
 
@@ -92,17 +81,11 @@ alias unload_mysql='echo "money" | sudo launchctl unload -w /Library/LaunchDaemo
 alias ng_load='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
 alias ng_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
 
-alias disable_ipv6='sudo networksetup -setv6off Ethernet && sudo networksetup -setv6off Wi-Fi'
-alias enable_ipv6='sudo networksetup -setv6automatic Ethernet && sudo networksetup -setv6automatic Wi-Fi'
-
-alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
-alias syslog_osx_config2='sudo emacs /etc/asl.conf'
-alias disable_spotlight='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
-alias enable_spotlight='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sudo_textedit='f_sudo_textedit'
 
-
+alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
+alias syslog_osx_config2='sudo emacs /etc/asl.conf'
 alias syslog_push_config='sudo cp -R $HOME_ENV/$SERVER/syslog-ng/syslog-ng.conf /opt/local/etc/'
 alias syslog_load='syslog_push_config; sudo launchctl load -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
 alias syslog_unload='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
@@ -110,8 +93,8 @@ alias syslog_config='sudo emacs /opt/local/etc/syslog-ng.conf'
 alias syslog_reload='syslog_push_config; syslog_unload; syslog_load;'
 alias syslog_kill='kill_by syslog'
 alias sys_log="tail -f /var/log/system.log"
+alias syslog_debug='syslog_push_config; sudo /opt/local/sbin/syslog-ng -Fvedt'
 
-alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
 
 test_acro_js() {
     js_content="\
@@ -139,7 +122,6 @@ alias T_in_1='curl http://0.0.0.0:8888/t1?b=2;'
 alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; syslog_push_config; sudo syslog-ng;'
 alias P='echo test'
 alias SK='syslog_kill'
-alias syslog_debug='syslog_push_config; sudo /opt/local/sbin/syslog-ng -Fvedt'
 alias saved_grep="cat redis.conf | grep -n -v '^\w'"
 alias SLd='sudo launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist'
 alias SLu='sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist'
