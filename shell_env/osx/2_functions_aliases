@@ -1,15 +1,6 @@
 #!/bin/zsh
 
-link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
-    $IPY/ENV/lib/python2.7/site-packages/; }
-link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
-    $APRINTO/ENV/lib/python2.7/site-packages/; }
-link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
-link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
-f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
-f_mp_py() { sudo port select python python$1; }
-f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
-mp_py_select() { echo "admin" | sudo port select python python$1; }
+
 f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
 f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
 

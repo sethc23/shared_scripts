@@ -1,10 +1,22 @@
 #!/bin/zsh
 
+link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+    $IPY/ENV/lib/python2.7/site-packages/; }
+link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+    $APRINTO/ENV/lib/python2.7/site-packages/; }
+link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
+link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
+f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
+f_mp_py() { sudo port select python python$1; }
+f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
+mp_py_select() { echo "admin" | sudo port select python python$1; }
+
+
 alias mp_check='f_mp_check'
-alias mp_clean_port_all='sudo port clean --all'
-alias mp_clean_port_safe='sudo port clean'
 alias mp_clean_db='port echo leaves'
 #alias mp_clean_db_confirmed="while sudo port uninstall leaves --follow-dependencies; do :; done"
+alias mp_clean_port_all='sudo port clean --all'
+alias mp_clean_port_safe='sudo port clean'
 alias mp_contents_exe='f_mp_contents_exe'
 alias mp_contents_files='port contents'
 alias mp_dependents='port dependents'
@@ -48,5 +60,5 @@ function mp_variant_install_f() {
         [2Nn]* ) mp_install $1;;
         * ) echo "Please select yes or no.";;
     esac
-}
+    }
 alias mp_variant_install='mp_variant_install_f'
