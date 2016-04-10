@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 
 alias rq_status='sudo rabbitmqctl status'
 alias rq_cel_run='cel_env; celery -A --app=sync_app --workdir=$SERV_HOME/aprinto/celery worker --loglevel=info'

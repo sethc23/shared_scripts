@@ -1,6 +1,7 @@
 #!/bin/zsh
-alias svc_rsyslog_disable='sudo systemctl disable rsyslog.service syslog.socket'
-alias svc_rsyslog_enable='sudo systemctl link /lib/systemd/system/rsyslog.service /lib/systemd/system/syslog.socket'
+
+alias svc_rsyslog_disable='sudo systemctl disable rsyslog.service syslog.socket; sudo systemctl daemon-reload'
+alias svc_rsyslog_enable='sudo systemctl daemon-reload; sudo systemctl enable /lib/systemd/system/rsyslog.service 2> /dev/null; sudo systemctl enable /lib/systemd/system/syslog.socket'
 alias svc_rsyslog_start='sudo systemctl start rsyslog.service'
 alias svc_rsyslog_stop='sudo systemctl stop rsyslog.service syslog.socket'
 alias svc_rsyslog_restart='sudo service rsyslog restart'

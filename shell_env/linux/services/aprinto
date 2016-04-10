@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 function aprinto() {                cd $APRINTO; source $APRINTO/ENV/bin/activate; }
 function aprinto_test() {           aprinto; behave tests/features/ > /dev/null 2>&1; }
 function aprinto_test_production() { aprinto; behave tests/features/ --tags=production > /dev/null 2>&1; }

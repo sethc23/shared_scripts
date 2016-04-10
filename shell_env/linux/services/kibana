@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-alias svc_kb_enable='sudo systemctl daemon-reload && sudo systemctl link $SERV_HOME/kibana/RUN/kibana.service'
+alias svc_kb_enable='sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/kibana/RUN/kibana.service 2> /dev/null'
 alias svc_kb_disable='sudo systemctl disable $SERV_HOME/kibana/RUN/kibana.service && sudo systemctl daemon-reload'
 alias svc_kb_start='sudo systemctl start kibana.service'
 alias svc_kb_stop='sudo systemctl stop kibana.service'

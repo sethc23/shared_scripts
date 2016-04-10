@@ -9,7 +9,7 @@ alias wifi_off='networksetup -setairportpower en1 off'
 alias wifi_on='networksetup -setairportpower en1 on'
 alias wifi_scan='airport scan'
 alias wifi_connect='networksetup -setairportnetwork en1'
-alias wifi_disconnect='airport -z'
+alias wifi_disconnect='sudo airport -z'
 alias wifi_log_tail='tail -f /var/log/wifi.log'
 alias wifi_bssid='airport-bssid en1'
 

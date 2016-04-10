@@ -1,3 +1,4 @@
+#!/bin/zsh
 
 alias ap_update='sudo apt-get update'
 alias ap_install='sudo apt-get install -y'
