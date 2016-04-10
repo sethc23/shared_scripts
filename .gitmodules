@@ -10,3 +10,6 @@
 [submodule "sysparse"]
     path = sysparse
     url = https://github.com/sethc23/sysparse.git
+[submodule "shell_env/shell/zsh/antigen"]
+	path = shell_env/shell/zsh/antigen
+	url = https://github.com/zsh-users/antigen.git
