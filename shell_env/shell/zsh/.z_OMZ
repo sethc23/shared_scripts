@@ -18,27 +18,14 @@
 HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 #plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
-
 plugins=(zsh-completions autojump last-working-dir git python)
 
 # ------------------------
-# ------------------------
-# ------------------------
-export ZSH=$HOME_ENV/.scripts/shell_env/zsh/OMZ
 
-source $ZSH/oh-my-zsh.sh
+export ZSH_PLUGINS=$plugins
+export ZSH=$HOME_ENV/.scripts/shell_env/shell/zsh/OMZ
 
-[[ -L $HOME_ENV/.shell_local ]] && source $HOME_ENV/.shell_local
-[[ -z "$ZSH_THEME" ]] && ZSH_THEME="candy"
+if [[ ! -L $HOME_ENV/.shell_local ]]; then
+    [[ -z "$ZSH_THEME" ]] && ZSH_THEME="candy" && source $ZSH/oh-my-zsh.sh
+fi
 
-source $ZSH/oh-my-zsh.sh
-
-
-# autoload bashcompinit
-# bashcompinit
-# source ~/.scripts/shell_env/zsh/completers/py-argcomplete.sh
-# eval "$(register-python-argcomplete /home/ub2/.scripts/System_Control.py)"
-
-export WORKON_HOME=$HOME_ENV/.virtualenvs
-export PROJECT_HOME=$HOME_ENV/.dev
-source /usr/local/bin/virtualenvwrapper.sh

@@ -1,2 +1,33 @@
 #!/bin/zsh
 
+export SH=$SERV_HOME
+export ALIAS='.alias_s'$SERVER_ID
+
+[[ -f $SERV_HOME/local_config/shell/$ALIAS ]] && source $SERV_HOME/local_config/shell/$ALIAS
+
+#export GIT_CONFIG=$HOME_ENV/.gitconfig     # Enabling sets all repo configs to same, so submodules get mixed'
+export J=/home/jail/home/serv
+export CLIENT_HOST=$SERVER
+export BD=$HOME_ENV/BD_Scripts
+export GIT_REPOS=$HOME/GIT_REPOS
+export G=$GIT_REPOS
+export WORKON_HOME=$HOME_ENV/.virtualenvs
+export PROJECT_HOME=$HOME_ENV/.dev
+
+# setup quick folders for sharing among ubuntu cluster
+for n in 1 2 4 5; do
+    if [[ $n != $SERVER_ID ]]; then
+        x=`printf "export SHARE%s=/Volumes/ub%s/home/ub%s" $n $n $n`
+        eval $x
+        x=`printf "export SHARE%s_SERVER=SERVER%s" $n $n`
+        eval $x
+        y=`printf "export SERV%s=/Volumes/ub%s/$J" $n $n`
+        eval $y
+        y=`printf "export SERV%s_SERVER=SERVER%s" $n $n`
+        eval $y
+    fi
+done
+if [[ $SERVER_ID != 3 ]]; then
+    export SHARE3=/Volumes/mbp2/Users/admin
+    export SHARE3_SERVER=SERVER3
+fi

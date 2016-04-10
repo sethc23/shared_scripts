@@ -10,15 +10,15 @@
 
 
 
+#  --  REPOS (g-rp*)
+alias g-rp-clean='git clean -dfx'
+alias g-rp-clone='git clone --recursive'
+alias g-rp-name='basename `git rev-parse --show-toplevel`'
+alias g-rp-pull='git pull --recurse-submodules'
+alias g-rp-push='git push'
 
 
-
-#  --  REPOS (g-r*)
-alias g-r-clean='git clean -dfx'
-alias g-r-clone='git clone --recursive'
-alias g-r-name='basename `git rev-parse --show-toplevel`'
-
-g-r-init_w_descr() { \
+g-rp-init_w_descr() { \
     git init; rm .git/config; cd .git;
     cp $HOME_ENV/.gitconfig ./config; cd ..; emacs .git/config;
     git-hub create --desc="$1";
@@ -39,8 +39,8 @@ alias g-s-UNSTAGED-ALL='git diff --stat --name-only'
 alias g-s-UNTRACKED='git status --porcelain | grep -E "\?\?" | awk '\''{print }'\'' | tr '\''??'\'' '\'' '\'''
 alias g-s-p='git status --porcelain'
 alias g-s-p-STAGED='git diff --name-status --cached | more'
-alias g-NOT_STAGED="git diff --name-only | more"
-alias g-NOT_STAGED-MOD="git diff --name-status | more | grep ^M | sed 's/^M\s*//g'"
+alias g-s-NOT_STAGED="git diff --name-only | more"
+alias g-s-NOT_STAGED-MOD="git diff --name-status | more | grep ^M | sed 's/^M\s*//g'"
 g-S-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g';}
 g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*//g';}
 
@@ -50,10 +50,16 @@ alias g-b-DELETE='git branch -d'
 alias g-b-r-DELETE='git branch --remotes --delete'
 alias g-b-name='git rev-parse --abbrev-ref HEAD'
 g_b_sync(){ \
-    git push -f . $(g-b-name):$1; 
-    REMOTE_NAME=$(git rev-parse --abbrev-ref --symbolic-full-name @{upstream} | cut -d / -f1);
-    git push $REMOTE_NAME $1; }
-alias g-b-push-other='g_b_sync'
+    if [[ "$1" = "push" ]]; then
+        git push -f . $(g-b-name):$1; 
+        REMOTE_NAME=$(git rev-parse --abbrev-ref --symbolic-full-name @{upstream} | cut -d / -f1);
+        git push $REMOTE_NAME $1;
+    elif [[ "$1" = "fetch" ]]; then
+        git fetch $2 $3:$3
+    fi; \
+    }
+alias g-b-push-other='g_b_sync push'
+alias g-b-fetch-other='g_b_sync fetch $1 $2'
 alias g-b-clean='git clean -dfx'
 
 #  --  DEV BRANCH (g-D*):
@@ -85,14 +91,13 @@ alias g-t-last='git describe --abbrev=0 --tags'
 alias g-f-latest='git diff-tree --no-commit-id --name-only -r $(g-c-latest)'
 alias g-f-MODIFIED="g-s-p | grep '^ M ' | awk '{print $2}'"
 
-#  --  REMOTES (g-c*)
-alias g-r-c="g-s-p | grep '^ D ' | sed 's/^\sD\s//' | xargs git rm --cached --ignore-unmatch -r -f --"
-alias g-r="g-s-p | grep '^ D ' | sed 's/^\sD\s//' | xargs git rm --ignore-unmatch -r -f --"
-alias g-r-REMAINING_UNSTAGED_ALL='git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --'
-alias g-r-REMAINING_UNSTAGED_DELETED='git status --porcelain | grep "^ D " | sed "s/ [A-Z] //g" | xargs -I '{}' git rm -q --cached --ignore-unmatch -f -r -- {} > /dev/null 2>&1'
-alias g-a='g-r-REMAINING_UNSTAGED_DELETED && git add --ignore-removal -- .'
-alias g-r-IGNORED='cat .gitignore | xargs git rm --cached -r --ignore-unmatch -q --'
-alias g-r-UNSTAGED-UNTRACK="g-not_staged | awk '{print $2}' | xargs git update-index --remove --ignore-missing --force-remove --assume-unchanged --skip-worktree --again -q --"
+#  --  REMOVE (g-rm*)
+alias g-rm-c="g-s-p | grep '^ D ' | sed 's/^\sD\s//' | xargs git rm --cached --ignore-unmatch -r -f --"
+alias g-rm="g-s-p | grep '^ D ' | sed 's/^\sD\s//' | xargs git rm --ignore-unmatch -r -f --"
+alias g-rm-REMAINING_UNSTAGED_ALL='git diff --stat --name-only | xargs git rm --cached --ignore-unmatch -f -r --'
+alias g-rm-REMAINING_UNSTAGED_DELETED="git status --porcelain | grep '^ D ' | sed 's/ [A-Z] //g' | xargs -I '{}' git rm -q --cached --ignore-unmatch -f -r -- {} > /dev/null 2>&1"
+alias g-rm-IGNORED='cat .gitignore | xargs git rm --cached -r --ignore-unmatch -q --'
+alias g-rm-UNSTAGED-UNTRACK="g-not_staged | awk '{print $2}' | xargs git update-index --remove --ignore-missing --force-remove --assume-unchanged --skip-worktree --again -q --"
 
 #  --  INDEX (g-i*)
 alias g-i='git update-index --assume-unchanged --'
@@ -102,6 +107,7 @@ alias g-i-LIST='git ls-files -v | grep "^[[:lower:]]"'
 
 
 
+alias g-a='g-rm-REMAINING_UNSTAGED_DELETED && git add --ignore-removal -- .'
 alias g-ch-n='git checkout -b'
 alias g-l='git log --graph --decorate --pretty=oneline --abbrev-commit --all'
 alias g-reset-FLAGS="git ls-files -o | sed -r "s/'/\\\'/" | grep -v /$ | xargs -I '{}' printf '"%s"\n' {} | xargs -I '{}' git add --ignore-removal -- {}"
@@ -110,6 +116,7 @@ alias g-SPARSE_UPDATE='git read-tree -mu HEAD'
 alias g-RESTORE_LOCAL='g-restore_local_f'
 alias g-UNTRACK='git update-index --remove --ignore-missing --force-remove --assume-unchanged -q --'
 
+#  --  SPECIAL (g-X*):
 g_commit_push() {\
     git commit -m "$1";
     sleep 1;
@@ -126,10 +133,20 @@ g_add_commit_push() { \
 alias g-X_='g_commit_push'
 alias g-X='g_add_commit_push'
 
+
 #  --  SUBMODULES (gs-*):
 gs_recursive_pull() { \
+    git submodule foreach "(\
+    git submodule init; \
+    git submodule update; \
+    git pull origin master; \
+    )&"
+
     git submodule foreach --recursive git submodule init;
     git submodule foreach --recursive git submodule update;
+    
+    git branch --remotes --list --contains 6a1b854 | sed 's/^ *//'
+    
     git submodule foreach --recursive git pull origin master;
     git submodule foreach --recursive git checkout master master;
     }

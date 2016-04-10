@@ -6,75 +6,52 @@ source_sub_dir() {
             source $j
         done
     done
-}
+    }
 source_files(){
     for i in `env find $1 -maxdepth 1 -type f | sort`; do source $i; done
-}
+    }
 source_files_and_sub_dirs() {
     source_files "$1"
     source_sub_dir "$1"
-}
+    }
 
 if [[ -n "$HOME_ENV" ]]; then
     BASE_DIR="$HOME_ENV/.scripts/shell_env"
 else
-    if [[ -n "$BASH_VERSION" ]]; then
-        SOURCE="${BASH_SOURCE[0]}"
-        while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-            DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-            SOURCE="$(readlink "$SOURCE")"
-            [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-        done
-        BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+    [[ -n "$SUDO_USER" ]] && export DISABLE_AUTO_UPDATE=true && export HOME_ENV="$(eval echo ~$SUDO_USER)"
+    [[ -z "$SUDO_USER" ]] && export HOME_ENV="$(eval echo ~$USER)"
+
+    if [[ -n "$HOME_ENV" ]]; then
+        BASE_DIR="$HOME_ENV/.scripts/shell_env"
+    else
+        if [[ -n "$BASH_VERSION" ]]; then
+            SOURCE="${BASH_SOURCE[0]}"
+            while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+                DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+                SOURCE="$(readlink "$SOURCE")"
+                [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+            done
+            BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+        fi
+        [[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
     fi
-    [[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
-    
-    [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
-    [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
-    
+
+    [[ -z "$HOME_ENV" ]] && export HOME_ENV="$(eval echo ~$USER)"
+
 fi
 
-source_files_and_sub_dirs "$BASE_DIR/shell"
+source "$HOME_ENV/.profile"
+source_files "$BASE_DIR/shell"
 source_files_and_sub_dirs "$BASE_DIR/shared"
+
 _env=$(uname -a)
+[[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
+[[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
 
-if [[ -n $(echo $_env | grep "Darwin") ]]; then
-    source_files_and_sub_dirs "$BASE_DIR/osx"
-elif [[ -n $(echo $_env | grep "Linux") ]]; then
-    source_files_and_sub_dirs "$BASE_DIR/linux"
-fi
 
-export SH=$SERV_HOME
-export ALIAS='.alias_s'$SERVER_ID
 
-[[ -f $SERV_HOME/local_config/shell/$ALIAS ]] && source $SERV_HOME/local_config/shell/$ALIAS
 
-# Enabling sets all repo configs to same, so submodules get mixed'
-#export GIT_CONFIG=$HOME_ENV/.gitconfig
-
-export J=/home/jail/home/serv
-export CLIENT_HOST=$SERVER
-export BD=$HOME_ENV/BD_Scripts
-export GIT_REPOS=$HOME/GIT_REPOS
-export G=$GIT_REPOS
-
-# setup quick folders for sharing among ubuntu cluster
-for n in 1 2 4 5; do
-    if [[ $n != $SERVER_ID ]]; then
-        x=`printf "export SHARE%s=/Volumes/ub%s/home/ub%s" $n $n $n`
-        eval $x
-        x=`printf "export SHARE%s_SERVER=SERVER%s" $n $n`
-        eval $x
-        y=`printf "export SERV%s=/Volumes/ub%s/$J" $n $n`
-        eval $y
-        y=`printf "export SERV%s_SERVER=SERVER%s" $n $n`
-        eval $y
-    fi
-done
-if [[ $SERVER_ID != 3 ]]; then
-    export SHARE3=/Volumes/mbp2/Users/admin
-    export SHARE3_SERVER=SERVER3
-fi
 
 
 
