@@ -1,15 +1,12 @@
-[submodule "shell_env/zsh/OMZ"]
-	path = shell_env/zsh/OMZ
+[submodule "shell_env/shell/zsh/OMZ"]
+	path = shell_env/shell/zsh/OMZ
 	url = https://github.com/robbyrussell/oh-my-zsh.git
-[submodule "shell_env/zsh/antigen"]
-	path = shell_env/zsh/antigen
-	url = https://github.com/zsh-users/antigen.git
-[submodule "shell_env/zsh/custom_plugins/zsh-completions"]
-	path = shell_env/zsh/custom_plugins/zsh-completions
+[submodule "shell_env/shell/zsh/custom_plugins/zsh-completions"]
+	path = shell_env/shell/zsh/custom_plugins/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
 [submodule "syscontrol"]
 	path = syscontrol
 	url = https://github.com/sethc23/syscontrol.git
 [submodule "sysparse"]
-        path = sysparse
-        url = https://github.com/sethc23/sysparse.git
+    path = sysparse
+    url = https://github.com/sethc23/sysparse.git
