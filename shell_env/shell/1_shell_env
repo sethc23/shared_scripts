@@ -1,9 +1,5 @@
 #!/bin/zsh
 
-DIR="${0:a:h}"
-[[ -n "$ZSH_VERSION" ]] && source "$DIR/zsh/_base"
-[[ -n "$BASH_VERSION" ]] && source "$DIR/bash/_base"
-
 #export TERM=screen-256color
 #export TERM=xterm-256color tmux
 export TERM=xterm-color
@@ -22,7 +18,7 @@ export HISTFILESIZE=10000000
 #export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
 export EDITOR=`which emacs`
 export LESS='-R'
-export LESSOPEN='|$HOME_ENV/.lessfilter %s'
+export LESSOPEN='$HOME_ENV/.lessfilter'
 
 if [[ -z "$ZSH_VERSION" ]]; then
 
