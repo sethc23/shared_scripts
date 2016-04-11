@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+[[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
+[[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
+
 export SH=$SERV_HOME
 export ALIAS='.alias_s'$SERVER_ID
 

@@ -1,10 +1,4 @@
-#!/bin/bash
-
-# if [[ -n "$SUDO_USER" ]]; then
-#     export HOME_ENV=$(eval echo ~$SUDO_USER)
-# else
-#     export HOME_ENV=$(eval echo ~$USER)
-# fi
+#!/bin/zsh
 
 # source $HOME_ENV/.profile
 # source $HOME_ENV/.scripts/shell_env/_base
@@ -15,5 +9,5 @@ case $- in
 esac
 
 source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
-source ~/.shell_local
+source $HOME_ENV/.shell_local
 
