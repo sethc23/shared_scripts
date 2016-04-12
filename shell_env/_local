@@ -1,6 +1,10 @@
 #!/bin/zsh
 
-MACHINE_ID=$(ifconfig|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
+if [[ -n $(uname -a | grep "Darwin") ]]; then
+    MACHINE_ID=$(ifconfig|env grep -i ether|head -n 1|sed -E 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')    
+else
+    MACHINE_ID=$(ifconfig|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
+fi
 
 # admin: c8:2a:14:41:bf:23
 # ub2: 60:33:4b:97:84:a2
