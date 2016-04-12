@@ -1,0 +1,91 @@
+#!/bin/zsh
+
+MACHINE_ID=$(ifconfig|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
+
+# admin: c8:2a:14:41:bf:23
+# ub2: 60:33:4b:97:84:a2
+
+if [[ "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
+
+    echo "_local_ub2"
+
+    if [[ -n "$ZSH_VERSION" ]]; then
+
+        source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
+        echo "shell_local"4$CLIENT_HOST
+
+        autoload -U compinit && compinit
+        autoload -U bashcompinit && bashcompinit
+
+        echo "shell_local"5"$CLIENT_HOST"
+
+        [[ "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="cobalt2"
+        [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
+
+        plugins=$ZSH_PLUGINS
+        source $ZSH/oh-my-zsh.sh
+        compinit
+
+        bindkey '\e[A' history-substring-search-up
+        bindkey '\e[B' history-substring-search-down
+
+        for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
+
+    fi
+
+    local_port=9092
+    git_sync=[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
+
+    echo "_local"6"$CLIENT_HOST"
+    # source_files_and_sub_dirs "$BASE_DIR/shared"
+    # echo "shell_local"7"$CLIENT_HOST"
+    _env=$(uname -a)
+    [[ -n $(echo $_env | grep "Linux") ]] && \
+        source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared" && \
+        source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
+
+    echo "_local"8"$CLIENT_HOST"
+    source_files "$HOME_ENV/.scripts/shell_env/shell"
+    echo "_local"5$CLIENT_HOST
+
+elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
+
+    echo "_local_admin"
+
+    if [[ -n "$ZSH_VERSION" ]]; then
+
+        source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
+        echo "_local_admin_2"
+
+        autoload -U compinit && compinit
+        autoload -U bashcompinit && bashcompinit
+
+        export ZSH_THEME="cobalt2"
+        plugins=$ZSH_PLUGINS
+        plugins+=(osx)
+        source $ZSH/oh-my-zsh.sh
+        compinit
+
+        bindkey '\e[A' history-substring-search-up
+        bindkey '\e[B' history-substring-search-down
+
+        for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
+
+        # eval "$(register-python-argcomplete /home/ub2/.scripts/syscontrol/sys_control.py)"
+      
+    fi
+
+    local_port=9093
+    git_sync=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
+
+    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
+    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
+    source_files "$HOME_ENV/.scripts/shell_env/shell"
+
+    #source_files "$HOME_ENV/.scripts/shell_env/shell"
+    #[[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
+    #source_files_and_sub_dirs "$BASE_DIR/shared"
+
+    echo $PATH
+
+fi
