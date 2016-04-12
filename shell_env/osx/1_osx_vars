@@ -1,13 +1,15 @@
 #!/bin/zsh
 
-export PATH=/usr/local/bin:/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin/:/opt/local/lib/postgresql95/bin:$PATH
+echo "osx_start"
+
+export PATH=/Users/admin/.luarocks/bin:/opt/local/share/luarocks/bin:/usr/local/bin:/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin:/opt/local/lib/postgresql95/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
 
 export HOME=/Users/admin
 export SERV_HOME=$HOME_ENV/$SERVER
 export SERVER_ID='3'
 export SERVER='SERVER'$SERVER_ID
 export ALIAS='.alias_s'$SERVER_ID
-export SHELL_CONFIG=.zshrc
+export SHELL_CONFIG=.zshenv
 export ROOT=root
 export ROOT_GRP=wheel
 export SSHFS=/opt/local/bin/sshfs

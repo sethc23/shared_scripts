@@ -121,6 +121,8 @@ alias l-test="printf 'package.loaded.tmp=nil\nt=require\"tmp\"\nt.test()' | luap
 alias locate='locate -i'
 alias locate_info='locate -S'
 alias locate_update='sudo /usr/libexec/locate.updatedb'
+alias ls='ls --color --almost-all --classify --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
+#alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
 alias mnt='scr_ed; ./System_Control.py servers mnt'
 alias mnt_EXT_HD='mkdir -p /Volumes/EXT_HD; $SSHFS ub1:/Volumes/EXT_HD /Volumes/EXT_HD -o ConnectTimeout=5'
 alias mysql_cmd='mysql -uroot -pDelivery100%'

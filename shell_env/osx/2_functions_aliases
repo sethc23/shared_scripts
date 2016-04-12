@@ -36,9 +36,6 @@ alias open_color_picker='open_color_picker_f'
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
 
-unalias ls > /dev/null 2>&1
-alias ls='ls -AlBcuFUhG --color=tty'
-
 ps_cut(){ bash -c "ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2}" | cut -c -$(tput cols) ; }
 alias ps='ps_cut ps'
 alias ps-mem='ps -m'

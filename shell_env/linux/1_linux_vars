@@ -4,7 +4,7 @@
 
 export SERVER_ID=`hostname | sed -r 's/SERVER//g'`
 export SERVER=`hostname`
-export SHELL_CONFIG=.bashrc
+export SHELL_CONFIG=.zshenv
 export ROOT=root
 export ROOT_GRP=root
 export SSHFS=/usr/bin/sshfs
