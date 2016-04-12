@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "zsh/_base"$CLIENT_HOST
+
+
+echo "zsh/_base"1$CLIENT_HOST
 env|sort
 
 if [[ -n "$SUDO_USER" ]]; then
@@ -12,9 +14,7 @@ fi
 source $HOME_ENV/.profile
 echo "zsh/_base_"2$CLIENT_HOST
 
-BASE_DIR=$HOME_ENV/.scripts/shell_env
-
-source $BASE_DIR/_base
+source $HOME_ENV/.scripts/shell_env/_base
 echo "zsh/_base_"3$CLIENT_HOST
 
 case $- in
@@ -37,4 +37,4 @@ echo "zsh/_base_"4$CLIENT_HOST
 # [[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
 # echo "zsh/_base_"7$CLIENT_HOST
 
-source ~/.shell_local
+source $HOME_ENV/.shell_local

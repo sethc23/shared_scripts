@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+echo "shell_env_base"
+
 source_sub_dir() {
     for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
         for j in `env find $d -maxdepth 1 -type f | sort`; do 
@@ -41,11 +43,8 @@ else
 
 fi
 
-#
-# Environment Config Method:
-#   -load most basic/general to most dependent/specific
-#
 echo sh_env1$CLIENT_HOST
+
 # source "$HOME_ENV/.profile"
 
 # echo 2$CLIENT_HOST
@@ -56,9 +55,11 @@ echo sh_env1$CLIENT_HOST
 # [[ -n "$BASH_VERSION" ]] && source "$BASE_DIR/shell/bash/_base"
 
 source_files_and_sub_dirs "$BASE_DIR/shared"
+
 echo sh_env4$CLIENT_HOST
 _env=$(uname -a)
-[[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
-[[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
+# [[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
+# [[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
 echo sh_env5$CLIENT_HOST
+
 
