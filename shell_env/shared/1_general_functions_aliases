@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+echo "_shared_"
+
 assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 cde_f() {
     if [[ -z $1 ]]; then

@@ -31,8 +31,6 @@ alias kill_by='f_kill_by'
 alias mail_old='mail -f $HOME_ENV/mbox'
 
 alias locate_update='sudo /usr/bin/updatedb'
-alias ls='ls --color --almost-all --classify --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
-#alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
 alias red_keys='redis-cli -h localhost -p 6379 -n 0 keys \*'
 
 alias cel_env='cd $SERV_HOME/aprinto; source ENV/bin/activate'

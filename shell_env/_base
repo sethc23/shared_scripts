@@ -54,10 +54,10 @@ echo sh_env1$CLIENT_HOST
 # [[ -n "$ZSH_VERSION" ]] && source "$BASE_DIR/shell/zsh/_base"
 # [[ -n "$BASH_VERSION" ]] && source "$BASE_DIR/shell/bash/_base"
 
-source_files_and_sub_dirs "$BASE_DIR/shared"
+# source_files_and_sub_dirs "$BASE_DIR/shared"
 
-echo sh_env4$CLIENT_HOST
-_env=$(uname -a)
+# echo sh_env4$CLIENT_HOST
+# _env=$(uname -a)
 # [[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
 # [[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
 echo sh_env5$CLIENT_HOST
