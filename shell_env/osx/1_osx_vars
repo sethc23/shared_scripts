@@ -1,7 +1,5 @@
 #!/bin/zsh
 
-echo "osx_start"
-
 export PATH=/Users/admin/.luarocks/bin:/opt/local/share/luarocks/bin:/usr/local/bin:/opt/local/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin:/opt/local/lib/postgresql95/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
 
 export HOME=/Users/admin
