@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_START"
+
 if [[ -n $(uname -a | grep "Darwin") ]]; then
     MACHINE_ID=$(ifconfig|env grep -i ether|head -n 1|sed -E 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')    
 else
@@ -11,17 +13,17 @@ fi
 
 if [[ "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
 
-    echo "_local_ub2"
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local_ub2"
 
     if [[ -n "$ZSH_VERSION" ]]; then
 
         source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
-        echo "shell_local"4$CLIENT_HOST
+        [[ -n "$DEBUG_SHELL" ]] && echo "shell_local"4$CLIENT_HOST
 
         autoload -U compinit && compinit
         autoload -U bashcompinit && bashcompinit
 
-        echo "shell_local"5"$CLIENT_HOST"
+        [[ -n "$DEBUG_SHELL" ]] && echo "shell_local"5"$CLIENT_HOST"
 
         [[ "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="cobalt2"
         [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
@@ -40,7 +42,7 @@ if [[ "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
     local_port=9092
     git_sync=[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
 
-    echo "_local"6"$CLIENT_HOST"
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local"6"$CLIENT_HOST"
     # source_files_and_sub_dirs "$BASE_DIR/shared"
     # echo "shell_local"7"$CLIENT_HOST"
     _env=$(uname -a)
@@ -48,18 +50,18 @@ if [[ "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
         source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared" && \
         source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
 
-    echo "_local"8"$CLIENT_HOST"
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local"8"$CLIENT_HOST"
     source_files "$HOME_ENV/.scripts/shell_env/shell"
-    echo "_local"5$CLIENT_HOST
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local"5$CLIENT_HOST
 
 elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
 
-    echo "_local_admin"
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local_admin"
 
     if [[ -n "$ZSH_VERSION" ]]; then
 
         source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
-        echo "_local_admin_2"
+        [[ -n "$DEBUG_SHELL" ]] && echo "_local_admin_2"
 
         autoload -U compinit && compinit
         autoload -U bashcompinit && bashcompinit
@@ -90,6 +92,6 @@ elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
     #[[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
     #source_files_and_sub_dirs "$BASE_DIR/shared"
 
-    echo $PATH
+    [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
 fi

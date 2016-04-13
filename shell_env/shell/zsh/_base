@@ -1,9 +1,6 @@
 #!/bin/bash
 
-
-
-echo "zsh/_base"1$CLIENT_HOST
-env|sort
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base"1$CLIENT_HOST && env|sort
 
 if [[ -n "$SUDO_USER" ]]; then
     export HOME_ENV=$(eval echo ~$SUDO_USER)
@@ -12,31 +9,15 @@ else
 fi
 
 source $HOME_ENV/.profile
-echo "zsh/_base_"2$CLIENT_HOST
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"2$CLIENT_HOST
 
 source $HOME_ENV/.scripts/shell_env/_base
-echo "zsh/_base_"3$CLIENT_HOST
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"3$CLIENT_HOST
 
 case $- in
     *i*);;
     *) return ;;
 esac
 
-echo "zsh/_base_"4$CLIENT_HOST
-
-
-
-
-# [[ -n "$ZSH_VERSION" ]] && source "$BASE_DIR/shell/zsh/_base"
-# [[ -n "$BASH_VERSION" ]] && source "$BASE_DIR/shell/bash/_base"
-
-# source_files_and_sub_dirs "$BASE_DIR/shared"
-# echo "zsh/_base_"6$CLIENT_HOST
-# _env=$(uname -a)
-# [[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
-# [[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
-# echo "zsh/_base_"7$CLIENT_HOST
-
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"4$CLIENT_HOST
 source $HOME_ENV/.scripts/shell_env/_local
-# source $HOME_ENV/.scripts/shell_env/_local
-# source $HOME_ENV/.shell_local

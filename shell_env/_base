@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-echo "shell_env_base"
+[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base"
 
 source_sub_dir() {
     for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
@@ -43,23 +43,5 @@ else
 
 fi
 
-echo sh_env1$CLIENT_HOST
-
-# source "$HOME_ENV/.profile"
-
-# echo 2$CLIENT_HOST
-# source_files "$BASE_DIR/shell"
-
-# echo 3$CLIENT_HOST
-# [[ -n "$ZSH_VERSION" ]] && source "$BASE_DIR/shell/zsh/_base"
-# [[ -n "$BASH_VERSION" ]] && source "$BASE_DIR/shell/bash/_base"
-
-# source_files_and_sub_dirs "$BASE_DIR/shared"
-
-# echo sh_env4$CLIENT_HOST
-# _env=$(uname -a)
-# [[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
-# [[ -n $(echo $_env | grep "Linux") ]] && source_files_and_sub_dirs "$BASE_DIR/linux"
-echo sh_env5$CLIENT_HOST
 
 

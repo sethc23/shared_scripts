@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-
+[[ -n "$DEBUG_SHELL" ]] && echo "linux/linux_vars"
 
 export SERVER_ID=`hostname | sed -r 's/SERVER//g'`
 export SERVER=`hostname`

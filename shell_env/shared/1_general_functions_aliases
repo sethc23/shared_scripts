@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-echo "_shared_"
+[[ -n "$DEBUG_SHELL" ]] && echo "_shared_"
 
 assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 cde_f() {
