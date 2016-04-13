@@ -19,7 +19,6 @@ alias BT_restart='sudo /etc/init.d/bluetooth restart'
 function path_of_pid_f() { readlink -f /proc/$1/exe; }
 alias path_of_pid='path_of_pid_f'
 alias chk_filesystem_types='sudo blkid'
-alias emacs='emacs -nw'
 alias semacs='sudo emacs -nw'
 
 alias jupyter_nbconvert='jupyter-nbconvert --to=notebook --nbformat=3 --inplace $SERV_HOME/ipython/notebooks/'

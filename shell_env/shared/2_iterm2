@@ -4,7 +4,7 @@
 #if [ "$(( `printenv ITERM_PROFILE | wc -l` ))" -ne 0 ]; then
 #    echo $'\e]50;SetProfile=$USER\007'
 #fi
-#function iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
+iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
 export iterm2_hostname="$USER"
 iterm2_print_user_vars() {
     iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
@@ -12,3 +12,37 @@ iterm2_print_user_vars() {
     iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
 }
 alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
+
+
+# load special functions and aliases if shell controlled by iTerm2
+#if [ "$(( `printenv ITERM_PROFILE | wc -l` ))" -ne 0 ]; then
+#    echo $'\e]50;SetProfile=$USER\007'
+#fi
+#
+# iterm2_hostname
+#
+tail_b(){
+    [[ "$1" = "-n1" ]] && echo "returning" && return
+    CMD_PART="tail"
+    FPATH=""
+    while (($#)); do
+        if [[ "$1" = "-f" ]]; then
+            CMD_PART+=" $1 $2"
+            FPATH="$2"
+            break
+        else
+            CMD_PART+=" $1"
+        fi
+        shift
+    done
+    if [[ "$FPATH" = "" ]]; then 
+        zsh -c $CMD_PART
+    else
+        printf "\e]1337;SetBadgeFormat=%s\a" \
+            $(echo -n "$FPATH" | base64)
+        zsh -c $CMD_PART
+        printf "\e]1337;SetBadgeFormat=%s\a" \
+            $(echo -n "\(user.gitRepo):\(user.gitBranch):\(user.gitBranchTag)" | base64)
+    fi
+    }
+alias tail='tail_b'

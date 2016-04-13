@@ -8,10 +8,11 @@ else
     MACHINE_ID=$(ifconfig|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
 fi
 
-# admin: c8:2a:14:41:bf:23
+# ub1: 00:1b:63:bb:88:0b
 # ub2: 60:33:4b:97:84:a2
+# admin: c8:2a:14:41:bf:23
 
-if [[ "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
+if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_ub2"
 
