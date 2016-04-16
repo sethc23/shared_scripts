@@ -2,11 +2,17 @@
 
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base"1$CLIENT_HOST && env|sort
 
-if [[ -n "$SUDO_USER" ]]; then
-    export HOME_ENV=$(eval echo ~$SUDO_USER)
-else
-    export HOME_ENV=$(eval echo ~$USER)
+if [[ -z "$HOME_ENV" ]]; then
+    if [[ -n "$SUDO_USER" ]]; then
+        echo 1
+        export HOME_ENV=$(eval echo ~$SUDO_USER)
+    else
+        echo 2
+        export HOME_ENV=$(eval echo ~$USER)
+    fi
 fi
+
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base: HOME_ENV: "$HOME_ENV
 
 source $HOME_ENV/.profile
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"2$CLIENT_HOST

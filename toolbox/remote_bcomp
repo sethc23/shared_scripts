@@ -1,0 +1,18 @@
+#!/bin/zsh
+
+L="$1"
+R="$2"
+
+if [[ "${L:0:1}" = "/" ]]; then LOCAL="/Volumes/$USER$L"; else LOCAL="/Volumes/$USER$PWD/$1"; fi
+if [[ "${R:0:1}" = "/" ]]; then REMOTE="/Volumes/$USER$R"; else REMOTE="/Volumes/$USER$PWD/$2"; fi
+
+echo "$LOCAL" >> /tmp/git_stuff
+echo "$REMOTE" >> /tmp/git_stuff
+
+# ssh admin -- /usr/local/bin/bcomp \
+#     "$(/usr/local/bin/realfullpath '$LOCAL')" \
+#     "$(/usr/local/bin/realfullpath '$REMOTE')"
+
+ssh admin -- /usr/local/bin/bcomp \"$LOCAL\" \"$REMOTE\"
+    # "$(/usr/local/bin/realfullpath '$LOCAL')" \
+    # "$(/usr/local/bin/realfullpath '$REMOTE')"
