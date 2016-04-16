@@ -10,6 +10,10 @@ def run_cmd(cmd):
     assert _err is None
     return _out.rstrip('\n')
 
+def growl(msg):
+    growl = "/usr/local/bin/growlnotify --sticky --message '%s'"
+    run_cmd(growl % msg)
+    raise SystemExit
 
 def _sublime(args):
     D = dict(zip(['prefix','user','dir','match'],args))
@@ -19,7 +23,6 @@ def _sublime(args):
     fpath = run_cmd(cmd)
     open_sublime = "/usr/local/bin/sublime_open %s" % fpath
     run_cmd(open_sublime)
-
 
 
 if __name__ == '__main__':

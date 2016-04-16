@@ -11,7 +11,7 @@ def check_for_link(_path):
     assert _err is None
     return _out.strip('\n')
 
-def main(p):
+def get_real_path(p):
     if not p[0]=='/':
         p = os.path.abspath(p)
     fpath = "/"
@@ -33,9 +33,16 @@ def main(p):
             else:
                 fpath = os.path.join(fpath,link_dest)
 
+            fpath = get_real_path(fpath)
+
         else:
             fpath = os.path.join(fpath,seg)
-    print fpath
+
+    return fpath
+
+def main(p):
+    print get_real_path(p)
+    
 
 if __name__ == '__main__':
     import sys
