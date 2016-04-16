@@ -28,7 +28,7 @@ g-rp-init_w_descr() { \
     git checkout -b master; git push github master; git branch --set-upstream-to=github/master;
     git checkout -b dev;
     git branch -avv; \
-}
+    }
 
 
 #  --  STATUSES (g-s*)
@@ -83,6 +83,13 @@ g-c-DATE() { git show -s --format=%ai $1 | head -n 1; }
 g-c-DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
 alias g-c-latest='git log --abbrev-commit --pretty=oneline | head -n 1 | cut -d \  -f 1'
 g-c-between(){ git log $1..$2 --pretty=oneline | wc -l;}
+
+#  --  DIFFS (g-d*)
+g-d-names() { git diff $1 $2 --name-only | more; }
+g-d-added() { git diff $1 $2 --name-status | grep '^A' | sed -r 's/^A\s+//g'; }
+g-d-deleted() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g'; }
+g-d-modified() { git diff $1 $2 --name-status | grep '^M' | sed -r 's/^M\s+//g'; }
+
 
 #  --  TAGS (g-t*)
 alias g-t-last='git describe --abbrev=0 --tags'
