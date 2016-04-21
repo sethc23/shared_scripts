@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 
-f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
-f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
+# f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
+# f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
 
 
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"

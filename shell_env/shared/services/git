@@ -205,6 +205,7 @@ alias gs-init_all='gs_recursive_pull'
 alias gs-status='git submodule foreach --recursive git branch -avv'
 alias gs-update='git pull && git submodule init && git submodule update && git submodule status'
 alias gs-list='git config --list|env egrep \^submodule'
+alias gs-init_by_gitmodules='gs_add_from_gitmodules'
 
 # new submodule example
 # git submodule add --name seamless_yelp_scraping -- git@github.com:sethc23/seamless_yelp_scrapi

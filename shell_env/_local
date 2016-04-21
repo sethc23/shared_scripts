@@ -30,8 +30,10 @@ if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e"
         [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
 
         plugins=$ZSH_PLUGINS
+        # plugins+=(git-prompt)
         source $ZSH/oh-my-zsh.sh
-        compinit
+        autoload -U compinit && compinit
+        autoload -U bashcompinit && bashcompinit
 
         bindkey '\e[A' history-substring-search-up
         bindkey '\e[B' history-substring-search-down
@@ -96,3 +98,5 @@ elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
     [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
 fi
+
+[[ $START_TMUX = true ]] && tmux attach -t base || tmux new -s base

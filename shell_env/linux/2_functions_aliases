@@ -24,8 +24,8 @@ alias semacs='sudo emacs -nw'
 alias jupyter_nbconvert='jupyter-nbconvert --to=notebook --nbformat=3 --inplace $SERV_HOME/ipython/notebooks/'
 
 
-function f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
-alias kill_by='f_kill_by'
+# function f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
+# alias kill_by='f_kill_by'
 
 alias mail_old='mail -f $HOME_ENV/mbox'
 

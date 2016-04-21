@@ -50,44 +50,158 @@ sl_tail_syslog_logs() {
 
 alias sl_tail_syslog_all_else="sudo tail -f /var/log/syslog | grep -v '#011#011' | uniq"
 
-sl_last_log() {
-    DIR=/var/log/syslogs
+last_log() {
+    [[ -n "$BASH_VERSION" ]] && shopt -s extglob
+    [[ -n "$ZSH_VERSION" ]] && setopt kshglob
+
+    if [[ "${1:0:1}" = "/" ]]; then
+        DIR="$1"
+        shift
+    else
+        DIR="/var/log"
+    fi
     HELP_OPT=("-h" "--help")
     if [[ "$1" != "" ]] && [[ $HELP_OPT =~ $1 ]]; then
+
+        echo ""
         echo "EXAMPLES:"
-        echo "1. sl_last_log"
+        echo "1. last_log"
         echo ">>>\tlist of files (\"LOG LIST\") in directory $DIR sorted with most recent at bottom"
         echo ""
-        echo "2. sl_last_log 2"
-        echo ">>>\ttails 2nd file from bottom of LOG LIST"
+        echo "2. last_log 2"
+        echo ">>>\ttails 2nd file FROM BOTTOM of LOG LIST"
         echo ""
-        echo "3. sl_last_log tmp"
+        echo "3. last_log tmp"
         echo ">>>\tsame as (1.) except only listing files (\"TMP LOG LIST\") where filename contains 'tmp' (case insensitive)"
         echo ""
-        echo "4. sl_last_log tmp 1"
+        echo "4. last_log tmp 1"
         echo ">>>\ttails bottom-most file in TMP LOG LIST"
+        echo ""
+        echo "5. last_log syslog -rsyslog"
+        echo ">>>\ttails bottom-most file in TMP LOG LIST"
+        echo ""
+        echo "6. last_log +syslog -rsyslog -log1 -1"
+        echo ">>>\ttails bottom-most file in TMP LOG LIST"
+        echo ""
+        echo "7. last_log syslog -rsyslog -log1 +1"
+        echo ">>>\ttails bottom-most file in TMP LOG LIST"
+        echo ""
+
     else
-        case $1 in
-            ''|*[!0-9]*);
-                TAG="$1";
-                log_num="$2";;
-            *);
-                TAG="";
-                log_num="$1";;
+        # DEFAULTS:
+        
+        INDEX_START="bottom"                # direction to start counting files from
+        TAG_TYPE="include"                  # regex type when tag without "+" and "-"
+
+        # ------------------------------------------------
+
+        last_arg="${@: -1}"
+        case $last_arg in
+            +(''|[-+])+([0-9]))
+                # echo "$last_arg:  digit (w | wo) modifier"
+                first_char="${last_arg:0:1}"
+                case $first_char in
+                    +)
+                        index_start="top"
+                        log_num="${last_arg:1:${#last_arg}}"
+                        ;;
+                    -)
+                        index_start="bottom"
+                        log_num="${last_arg:1:${#last_arg}}"
+                        ;;
+                    ''|*)
+                        index_start="$INDEX_START"
+                        log_num="$last_arg"
+                        ;;
+                esac
+                TAGS=${@: 1:$(expr ${#@} - 1)}
+                ;;
+            *) 
+                # echo "$last_arg NOT digit"
+                TAGS=${@: 1}
+                index_start="$INDEX_START"
+                log_num=""
+                ;;
         esac
-        CMD="env ls -lAtr $DIR | tail -n +2"
-        [[ -n "$TAG" ]] && CMD="$CMD | grep $TAG"
-    fi
-    if [[ -z "$log_num" ]]; then
-        [[ -z "$TAG" ]] && env ls -lAtr $DIR | tail -n +2
-        [[ -n "$TAG" ]] && env ls -lAtr $DIR | tail -n +2 | grep $TAG
-    else
-        log=$(env ls -At $DIR | head -n +$log_num | tail -n 1)
-        printf "\e]1337;SetBadgeFormat=%s\a" \
-            $(echo -n "$log" | base64)
-        echo "\n\n" | sudo tail -n 20 -f $DIR/$log
-        printf "\e]1337;SetBadgeFormat=%s\a" \
-            $(echo -n "\(user.gitRepo):\(user.gitBranch):\(user.gitBranchTag)" | base64)
+        
+        [[ -n "$BASH_VERSION" ]] && TAG_ARR=$TAGS
+        [[ -n "$ZSH_VERSION" ]] && TAG_ARR=(${(@s/ /)TAGS})
+
+        TAG_COND=""
+        # for tag in "${(@s/ /)TAGS}"; do
+        for tag in $TAG_ARR; do
+            first_char="${tag:0:1}"
+            case $first_char in
+                +)
+                    tag_type="include"
+                    tag="${tag:1:${#tag}}"
+                    ;;
+                -)
+                    tag_type="exclude"
+                    tag="${tag:1:${#tag}}"
+                    ;;
+                *)
+                    tag_type="$TAG_TYPE"
+                    tag="$tag"
+                    ;;
+            esac
+            
+            [[ "$tag_type" = "include" ]] && TAG_COND+=" | env grep -iE \"(.*)$tag([^[:space:]]*)$\""
+            [[ "$tag_type" = "exclude" ]] && TAG_COND+=" | env grep -viE \"(.*)$tag([^[:space:]]*)$\""
+        done
+
+        LIST_LOGS="env ls -lAtr $DIR | env grep -E \"^-\" | tail -n +2"
+        [[ -n "$TAGS" ]] && LIST_LOGS+=$TAG_COND
+
+        # If no $log_num provided, show log list
+        if [[ -z "$log_num" ]]; then
+            eval ${LIST_LOGS}
+        # Else, use $log_num and run socat tail on specific log file
+        else
+            # Confirm index number is valid
+            LOG_LIST_COUNT="$LIST_LOGS"" | wc -l"
+            [[ $log_num -gt $(eval ${LOG_LIST_COUNT}) ]] && echo "Index Number exceeds log list count." && exit 99
+
+            # Get nth log file from (top if modifier = "+", bottom is modifier = "-") where n=$log_num
+            GET_LOG_FNAME="$LIST_LOGS"" | column -t | tr -s \" \" | cut -d ' '  -f9-"        
+            [[ "$index_start" = "top" ]] && GET_LOG_FNAME+="$TAG_COND"" | head -n $log_num | tail -n 1"
+            [[ "$index_start" = "bottom" ]] && GET_LOG_FNAME+="$TAG_COND"" | tail -n $log_num  | head -n 1"
+            log="$DIR/""$(eval ${GET_LOG_FNAME})"
+
+            # Confirm logfile is actually a file
+            test ! -f "$log" && echo "'$log' is not a file" && exit 99
+
+
+            # BUILD CMD
+            CMD=""
+            SOCAT_CMD="socat "
+            SOCAT_LEFT="$log,nonblock,ignoreeof,seek-end"
+            SOCAT_RIGHT="-"
+
+            # If not readable, request root credentials (testing now to allow disrupting log display command)
+            test ! -r "$log" && sudo -v && CMD+="sudo "
+
+            # If large file, limit previous seek
+            [[ $(stat -c '%s' $log) -gt 1000 ]] && SOCAT_LEFT+=",seek-end,seek-cur=-1000"
+
+
+            CMD+=" $SOCAT_CMD $SOCAT_LEFT $SOCAT_RIGHT"
+
+            # log="$DIR/""$(env ls -At $DIR | head -n +$log_num | tail -n 1)"
+            printf "\e]1337;SetBadgeFormat=%s\a" \
+                $(echo -n "$log" | base64)
+
+            printf "\n\n%s\n\n" "$log"
+            trap "" TERM INT QUIT
+            if [[ $(stat -c '%s' $log) -gt 1000 ]]; then
+                eval {} 
+            else
+                sudo socat $log,nonblock,ignoreeof -
+            fi
+
+            printf "\e]1337;SetBadgeFormat=%s\a" \
+                $(echo -n "\(user.gitRepo):\(user.gitBranch):\(user.gitBranchTag)" | base64)
+        fi        
     fi
     }
-
+alias sl_last_log='last_log /var/log/syslogs'
