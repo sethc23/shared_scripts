@@ -99,4 +99,8 @@ elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
 
 fi
 
+if [[ "$PROFILE_STARTUP" == true ]]; then
+    unsetopt xtrace
+    exec 2>&3 3>&-
+fi
 [[ $START_TMUX = true ]] && tmux attach -t base || tmux new -s base

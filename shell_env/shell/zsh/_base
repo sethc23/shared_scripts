@@ -1,13 +1,18 @@
 #!/bin/bash
 
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base"1$CLIENT_HOST && env|sort
+PROFILE_STARTUP=false
+if [[ "$PROFILE_STARTUP" == true ]]; then
+    # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
+    PS4=$'%D{%M%S%.} %N:%i> '
+    exec 3>&2 2>/tmp/startlog.$$
+    setopt xtrace prompt_subst
+fi
 
 if [[ -z "$HOME_ENV" ]]; then
     if [[ -n "$SUDO_USER" ]]; then
-        echo 1
         export HOME_ENV=$(eval echo ~$SUDO_USER)
     else
-        echo 2
         export HOME_ENV=$(eval echo ~$USER)
     fi
 fi
