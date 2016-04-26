@@ -20,7 +20,7 @@ alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
 #fi
 #
 # iterm2_hostname
-#
+
 tail_b(){
     [[ "$1" = "-n1" ]] && echo "returning" && return
     CMD_PART="tail"
@@ -45,4 +45,4 @@ tail_b(){
             $(echo -n "\(user.gitRepo):\(user.gitBranch):\(user.gitBranchTag)" | base64)
     fi
     }
-alias tail='tail_b'
+# alias tail='tail_b'

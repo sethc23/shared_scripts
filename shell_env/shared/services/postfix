@@ -1,4 +1,4 @@
-#/bin/zsh
+#!/bin/zsh
 
 alias pf_config='sudo emacs /opt/local/etc/postfix/main.cf'
 alias pf_test_smtp='openssl s_client -connect smtp.gmail.com:587 -starttls smtp | tail -f /var/log/mail.log'

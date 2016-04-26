@@ -48,6 +48,7 @@ if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e"
 
         plugins=$ZSH_PLUGINS
         # plugins+=(git-prompt)
+        # plugins=(zsh-completions autojump last-working-dir python)
         source $ZSH/oh-my-zsh.sh
         autoload -U compinit && compinit
         autoload -U bashcompinit && bashcompinit
@@ -63,8 +64,10 @@ if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e"
     git_sync=[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local"6"$CLIENT_HOST"
+    
     # source_files_and_sub_dirs "$BASE_DIR/shared"
     # echo "shell_local"7"$CLIENT_HOST"
+
     _env=$(uname -a)
     [[ -n $(echo $_env | grep "Linux") ]] && \
         source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared" && \

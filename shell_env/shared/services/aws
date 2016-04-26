@@ -1,4 +1,4 @@
-#/bin/zsh
+#!/bin/zsh
 
 alias aws_addr='aws ec2 describe-addresses --filters Name="instance-id",Values="i-8206d068"'
 alias aws_attach_volume='aws ec2 attach-volume --volume-id vol-349bc67f --instance-id i-8206d068 --device /dev/sdh'
