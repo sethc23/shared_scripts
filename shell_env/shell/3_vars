@@ -3,9 +3,20 @@
 [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
 [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
 
-export SH=$SERV_HOME
+export SERVER_ID="$(hostname | sed -r 's/SERVER//g')"
+export SERVER="$(hostname | sed -r 's/\.local$//')"
 export ALIAS='.alias_s'$SERVER_ID
+export SHELL_CONFIG=.zshrc
+export ROOT=root
 
+if [[ -z "uname -a | env grep Darwin" ]]; then
+    non_root_user=$(getent passwd | grep "^ub" | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g')
+    export SERV_HOME=/home/$non_root_user/$SERVER
+else
+    export SERV_HOME=$HOME_ENV/$SERVER
+fi
+
+export SH=$SERV_HOME
 [[ -f $SERV_HOME/local_config/shell/$ALIAS ]] && source $SERV_HOME/local_config/shell/$ALIAS
 
 #export GIT_CONFIG=$HOME_ENV/.gitconfig     # Enabling sets all repo configs to same, so submodules get mixed'
@@ -30,6 +41,6 @@ for n in 1 2 4 5; do
     fi
 done
 if [[ $SERVER_ID != 3 ]]; then
-    export SHARE3=/Volumes/mbp2/Users/admin
+    export SHARE3=/Volumes/admin/Users/admin
     export SHARE3_SERVER=SERVER3
 fi
