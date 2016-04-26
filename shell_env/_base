@@ -2,21 +2,6 @@
 
 [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base"
 
-source_sub_dir() {
-    for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
-        for j in `env find $d -maxdepth 1 -type f | sort`; do 
-            source $j
-        done
-    done
-    }
-source_files(){
-    for i in `env find $1 -maxdepth 1 -type f | sort`; do source $i; done
-    }
-source_files_and_sub_dirs() {
-    source_files "$1"
-    source_sub_dir "$1"
-    }
-
 if [[ -n "$HOME_ENV" ]]; then
     BASE_DIR="$HOME_ENV/.scripts/shell_env"
 else
@@ -38,10 +23,9 @@ else
         fi
         [[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
     fi
-
     [[ -z "$HOME_ENV" ]] && export HOME_ENV="$(eval echo ~$USER)"
 
 fi
 
-
-
+[[ -z "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
+[[ -z "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base

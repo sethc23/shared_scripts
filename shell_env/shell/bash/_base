@@ -1,22 +1,26 @@
 #!/bin/bash
 
+[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base"1$CLIENT_HOST && env|sort
+
 if [[ -n "$SUDO_USER" ]]; then
     export HOME_ENV=$(eval echo ~$SUDO_USER)
 else
     export HOME_ENV=$(eval echo ~$USER)
 fi
 
+source $HOME_ENV/.profile
+[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"2$CLIENT_HOST
+
 case $- in
     *i*) ;;
-      *) source $HOME_ENV/.profile && source $HOME_ENV/.scripts/shell_env/_base && return;;
+      *) return;;
 esac
 
 
-source $HOME_ENV/.profile
-source $HOME_ENV/.scripts/shell_env/_base
-source ~/.shell_local
+[[ -n "$DEBUG_SHELL" ]] && echo "bassh/_base_"4$CLIENT_HOST
+source $HOME_ENV/.scripts/shell_env/_local
 
-if [[ -n "$BASH_VERSION" ]]; then
-    DIR="$HOME_ENV/.scripts/shell_env/bash/completers"
-    for i in `env find $DIR -maxdepth 1 -type f`; do source $i; done
-fi
+# if [[ -n "$BASH_VERSION" ]]; then
+#     DIR="$HOME_ENV/.scripts/shell_env/bash/completers"
+#     for i in `env find $DIR -maxdepth 1 -type f`; do source $i; done
+# fi

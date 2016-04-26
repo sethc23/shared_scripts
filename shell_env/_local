@@ -2,6 +2,23 @@
 
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_START"
 
+
+source_sub_dir() {
+    for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
+        for j in `env find $d -maxdepth 1 -type f | sort`; do 
+            source $j
+        done
+    done
+    }
+source_files(){
+    for i in `env find $1 -maxdepth 1 -type f | sort`; do source $i; done
+    }
+source_files_and_sub_dirs() {
+    source_files "$1"
+    source_sub_dir "$1"
+    }
+
+
 if [[ -n $(uname -a | grep "Darwin") ]]; then
     MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -E 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')    
 else
@@ -103,4 +120,4 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
     unsetopt xtrace
     exec 2>&3 3>&-
 fi
-[[ $START_TMUX = true ]] && tmux attach -t base || tmux new -s base
+#[[ $START_TMUX = true ]] && tmux attach -t base || tmux new -s base

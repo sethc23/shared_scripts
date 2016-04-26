@@ -9,21 +9,21 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
     setopt xtrace prompt_subst
 fi
 
-if [[ -z "$HOME_ENV" ]]; then
-    if [[ -n "$SUDO_USER" ]]; then
-        export HOME_ENV=$(eval echo ~$SUDO_USER)
-    else
-        export HOME_ENV=$(eval echo ~$USER)
-    fi
-fi
+# if [[ -z "$HOME_ENV" ]]; then
+#     if [[ -n "$SUDO_USER" ]]; then
+#         export HOME_ENV=$(eval echo ~$SUDO_USER)
+#     else
+#         export HOME_ENV=$(eval echo ~$USER)
+#     fi
+# fi
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base: HOME_ENV: "$HOME_ENV
+# [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base: HOME_ENV: "$HOME_ENV
 
 source $HOME_ENV/.profile
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"2$CLIENT_HOST
 
-source $HOME_ENV/.scripts/shell_env/_base
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"3$CLIENT_HOST
+# source $HOME_ENV/.scripts/shell_env/_base
+# [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"3$CLIENT_HOST
 
 case $- in
     *i*);;
