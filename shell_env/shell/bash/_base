@@ -2,14 +2,14 @@
 
 [[ -n "$DEBUG_SHELL" ]] && echo "bash/_base"1$CLIENT_HOST && env|sort
 
-if [[ -n "$SUDO_USER" ]]; then
-    export HOME_ENV=$(eval echo ~$SUDO_USER)
-else
-    export HOME_ENV=$(eval echo ~$USER)
-fi
+[[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
+[[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
 
 source $HOME_ENV/.profile
 [[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"2$CLIENT_HOST
+
+source $HOME_ENV/.scripts/shell_env/shell/bash/_env
+[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"3$CLIENT_HOST
 
 case $- in
     *i*) ;;

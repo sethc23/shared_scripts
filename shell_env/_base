@@ -27,5 +27,5 @@ else
 
 fi
 
-[[ -z "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
-[[ -z "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base
+[[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
+[[ -n "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base
