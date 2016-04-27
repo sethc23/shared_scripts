@@ -1,43 +1,45 @@
 #!/bin/zsh
 
-alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
 
-# <<< --- OSX WIFI --- >>>
-alias wifi_renew='sudo ipconfig set en1 DHCP'
-alias wifi_hardware='networksetup -listallhardwareports'
-alias wifi_off='networksetup -setairportpower en1 off'
-alias wifi_on='networksetup -setairportpower en1 on'
-alias wifi_scan='airport scan'
-alias wifi_connect='networksetup -setairportnetwork en1'
-alias wifi_disconnect='sudo airport -z'
-alias wifi_log_tail='tail -f /var/log/wifi.log'
-alias wifi_bssid='airport-bssid en1'
+# <<< --- SERVICES --- >>>
+alias svc_bluetooth_disable='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 0'
+alias svc_bluetooth_enable='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 1'
+alias svc_spotlight_disable='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist'
+alias svc_spotlight_enable='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist'
 
+/opt/local/etc/LaunchDaemons/org.macports.OpenSSH/org.macports.OpenSSH.plist
 
-# <<< --- SETTINGS --- >>>
-alias disable_bt='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 0'
-alias enable_bt='echo "admin" | sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 1'
+alias svc_sshd_disable='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'; \
+alias svc_sshd_enable='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'; \
+alias svc_sshd_restart='svc_sshd_disable && svc_sshd_enable'
+alias svc_sshd_restart_force='svc_sshd_disable; kill_by "sshd"; svc_sshd_enable'
 
-alias disable_hidden='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'
-alias enable_hidden='defaults write com.apple.finder AppleShowAllFiles -bool false; killall Finder'
-
-alias enable_screen_share='sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -off -restart -agent -privs -all -allowAccessFor -allUsers -clientopts'
-
-alias disable_lid='sudo nvram boot-args="niog=1"'
-alias enable_lid='sudo nvram -d boot-args'
-
-function enable_softwareupdate_f() { \
+# <<< --- SETTINGS/OPTIONS --- >>>
+function svc_softwareupdate_enable() { \
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdate_download_service.plist; }
-alias enable_softwareupdate='enable_softwareupdate_f'
-function disable_softwareupdate_f() { \
+function svc_softwareupdate_disable() { \
     sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\
     sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.softwareupdate_download_service.plist; }
-alias disable_softwareupdate='disable_softwareupdate_f'
 
-alias disable_ipv6='sudo networksetup -setv6off Ethernet && sudo networksetup -setv6off Wi-Fi'
-alias enable_ipv6='sudo networksetup -setv6automatic Ethernet && sudo networksetup -setv6automatic Wi-Fi'
+alias opt_hidden_disable='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'
+alias opt_hidden_enable='defaults write com.apple.finder AppleShowAllFiles -bool false; killall Finder'
+alias opt_ipv6_disable='sudo networksetup -setv6off Ethernet && sudo networksetup -setv6off Wi-Fi'
+alias opt_ipv6_enable='sudo networksetup -setv6automatic Ethernet && sudo networksetup -setv6automatic Wi-Fi'
+alias opt_lid_disable='sudo nvram boot-args="niog=1"'
+alias opt_lid_enable='sudo nvram -d boot-args'
+alias opt_screen_share_enable='sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -off -restart -agent -privs -all -allowAccessFor -allUsers -clientopts'
 
-alias disable_spotlight='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
-alias enable_spotlight='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist;'
+alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
 
+
+# <<< --- OSX WIFI --- >>>
+alias wifi_bssid='airport-bssid en1'
+alias wifi_connect='networksetup -setairportnetwork en1'
+alias wifi_disconnect='sudo airport -z'
+alias wifi_hardware='networksetup -listallhardwareports'
+alias wifi_log_tail='tail -f /var/log/wifi.log'
+alias wifi_off='networksetup -setairportpower en1 off'
+alias wifi_on='networksetup -setairportpower en1 on'
+alias wifi_renew='sudo ipconfig set en1 DHCP'
+alias wifi_scan='airport scan'
