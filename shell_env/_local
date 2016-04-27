@@ -36,19 +36,17 @@ if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e"
     if [[ -n "$ZSH_VERSION" ]]; then
 
         source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
-        [[ -n "$DEBUG_SHELL" ]] && echo "shell_local"4$CLIENT_HOST
+        [[ -n "$DEBUG_SHELL" ]] && echo "_local"4$CLIENT_HOST
 
         autoload -U compinit && compinit
         autoload -U bashcompinit && bashcompinit
 
-        [[ -n "$DEBUG_SHELL" ]] && echo "shell_local"5"$CLIENT_HOST"
+        [[ -n "$DEBUG_SHELL" ]] && echo "_local"5"$CLIENT_HOST"
 
         [[ "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="cobalt2"
         [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
 
         plugins=$ZSH_PLUGINS
-        # plugins+=(git-prompt)
-        # plugins=(zsh-completions autojump last-working-dir python)
         source $ZSH/oh-my-zsh.sh
         autoload -U compinit && compinit
         autoload -U bashcompinit && bashcompinit
@@ -64,18 +62,15 @@ if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e"
     git_sync=[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local"6"$CLIENT_HOST"
-    
-    # source_files_and_sub_dirs "$BASE_DIR/shared"
-    # echo "shell_local"7"$CLIENT_HOST"
 
     _env=$(uname -a)
     [[ -n $(echo $_env | grep "Linux") ]] && \
         source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared" && \
         source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
 
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local"8"$CLIENT_HOST"
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local"7$CLIENT_HOST
     source_files "$HOME_ENV/.scripts/shell_env/shell"
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local"5$CLIENT_HOST
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local"8$CLIENT_HOST
 
 elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
 
@@ -124,3 +119,5 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
     exec 2>&3 3>&-
 fi
 #[[ $START_TMUX = true ]] && tmux attach -t base || tmux new -s base
+
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_END"

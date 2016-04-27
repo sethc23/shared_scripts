@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base"1$CLIENT_HOST && env|sort
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base"1$CLIENT_HOST
 PROFILE_STARTUP=false
 if [[ "$PROFILE_STARTUP" == true ]]; then
     # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
@@ -32,3 +32,5 @@ esac
 
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"4$CLIENT_HOST
 source $HOME_ENV/.scripts/shell_env/_local
+
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_END"
