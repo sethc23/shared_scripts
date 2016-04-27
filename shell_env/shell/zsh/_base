@@ -25,7 +25,7 @@ setopt AUTO_LIST                # autolist choices on ambiguous completion
 setopt AUTO_MENU                # auto use menu completion after second request
 setopt AUTO_PUSHD               # ? create directory if not exist
 setopt CDABLE_VARS              # e.g., interpret as `cd IN` as `cd ~IN`
-setopt CHECK_JOBS               # report  the  status  of  background and suspended jobs before exiting a shell with job control; a second attempt to exit the shell will succeed.
+# setopt CHECK_JOBS               # report the  status of background and suspended jobs before exiting a shell with job control; a second attempt to exit the shell will succeed.
 setopt CLOBBER                  # allows `>' redirection to truncate existing files
 setopt COMPLETE_IN_WORD         # completion done on boths sides of cursor
 setopt EXTENDED_GLOB            # `#', `~' and `^' characters as part of patterns for filename generation
@@ -43,17 +43,17 @@ setopt INTERACTIVE              # (I/NI) establish interactive shell
 setopt INTERACTIVE_COMMENTS     # allow comments even in interactive shells
 setopt LIST_PACKED              # use different column lengths to occupy less lines
 setopt LOGIN                    # (I/NI) establish login shell
-setopt LONG_LIST_JOBS           # ;ist jobs in the long format by default
+setopt LONG_LIST_JOBS           # list jobs in the long format by default
 setopt MARK_DIRS                # append a trailing `/' to all directory names resulting from globbing
 setopt MONITOR                  # (I/NI) allow job control
-# setopt NOTIFY                   # report the status of background jobs immediately
+setopt NOTIFY                   # report the status of background jobs immediately
 setopt PATH_DIRS                # if `/usr/local/bin' is in the user's path, and he or she types `X11/xinit', the command `/usr/local/bin/X11/xinit' will be executed
 setopt PRINT_EXIT_VALUE         # print the exit value of programs with non-zero exit status
 setopt PROMPT_SUBST             # parameter expansion, command substitution and arithmetic expansion are performed in prompts
 setopt PUSHD_IGNORE_DUPS        # don't create multiple copies of same directory in stack
-setopt RC_EXPAND_PARAM          #  `foo${xx}bar', where xx=(a b c) --> `fooabar foobbar foocbar' AND NOT `fooa b cbar'.
+setopt RC_EXPAND_PARAM          # e.g., `foo${xx}bar', where xx=(a b c) --> `fooabar foobbar foocbar' AND NOT `fooa b cbar'.
 setopt SH_FILE_EXPANSION        # filename expansion is performed immediately after alias expansion (for sh compatability)
-setopt ZLE                      # use the zsh line editor
+setopt ZLE                      # (req) use the zsh line editor
 
 
 source $HOME_ENV/.profile
