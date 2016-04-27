@@ -55,18 +55,15 @@ if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e"
         bindkey '\e[B' history-substring-search-down
 
         for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
-
     fi
 
-    local_port=9092
-    git_sync=[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
+    export LOCAL_PORT=9092
+    export LOCAL_GIT_SYNC=[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local"6"$CLIENT_HOST"
 
-    _env=$(uname -a)
-    [[ -n $(echo $_env | grep "Linux") ]] && \
-        source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared" && \
-        source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
+    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
+    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local"7$CLIENT_HOST
     source_files "$HOME_ENV/.scripts/shell_env/shell"
@@ -96,19 +93,14 @@ elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
         for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
 
         # eval "$(register-python-argcomplete /home/ub2/.scripts/syscontrol/sys_control.py)"
-      
     fi
 
-    local_port=9093
-    git_sync=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
+    export LOCAL_PORT=9093
+    export LOCAL_GIT_SYNC=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
 
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
     source_files "$HOME_ENV/.scripts/shell_env/shell"
-
-    #source_files "$HOME_ENV/.scripts/shell_env/shell"
-    #[[ -n $(echo $_env | grep "Darwin") ]] && source_files_and_sub_dirs "$BASE_DIR/osx"
-    #source_files_and_sub_dirs "$BASE_DIR/shared"
 
     [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 

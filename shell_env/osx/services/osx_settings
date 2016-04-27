@@ -7,8 +7,6 @@ alias svc_bluetooth_enable='echo "admin" | sudo defaults write /Library/Preferen
 alias svc_spotlight_disable='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist'
 alias svc_spotlight_enable='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist'
 
-/opt/local/etc/LaunchDaemons/org.macports.OpenSSH/org.macports.OpenSSH.plist
-
 alias svc_sshd_disable='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'; \
 alias svc_sshd_enable='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'; \
 alias svc_sshd_restart='svc_sshd_disable && svc_sshd_enable'

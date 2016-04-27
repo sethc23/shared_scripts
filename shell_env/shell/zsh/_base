@@ -9,15 +9,52 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
     setopt xtrace prompt_subst
 fi
 
-# if [[ -z "$HOME_ENV" ]]; then
-#     if [[ -n "$SUDO_USER" ]]; then
-#         export HOME_ENV=$(eval echo ~$SUDO_USER)
-#     else
-#         export HOME_ENV=$(eval echo ~$USER)
-#     fi
-# fi
+unsetopt BG_NICE                # run all background jobs at a lower priority
+unsetopt HIST_IGNORE_DUPS       # ignore newer dupes
+unsetopt HIST_IGNORE_SPACE      # removes commands from history where leading space
+unsetopt HUP                    # send HUP signal when shell exits
+unsetopt PUSHD_MINUS            # exchanges the meanings of ‘+’ and ‘-’, e.g., ‘~-0' now means zero positions from the top of the stack
+unsetopt SHARE_HISTORY          # imports new commands from history and appends history file (conflicts with INC_APPEND_HISTORY)
 
-# [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base: HOME_ENV: "$HOME_ENV
+setopt ALIASES                  # expand aliases
+setopt ALL_EXPORT               # all parameters subsequently defined are automatically exported
+setopt ALWAYS_TO_END            # move cursor to end of stdin upon completion
+setopt AUTO_CD                  # perform cd on command if no command and directory exists
+setopt AUTO_CONTINUE            # auto send CONT signal if `disown` acted on job
+setopt AUTO_LIST                # autolist choices on ambiguous completion
+setopt AUTO_MENU                # auto use menu completion after second request
+setopt AUTO_PUSHD               # ? create directory if not exist
+setopt CDABLE_VARS              # e.g., interpret as `cd IN` as `cd ~IN`
+setopt CHECK_JOBS               # report  the  status  of  background and suspended jobs before exiting a shell with job control; a second attempt to exit the shell will succeed.
+setopt CLOBBER                  # allows `>' redirection to truncate existing files
+setopt COMPLETE_IN_WORD         # completion done on boths sides of cursor
+setopt EXTENDED_GLOB            # `#', `~' and `^' characters as part of patterns for filename generation
+setopt EXTENDED_HISTORY         # add start & end timestamp to cmd
+setopt FLOW_CONTROL             # flow controlled via ^S and ^Q
+setopt GLOB                     # perform filename generation
+setopt GLOBAL_RCS               # /etc/zprofile, /etc/zshrc, /etc/zlogin and /etc/zlogout will not be run
+setopt HIST_EXPIRE_DUPS_FIRST   # if trim req'd, older dupe lost before recent uniq.
+setopt HIST_IGNORE_ALL_DUPS     # new dupes replace older dupes
+setopt HIST_REDUCE_BLANKS       # remove surplusage
+setopt HIST_SAVE_NO_DUPS        # same as HIST_IGNORE_ALL_DUPS on history write
+setopt HIST_VERIFY              # reload line into editing buffer (and not execute) upon history expansion
+setopt INC_APPEND_HISTORY       # new history lines are added to the $HISTFILE incrementally (as soon as they are entered),
+setopt INTERACTIVE              # (I/NI) establish interactive shell
+setopt INTERACTIVE_COMMENTS     # allow comments even in interactive shells
+setopt LIST_PACKED              # use different column lengths to occupy less lines
+setopt LOGIN                    # (I/NI) establish login shell
+setopt LONG_LIST_JOBS           # ;ist jobs in the long format by default
+setopt MARK_DIRS                # append a trailing `/' to all directory names resulting from globbing
+setopt MONITOR                  # (I/NI) allow job control
+setopt NOTIFY                   # report the status of background jobs immediately
+setopt PATH_DIRS                # if `/usr/local/bin' is in the user's path, and he or she types `X11/xinit', the command `/usr/local/bin/X11/xinit' will be executed
+setopt PRINT_EXIT_VALUE         # print the exit value of programs with non-zero exit status
+setopt PROMPT_SUBST             # parameter expansion, command substitution and arithmetic expansion are performed in prompts
+setopt PUSHD_IGNORE_DUPS        # don't create multiple copies of same directory in stack
+setopt RC_EXPAND_PARAM          #  `foo${xx}bar', where xx=(a b c) --> `fooabar foobbar foocbar' AND NOT `fooa b cbar'.
+setopt SH_FILE_EXPANSION        # filename expansion is performed immediately after alias expansion (for sh compatability)
+setopt ZLE                      # use the zsh line editor
+
 
 source $HOME_ENV/.profile
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"2$CLIENT_HOST
