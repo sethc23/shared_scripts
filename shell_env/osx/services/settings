@@ -1,0 +1,24 @@
+#!/bin/zsh
+
+# <<< --- SETTINGS/OPTIONS --- >>>
+alias opt_hidden_disable='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'
+alias opt_hidden_enable='defaults write com.apple.finder AppleShowAllFiles -bool false; killall Finder'
+alias opt_ipv6_disable='sudo networksetup -setv6off Ethernet && sudo networksetup -setv6off Wi-Fi'
+alias opt_ipv6_enable='sudo networksetup -setv6automatic Ethernet && sudo networksetup -setv6automatic Wi-Fi'
+alias opt_lid_disable='sudo nvram boot-args="niog=1"'
+alias opt_lid_enable='sudo nvram -d boot-args'
+alias opt_screen_share_enable='sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -off -restart -agent -privs -all -allowAccessFor -allUsers -clientopts'
+
+alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Events\\"\ntell process \\"Finder\\"\nkey code 96 using command down\nend tell\nend tell\"`"'
+
+
+# <<< --- OSX WIFI --- >>>
+alias wifi_bssid='airport-bssid en1'
+alias wifi_connect='networksetup -setairportnetwork en1'
+alias wifi_disconnect='sudo airport -z'
+alias wifi_hardware='networksetup -listallhardwareports'
+alias wifi_log_tail='tail -f /var/log/wifi.log'
+alias wifi_off='networksetup -setairportpower en1 off'
+alias wifi_on='networksetup -setairportpower en1 on'
+alias wifi_renew='sudo ipconfig set en1 DHCP'
+alias wifi_scan='airport scan'

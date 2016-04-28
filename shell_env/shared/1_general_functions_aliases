@@ -25,7 +25,7 @@ diff-dir-left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 
 diff-dir-right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
 diff-dir-right-copy-left() { 
     here=$(echo $(pwd))
-    f=$(diff_dir_right $1 $2 | awk '{print $3$4}' | sed 's/:/\//g' | sed 's/\/\//\//g');
+    f=$(diff-dir-right $1 $2 | awk '{print $3$4}' | sed 's/:/\//g' | sed 's/\/\//\//g');
     repl_part=$(echo $2 | sed 's/\//\\\//g');
     for from_file in $f 
         do
@@ -52,20 +52,20 @@ diff-files-right() { colordiff --side-by-side --suppress-common-lines --ignore-a
     --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | \
     awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; \
     }
-djJSON() { f_getJSON http://0.0.0.0/api_view/$1/?format=json; }
+djJSON() { curl-JSON http://0.0.0.0/api_view/$1/?format=json; }
 dl_unzip() { wget $1; tar -xzvf $1; }
 edit_bash_prof() { $EDITOR "$HOME_ENV/$SHELL_CONFIG"; source_bash; }
 edit_bash_share() { $EDITOR $HOME_ENV/.scripts/.alias_shared; source_bash; }
 edit_linux_share() { $EDITOR $HOME_ENV/.scripts/.alias_linux; source_bash; }
 edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
-f_find_file() { sudo find -H -s $1 -type f -iregex "$2"; }
-f_find_file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
-f_find_folder() { sudo find -H -s $1 -type d -iregex "$2"; }
-f_find_in_files() { sudo find $1 -type f | xargs grep -iE "$2"; }
-f_getJSON() { curl -H 'Accept: application/json; indent=4' $1; }
-f_sencha_build() { cd $APORO/static/sencha; sudo sencha app build production; }
+find-file() { sudo find -H -s $1 -type f -iregex "$2"; }
+find-file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
+find-folder() { sudo find -H -s $1 -type d -iregex "$2"; }
+find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
+curl-JSON() { curl -H 'Accept: application/json; indent=4' $1; }
+sencha-build() { cd $APORO/static/sencha; sudo sencha app build production; }
 gdiff() { git diff $@ | cdiff -s -w 110; }
-jq_merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
+jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
 newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
@@ -74,6 +74,12 @@ pyprofilewrite() { kernprof.py -l $1; }
 RD() { cd $BD/RD/src; python seamless.py; }
 RDt() { cd $BD/RD/src; python seamless_test.py; }
 retar() { tar -zcvf $1 $2; }
+shell_opts() {
+    if [[ "$1" = "show" ]]; then
+        [[ -n "$BASH_VERSION" ]] && shopt -p
+        [[ -n "$ZSH_VERSION" ]] && setopt
+    fi
+    }
 source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 
 build_script_env_f() {
@@ -107,8 +113,6 @@ alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
 alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
 alias egrep='egrep -i --color=auto'
 alias fgrep='fgrep -i --color=auto'
-alias find_file='f_find_file'
-alias find_folder='f_find_folder'
 alias function_names='compgen -A function | sort'
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
 alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME_ENV/django/Dropbox/aporo/static/sencha'
@@ -118,7 +122,7 @@ alias grok_app='ngrok -hostname app.aporodelivery.com 80'
 alias grok_mysql='ngrok -proto tcp 3306'
 alias grok_printer='ngrok -hostname printer.aporodelivery.com 80'
 alias hist_cmds="history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"
-alias JSON='f_getJSON'
+alias killall="killall -9"
 alias l-test="printf 'package.loaded.tmp=nil\nt=require\"tmp\"\nt.test()' | luap --"
 alias locate='locate -i'
 alias locate_info='locate -S'
