@@ -9,14 +9,15 @@ alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text
 
 alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
 ssh_f(){
+    
     [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
     mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1 > /dev/null 2>&1;
 }
 
-alias ssh-s1='ssh_f ub1'
-alias ssh-s2='ssh_f ub2'
-alias ssh-s6='ssh_f ub6'
-alias ssh-s7='ssh_f ub7'
+alias ssh-s1='dn_update_ip && dn_remote_tunnel open && ssh_f ub1'
+alias ssh-s2='dn_update_ip && dn_remote_tunnel open && ssh_f ub2'
+alias ssh-s6='dn_update_ip && dn_remote_tunnel open && ssh_f ub6'
+alias ssh-s7='dn_update_ip && dn_remote_tunnel open && ssh_f ub7'
 alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
 alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
 # ssh -nNL localhost:12501:localhost:12501 ub1 &
@@ -25,49 +26,25 @@ alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
 #sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
 alias locate_update='sudo /opt/local/libexec/gnubin/updatedb'
 
-
 open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 alias open_color_picker='open_color_picker_f'
 
-# <<< --- OSX SETTINGS --- >>>
 
 
 # <<< --- OSX_IPYTHON --- >>>
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
 
-ps_cut(){ bash -c "ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2}" | cut -c -$(tput cols) ; }
+ps_cut(){ env ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
 alias ps='ps_cut ps'
 alias ps-mem='ps -m'
 alias ps-cpu='ps -r'
-alias ps-threads='ps -M'
+alias ps-threads='pstree'
 
 
 alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
 
 alias rt_update_fw='cd $SERV_HOME/local_config/cisco && scp jffs/etc/config/fw.if cisco:/jffs/etc/config/ 2> /dev/null && rt_ /jffs/etc/config/fw.if 2> /dev/null'
-
-alias apache_load='sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist'
-alias apache_unload='sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist'
-
-alias ib_load='sudo launchctl load -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
-alias ib_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
-
-alias load_locate='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist'
-alias unload_locate='sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.locate.plist'
-alias load_standard_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
-alias unload_standard_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
-alias load_custom_syslogd='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl start custom.syslogd'
-alias unload_custom_syslogd='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl stop custom.syslogd'
-alias load_sshd='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
-alias unload_sshd='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
-
-alias load_mysql='echo "money" | sudo launchctl load -w /Library/LaunchDaemons/org.macports.mysql55-server.plist'
-alias unload_mysql='echo "money" | sudo launchctl unload -w /Library/LaunchDaemons/org.macports.mysql55-server.plist'
-
-# <<< -- Nginx -- >>>
-alias ng_load='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
-alias ng_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
 
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sudo_textedit='f_sudo_textedit'

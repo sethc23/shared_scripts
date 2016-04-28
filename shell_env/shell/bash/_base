@@ -5,9 +5,6 @@
 [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
 [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
 
-source $HOME_ENV/.profile
-[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"2$CLIENT_HOST
-
 source $HOME_ENV/.scripts/shell_env/shell/bash/_env
 [[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"3$CLIENT_HOST
 
@@ -17,7 +14,7 @@ case $- in
 esac
 
 
-[[ -n "$DEBUG_SHELL" ]] && echo "bassh/_base_"4$CLIENT_HOST
+[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"4$CLIENT_HOST
 source $HOME_ENV/.scripts/shell_env/_local
 
 # if [[ -n "$BASH_VERSION" ]]; then

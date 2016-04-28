@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-function get_my_ip_int_f() { \
+get_my_ip_int() {
     if [ `uname` = 'Darwin' ]; then
         _test=`ipconfig getifaddr en0`
         if [ -z $_test ]; then
@@ -16,12 +16,10 @@ function get_my_ip_int_f() { \
     else
         ip route get 8.8.8.8 | awk '{print $NF; exit}'
     fi;}
-function get_my_ip_ext_f() { \
+get_my_ip_ext() {
     curl -s 'http://ipv4.nsupdate.info/myip' | \
     sed -r 's/^([0-9]{,3}\.[0-9]{,3}\.[0-9]{,3}\.[0-9]{,3})/\1/g' | \
     xargs -I '{}' printf '%s\n' {}; }
-alias get_my_ip_int='get_my_ip_int_f'
-alias get_my_ip_ext='get_my_ip_ext_f'
 
 alias ipt='sudo iptables -nL -v'
 alias ipt_flush='sudo iptables -F'
@@ -37,34 +35,42 @@ alias ports_listen_3='nettop'
 alias ports_sockets='netstat -lx'
 alias ports_ssh='lsof -i tcp | grep ^ssh'
 
-function net_dig_simple_f() { dig $1 +nostats +nocomments +nocmd; }
+net_dig_simple() { dig $1 +nostats +nocomments +nocmd; }
 alias net_dig_simple='net_dig_simple_f'
 
-function net_port_check_f(){
+net_port_check(){
     nmap -p $1 $2
-}
-alias net_port_check='net_port_check_f'
-alias net_port_check_help='echo "alias net_port_check <port> <ip/url>"'
+    }
+alias net_port_check_help='echo "net_port_check <port> <ip/url>"'
 alias net_route_v4='route -A inet'
 alias net_route_v6='route -A inet6'
 
-#arp -- address resolution protocol
+# arp -- address resolution protocol
 
 # <<<   ---   DISTRIBUTED NETWORK (dn_*)   ---   >>>
-alias dn_remote_tunnel_open="echo \"$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)\" | xargs -I '{}' ssh -nNR 1{}:localhost:{} ub2  > /dev/null 2>&1 &"
-alias dn_remote_tunnel_close="echo '$(cat /etc/ssh/sshd_config | grep \^Port | cut -d \  -f2)' | xargs -I '{}' kill -9 `ps -awx | grep 1{} | grep -v grep | cut -d \  -f1` > /dev/null 2>&1"
-dn_update_ip(){ \
-    URL="http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID"
+dn_remote_tunnel(){
+    EXISTS="$(env ps -awx | grep 1$LOCAL_PORT | grep -v grep | wc -l)"
+    if [[ "$1" = "open" ]] && [[ $EXISTS = 0 ]]; then
+        echo $LOCAL_PORT | xargs -I '{}' ssh -nNR 1{}:localhost:{} ub2  > /dev/null 2>&1 &
+    elif [[ "$1" = "close" ]] && [[ $EXISTS = 1 ]]; then
+        kill_by 1$LOCAL_PORT > /dev/null 2>&1
+    fi
+    }
+dn_update_ip(){
+    SHELL_VARS=("${(@f)$(zsh -ic 'echo "tmp"; echo \"http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID\"; get_my_ip_int; get_my_ip_ext')}")
+    URL="$SHELL_VARS[2]"
+    IP_INT="$SHELL_VARS[3]"
+    IP_EXT="$SHELL_VARS[4]"
 
-    # JSON_1=$(printf '{"s_user":"%s","s_host":"%s"}' "$USER" "$(hostname)")
     JSON_1=$(printf '{"s_host":"%s"}' "$(hostname)")
     JSON_2=$(printf '{"home_env":"%s"}' "$HOME_ENV" )
     JSON_3=$(printf '{"local_port":"%s"}' "$LOCAL_PORT")
-    JSON_4=$(printf '{"local_ip":"%s","ext_ip":"%s"}' "$(get_my_ip_int_f)" "$(get_my_ip_ext_f)")
+    JSON_4=$(printf '{"local_ip":"%s","ext_ip":"%s"}' $IP_INT $IP_EXT)
     JSON_5=$(printf '{"git_sync":%s}' "$LOCAL_GIT_SYNC")
     JSON_6=$(printf '{"s_path":"%s"}' "$PATH")
     JSONS=($JSON_1 $JSON_2 $JSON_3 $JSON_4 $JSON_5 $JSON_6)
-    a='{}'; for i in $JSONS; do a=$(jq -M -n -c "$a * $i"); done
+    a='{}'; for i in $JSONS; do a=$(jq -nMc "$a * $i"); done
 
-    echo $a | curl -d @- $URL
-}
+    CMD="echo '$a' | curl -g -d @- $URL"
+    eval ${CMD}
+    }

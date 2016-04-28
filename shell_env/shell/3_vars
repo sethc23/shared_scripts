@@ -3,8 +3,8 @@
 [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
 [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
 
-export SERVER_ID="$(hostname | sed -r 's/SERVER//g')"
 export SERVER="$(hostname | sed -r 's/\.local$//')"
+export SERVER_ID="$(echo $SERVER | sed -r 's/SERVER//g')"
 export ALIAS='.alias_s'$SERVER_ID
 export SHELL_CONFIG=.zshrc
 export ROOT=root

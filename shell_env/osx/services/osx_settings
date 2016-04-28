@@ -7,12 +7,21 @@ alias svc_bluetooth_enable='echo "admin" | sudo defaults write /Library/Preferen
 alias svc_spotlight_disable='sudo mdutil -a -i off; sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist'
 alias svc_spotlight_enable='sudo mdutil -a -i on; sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist'
 
-alias svc_sshd_disable='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'; \
-alias svc_sshd_enable='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'; \
+alias svc_ipy_disable='sudo launchctl unload -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
+alias svc_ipy_enable='sudo launchctl load -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
+alias svc_locate_disable='sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.locate.plist'
+alias svc_locate_enable='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist'
+alias svc_ng_disable='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
+alias svc_ng_enable='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
+alias svc_sshd_disable='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
+alias svc_sshd_enable='sudo launchctl load -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
 alias svc_sshd_restart='svc_sshd_disable && svc_sshd_enable'
 alias svc_sshd_restart_force='svc_sshd_disable; kill_by "sshd"; svc_sshd_enable'
+alias svc_syslogd_custom_disable='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl stop custom.syslogd'
+alias svc_syslogd_custom_enable='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd2.plist; sudo launchctl start custom.syslogd'
+alias svc_syslogd_standard_disable='sudo launchctl unload -w -F /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
+alias svc_syslogd_standard_enable='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd3.plist'
 
-# <<< --- SETTINGS/OPTIONS --- >>>
 function svc_softwareupdate_enable() { \
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdate_download_service.plist; }
@@ -20,6 +29,7 @@ function svc_softwareupdate_disable() { \
     sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\
     sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.softwareupdate_download_service.plist; }
 
+# <<< --- SETTINGS/OPTIONS --- >>>
 alias opt_hidden_disable='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'
 alias opt_hidden_enable='defaults write com.apple.finder AppleShowAllFiles -bool false; killall Finder'
 alias opt_ipv6_disable='sudo networksetup -setv6off Ethernet && sudo networksetup -setv6off Wi-Fi'
