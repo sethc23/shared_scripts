@@ -1,6 +1,6 @@
 #!/home/ub2/.virtualenvs/devenv/bin/python
 
-import os,re
+import os,re,json
 from subprocess import Popen as sub_popen
 from subprocess import PIPE as sub_PIPE
 
@@ -11,6 +11,7 @@ def run_cmd(cmd,return_exit_code=False):
     p = sub_popen(cmd,stdout=sub_PIPE,shell=True,executable='/bin/zsh')
     (_out,_err), exit_code = p.communicate(), p.returncode
     assert _err is None
+    _out = _out.rstrip('\n ')
     if return_exit_code:
         return _out,exit_code
     else:
@@ -38,17 +39,47 @@ def update_repo(args):
     with open(data_file,'r') as f:
         D = eval(f.read())
 
+    D['branch'] = D['ref'].replace('refs/heads/','',1)
+    D_urls = [v for k,v in D.iteritems() if k.count('_url')]
+    # args example: 
+    #   {"commit":"443fd473b5afcec0f82cc177fb1c3867ebe7c269", \
+    #       "ref":"refs/heads/dev", \
+    #       "ssh_url":"git@github.com:sethc23/shared_scripts.git", \
+    #       "https_url":"https://github.com/sethc23/shared_scripts.git"}
     import pandas as pd
     import os
 
-    df = pd.read_csv('/home/ub2/.scripts/git/repo_server_info')
+    # df = pd.read_csv('/home/ub2/.scripts/git/repo_server_info')
     
-    assert not df.columns.isin(D.keys()).any()
-    for k,v in D.iteritems():
-        df[k] = v
+    # assert not df.columns.isin(D.keys()).any()
+    # for k,v in D.iteritems():
+    #     df[k] = v
+    # drop_idx = df[ (df.remote_url!=df.https_url) & (df.remote_url!=df.ssh_url) ].index.tolist()
+    cmd = '|'.join([""" echo \"{\\\"qry\\\": \\\"select * from servers where git_sync::text ilike '%%shared_scripts.git%%' \\\"}\" """,
+               'curl -s -d @- "http://localhost:9999/query"'
+               ])
+    res = run_cmd(cmd)
+    df = pd.DataFrame(json.loads(res))
     
-    idx = df[ (df.remote_url!=df.https_url) & (df.remote_url!=df.ssh_url) ].index.tolist()
-    df = df.drop(idx,axis=0).reset_index(drop=True)
+    def get_matching_git_repos():
+        for it in gs:
+            for k,v in it.iteritems():
+                if D_urls.count(v):
+                    return {k:v}
+        return {}
+    df['repo_path'] = ''
+    for k in D.keys():
+        df[k] = D[k]
+    drop_idx = []
+    for i,r in df[df.git_sync.isnull()==False].iterrows():
+        gs = json.loads(r.git_sync)
+        s_repo_info = get_matching_git_repos()
+        for k,v in s_repo_info.iteritems():
+            df.set_value(i,'repo_path', k)
+        if not s_repo_info:
+            drop_idx.append(i)
+
+    df = df.drop(drop_idx,axis=0).reset_index(drop=True)
 
     THIS_SERVER_USERS = run_cmd('cat /etc/passwd | cut -d : -f1').split('\n')
 
@@ -67,24 +98,28 @@ def update_repo(args):
     cmd_template = '; '.join([  'cd %(repo_path)s',
                                 '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
                                 '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
-                                'git pull',
+                                "REMOTE=$(git show-ref %(branch)s | columns | cut -d ' ' -f2- \
+                                    | grep -v 'refs/heads' | cut -d '/' -f3- | sed -r 's/\/dev//g')",
+                                'git fetch $REMOTE %(branch)s:%(branch)s',                          # git fetch github <sourceBranch>:<destinationBranch>
                                 'exit 0'])
     # exit 0 --> success OR server branch already at commit
     # exit 99 --> branch dirty
     # exit 255 --> server not connected
 
     for i,r in df.iterrows():
-        if THIS_SERVER_USERS.count(r.server):
+        if THIS_SERVER_USERS.count(r.s_user):
             cmd = cmd_template % r
             _out,exit_code = run_cmd(cmd,True)
         else:
-            cmd = ' '.join(["ssh %(server)s" % r,
+            cmd = ' '.join(["ssh %(s_user)s" % r,
                             "'%s'" % cmd_template % r,
                             "2>&1"])
+            print cmd
             _out,exit_code = run_cmd(cmd,True)
             
             if exit_code==255:
 
+                if not DEBUG:
                 from uuid import uuid4 as uuid
                 callback_file = '/tmp/%s' % uuid().hex
 
@@ -94,6 +129,8 @@ def update_repo(args):
                 cmd = """echo '/home/ub2/.scripts/git/webhooks 1 \'%s\' > /dev/null 2>&1"' \
                     | at NOW + 10 minutes""" % callback_file
                 run_cmd(cmd)
+                else:
+                    growl('exit_code==255:  %(server)s:%(repo_path)s' % r)
 
             elif exit_code==99:
 
@@ -127,7 +164,7 @@ from sys import argv
 if __name__ == '__main__':
 
     if DEBUG:
-        import json,uuid
+        import uuid
         with open('/tmp/webhooks_%s' % uuid.uuid4().hex,'w') as f:
             f.write(json.dumps(argv))
 
@@ -137,15 +174,16 @@ if __name__ == '__main__':
         raise SystemExit
 
     if args[0]=='queue':
-        run_cmd("echo 'queueing' > /dev/pts/0")
+        if DEBUG: run_cmd("echo 'queueing' > /dev/pts/0")
         cmd = """echo 'su ub2 -c "/home/ub2/.scripts/git/webhooks \'%s\' > /dev/null 2>&1"' \
                     | at NOW + 1 minute""" % str(args[1])
         run_cmd(cmd)
     elif args[0].isdigit():
-        run_cmd("echo 'trying again' > /dev/pts/0")
+        if DEBUG: run_cmd("echo 'trying again' > /dev/pts/0")
         try_update_again(args)
     else:
-        run_cmd("echo 'updating' > /dev/pts/0")
+        # ./webhooks /tmp/4134b19e-0c82-11e6-892b-60334b9784a2
+        if DEBUG: run_cmd("echo 'updating' > /dev/pts/0")
         update_repo(args)
 
 
