@@ -47,7 +47,8 @@ g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*//g';}
 #  --  BRANCHES (g-b*)
 alias g-b='git branch -avv'
 alias g-b-DELETE='git branch -d'
-alias g-b-r-DELETE='git branch --remotes --delete'
+alias g-b-r-DELETE_LOCAL='git branch --remotes --delete'
+g-b-r-DELETE-REMOTE() { git push $1 --delete $2; }
 alias g-b-name='git rev-parse --abbrev-ref HEAD'
 g_b_sync(){ \
     if [[ "$1" = "push" ]]; then
