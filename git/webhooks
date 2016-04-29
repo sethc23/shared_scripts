@@ -41,6 +41,7 @@ def update_repo(args):
 
     D['branch'] = D['ref'].replace('refs/heads/','',1)
     D_urls = [v for k,v in D.iteritems() if k.count('_url')]
+    
     # args example: 
     #   {"commit":"443fd473b5afcec0f82cc177fb1c3867ebe7c269", \
     #       "ref":"refs/heads/dev", \
@@ -120,15 +121,15 @@ def update_repo(args):
             if exit_code==255:
 
                 if not DEBUG:
-                from uuid import uuid4 as uuid
-                callback_file = '/tmp/%s' % uuid().hex
+                    from uuid import uuid4 as uuid
+                    callback_file = '/tmp/%s' % uuid().hex
 
-                with open(callback_file,'w') as f:
-                    f.write(cmd)
+                    with open(callback_file,'w') as f:
+                        f.write(cmd)
 
-                cmd = """echo '/home/ub2/.scripts/git/webhooks 1 \'%s\' > /dev/null 2>&1"' \
-                    | at NOW + 10 minutes""" % callback_file
-                run_cmd(cmd)
+                    cmd = """echo '/home/ub2/.scripts/git/webhooks 1 \'%s\' > /dev/null 2>&1"' \
+                        | at NOW + 10 minutes""" % callback_file
+                    run_cmd(cmd)
                 else:
                     growl('exit_code==255:  %(server)s:%(repo_path)s' % r)
 

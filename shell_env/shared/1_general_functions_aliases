@@ -20,9 +20,9 @@ cde_f() {
     fi
     }
 copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
-diff-dir-all() { colordiff --brief --recursive $1 $2; }
-diff-dir-left() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
-diff-dir-right() { colordiff --brief --recursive $1 $2 | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
+diff-dir-all() { env colordiff --brief --recursive --width=$(tput cols) $1 $2; }
+diff-dir-left() { diff-dir-all | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
+diff-dir-right() { diff-dir-all | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
 diff-dir-right-copy-left() { 
     here=$(echo $(pwd))
     f=$(diff-dir-right $1 $2 | awk '{print $3$4}' | sed 's/:/\//g' | sed 's/\/\//\//g');
@@ -39,17 +39,17 @@ diff-dir-right-copy-left() {
             #cp -R $(echo $from_file $to_file)
         done;
     unset here f repl_part to_file;}
-diff-dir-files() { colordiff --brief --recursive $1 $2 | grep -E '^Files'; }
-diff-dir-same() { colordiff --brief --recursive --report-identical-files $1 $2 | grep 'are identical'; }
-diff-files() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
-    --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2; \
+diff-dir-files() { diff-dir-all | grep -E '^Files'; }
+diff-dir-same() { env colordiff --brief --recursive --report-identical-files $1 $2 | grep 'are identical'; }
+diff-files() { env colordiff --side-by-side --suppress-common-lines --ignore-all-space \
+    --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=$(tput cols) $1 $2; \
     }
-diff-files-left() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
-    --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | \
+diff-files-left() { env colordiff --side-by-side --suppress-common-lines --ignore-all-space \
+    --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=$(tput cols) $1 $2 | \
     awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]<[^a-zA-Z0-9]/ {print}'; \
     }
-diff-files-right() { colordiff --side-by-side --suppress-common-lines --ignore-all-space \
-    --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=200 $1 $2 | \
+diff-files-right() { env colordiff --side-by-side --suppress-common-lines --ignore-all-space \
+    --ignore-blank-lines --ignore-space-change --ignore-blank-lines --width=$(tput cols) $1 $2 | \
     awk 'NR==1{print} NR>1 && /[^a-zA-Z0-9]>[^a-zA-Z0-9]/ {print}'; \
     }
 djJSON() { curl-JSON http://0.0.0.0/api_view/$1/?format=json; }
