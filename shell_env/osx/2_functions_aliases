@@ -15,11 +15,13 @@ ssh_f(){
 }
 
 alias ssh-s1='dn_update_ip && dn_remote_tunnel open && ssh_f ub1'
-alias ssh-s2='dn_update_ip && dn_remote_tunnel open && ssh_f ub2'
 alias ssh-s6='dn_update_ip && dn_remote_tunnel open && ssh_f ub6'
 alias ssh-s7='dn_update_ip && dn_remote_tunnel open && ssh_f ub7'
 alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
 alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
+
+alias ssh-s2='dn_update_ip && dn_remote_tunnel open && ssh_f ub2 && ssh-psql && env CLIENT_HOST=SERVER3 ssh ub2'
+
 # ssh -nNL localhost:12501:localhost:12501 ub1 &
 
 # <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>

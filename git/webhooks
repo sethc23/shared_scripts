@@ -41,7 +41,7 @@ def update_repo(args):
 
     D['branch'] = D['ref'].replace('refs/heads/','',1)
     D_urls = [v for k,v in D.iteritems() if k.count('_url')]
-    
+
     # args example: 
     #   {"commit":"443fd473b5afcec0f82cc177fb1c3867ebe7c269", \
     #       "ref":"refs/heads/dev", \
@@ -57,11 +57,11 @@ def update_repo(args):
     #     df[k] = v
     # drop_idx = df[ (df.remote_url!=df.https_url) & (df.remote_url!=df.ssh_url) ].index.tolist()
     cmd = '|'.join([""" echo \"{\\\"qry\\\": \\\"select * from servers where git_sync::text ilike '%%shared_scripts.git%%' \\\"}\" """,
-               'curl -s -d @- "http://localhost:9999/query"'
-               ])
-    res = run_cmd(cmd)
-    df = pd.DataFrame(json.loads(res))
-    
+                   'curl -s -d @- "http://localhost:9999/query"'
+                   ])
+    res = T.run_cmd(cmd)
+    df = T.pd.DataFrame(json.loads(res))
+
     def get_matching_git_repos():
         for it in gs:
             for k,v in it.iteritems():
@@ -84,38 +84,30 @@ def update_repo(args):
 
     THIS_SERVER_USERS = run_cmd('cat /etc/passwd | cut -d : -f1').split('\n')
 
-    # cmd_template = '; '.join([  'cd %(repo_path)s',
-    #                             '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
-    #                             '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
-    #                             '[[ "$(git symbolic-ref HEAD)" != "%(ref)s" ]] && \
-    #                                 ORIG_BRANCH="$(git symbolic-ref HEAD)" && \
-    #                                 git symbolic-ref HEAD %(ref)s',                                 # save head ref if not being updated
-    #                             'git pull',
-    #                             '[[ -n "$ORIG_BRANCH" ]] && git symbolic-ref HEAD $ORIG_BRANCH && unset ORIG_BRANCH',
-    #                             'exit 0'])
-
-    # reverting back to orig branch always leaves the remote repo dirty...
-
+                                                                                                    # exit 255 --> server not connected
     cmd_template = '; '.join([  'cd %(repo_path)s',
-                                '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit if already up-to-date
-                                '[[ -n "$(git status -s)" ]] && exit 99',                           # exit if branch dirty
+                                '[[ "$(git rev-parse %(ref)s)" = "%(commit)s" ]] && exit 0',        # exit 0 --> server branch already at commit
+                                '[[ -n "$(git status -s)" ]] && exit 99',                           # exit 99 --> branch dirty
                                 "REMOTE=$(git show-ref %(branch)s | columns | cut -d ' ' -f2- \
                                     | grep -v 'refs/heads' | cut -d '/' -f3- | sed -r 's/\/dev//g')",
                                 'git fetch $REMOTE %(branch)s:%(branch)s',                          # git fetch github <sourceBranch>:<destinationBranch>
-                                'exit 0'])
-    # exit 0 --> success OR server branch already at commit
-    # exit 99 --> branch dirty
-    # exit 255 --> server not connected
+                                'exit 0'])                                                          # exit 0 --> success
 
+
+    df['ext_ip'] = df.ext_ip.map(lambda s: str(s[:s.rfind('/')]))
     for i,r in df.iterrows():
         if THIS_SERVER_USERS.count(r.s_user):
             cmd = cmd_template % r
             _out,exit_code = run_cmd(cmd,True)
         else:
-            cmd = ' '.join(["ssh %(s_user)s" % r,
+            rev_tunnel_exists = 'sudo /usr/local/bin/ports_listen | grep 1%(local_port)s | wc -l' % r
+            if int(run_cmd(rev_tunnel_exists)):
+                ssh_cmd = 'ssh %(s_user)s@localhost -p 1%(local_port)s' % r
+            else:
+                ssh_cmd = 'ssh %(s_user)s@%(ext_ip)s -p %(local_port)s' % r
+            cmd = ' '.join([ssh_cmd,
                             "'%s'" % cmd_template % r,
                             "2>&1"])
-            print cmd
             _out,exit_code = run_cmd(cmd,True)
             
             if exit_code==255:
