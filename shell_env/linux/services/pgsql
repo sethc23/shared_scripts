@@ -1,13 +1,14 @@
 #!/bin/zsh
 
+alias svc_pgsql_push_config='sudo $SERV_HOME/pgsql/run_pgsql push_config'
 alias svc_pgsql_disable='sudo systemctl disable postgresql9.5.service'
-alias svc_pgsql_enable='sudo systemctl enable $SERV_HOME/pgsql/postgresql9.5.service'
+alias svc_pgsql_enable='svc_pgsql_push_config; sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/pgsql/postgresql9.5.service 2> /dev/null'
 alias svc_pgsql_start='sudo systemctl start postgresql9.5.service'
 alias svc_pgsql_stop='sudo systemctl stop postgresql9.5.service'
-alias svc_pgsql_reload='sudo systemctl reload postgresql9.5.service'
+alias svc_pgsql_reload='svc_pgsql_push_config; sudo systemctl daemon-reload; sudo systemctl reload postgresql9.5.service'
 alias svc_pgsql_status='sudo systemctl status postgresql9.5.service'
-alias svc_pgsql_debug='sudo /usr/local/sbin/rsyslogd -d -f /etc/rsyslog.d/debug.conf -n'
 
+# alias svc_pgsql_debug='sudo /usr/local/sbin/rsyslogd -d -f /etc/rsyslog.d/debug.conf -n'
 
 #alias pg_PUSH_CONFIG='sudo cp -R $SERV_HOME/pgsql93/postgresql93 /etc/rc.d/init.d/'
 #alias pg_RESET='sudo chkconfig postgresql93 reset'

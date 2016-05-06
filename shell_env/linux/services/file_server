@@ -1,4 +1,3 @@
-#!/bin/zsh
 
 alias svc_fs_enable='sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/file_server/RUN/file_server.service 2> /dev/null'
 alias svc_fs_disable='sudo systemctl disable $SERV_HOME/file_server/RUN/file_server.service; sudo systemctl daemon-reload'

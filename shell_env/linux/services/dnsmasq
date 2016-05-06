@@ -1,0 +1,6 @@
+
+alias svc_dnsm_enable='sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/dns/dnsmasq/dnsmasq.service 2> /dev/null'
+alias svc_dnsm_disable='sudo systemctl disable $SERV_HOME/dns/dnsmasq/dnsmasq.service; sudo systemctl daemon-reload'
+alias svc_dnsm_start='sudo systemctl start dnsmasq.service'
+alias svc_dnsm_stop='sudo systemctl stop dnsmasq.service; sudo systemctl daemon-reload'
+alias svc_dnsm_status='sudo systemctl status dnsmasq.service'
