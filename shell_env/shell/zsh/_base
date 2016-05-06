@@ -41,6 +41,7 @@ setopt HIST_VERIFY              # reload line into editing buffer (and not execu
 setopt INC_APPEND_HISTORY       # new history lines are added to the $HISTFILE incrementally (as soon as they are entered),
 #setopt INTERACTIVE              # (I/NI) establish interactive shell   --> causes err: "can't change option: ZLE"
 setopt INTERACTIVE_COMMENTS     # allow comments even in interactive shells
+setopt kshglob                  # NEED MORE INFO, but, for one, allows extended regex in case blocks, e.g., +(''|[-+])+([0-9]))
 setopt LIST_PACKED              # use different column lengths to occupy less lines
 setopt LOGIN                    # (I/NI) establish login shell
 setopt LONG_LIST_JOBS           # list jobs in the long format by default
@@ -55,6 +56,8 @@ setopt RC_EXPAND_PARAM          # e.g., `foo${xx}bar', where xx=(a b c) --> `foo
 setopt SH_FILE_EXPANSION        # filename expansion is performed immediately after alias expansion (for sh compatability)
 setopt SHWORDSPLIT
 # setopt ZLE                      # (req) use the zsh line editor --> causes err: "can't change option: ZLE"
+
+
 
 # source $HOME_ENV/.profile
 # [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"2$CLIENT_HOST

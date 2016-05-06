@@ -1,3 +1,4 @@
+#!/bin/bash
 
 rsyslog_debug() {
     CMD="sudo /usr/local/sbin/rsyslogd -d -f $SH/rsyslog/config/debug.conf > /tmp/rsyslog_debug"
@@ -51,8 +52,14 @@ alias sl_tail_syslog_all_else="sudo tail -f /var/log/syslog | grep -v '#011#011'
 
 last_log() {
 
-    [[ -n "$BASH_VERSION" ]] && shopt -s extglob
-    [[ -n "$ZSH_VERSION" ]] && setopt kshglob
+    # ENVIRONMENT REQUIREMENTS:
+    #   BASH:   shopt -s extglob
+    #   ZSH:    setopt kshglob
+    #
+    # Don't currently know how to temporaily set options here.
+    # This doesn't work here:
+    #   [[ -n "$ZSH_VERSION" ]] && setopt kshglob
+    #   [[ -n "$BASH_VERSION" ]] && shopt -s extglob
 
     if [[ "${1:0:1}" = "/" ]]; then
         DIR="$1"
@@ -95,9 +102,6 @@ last_log() {
         MAX_TAIL_LINES=50                   # number of lines from end of file to initially display
 
         # ------------------------------------------------
-
-        [[ -n "$ZSH_VERSION" ]] && setopt kshglob
-        [[ -n "$BASH_VERSION" ]] && shopt -s extglob
         
 
         last_arg="${@: -1}"
@@ -199,4 +203,4 @@ last_log() {
         fi        
     fi
     }
-# alias sl_last_log='last_log /var/log/syslogs'
+alias sl_last_log='last_log /var/log/syslogs'
