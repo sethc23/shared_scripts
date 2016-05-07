@@ -44,3 +44,5 @@ if [[ $SERVER_ID != 3 ]]; then
     export SHARE3=/Volumes/admin/Users/admin
     export SHARE3_SERVER=SERVER3
 fi
+
+[[ -n "$(which luarocks | grep -v 'not found')" ]] && eval $(luarocks path --bin)
