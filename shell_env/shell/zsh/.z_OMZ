@@ -20,7 +20,7 @@ export ZSH=$HOME_ENV/.scripts/shell_env/shell/zsh/OMZ
 HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 #plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
-plugins=(zsh-completions autojump last-working-dir git python)
+plugins=(zsh-completions autojump last-working-dir git python systemd)
 export ZSH_PLUGINS=$plugins
 source $ZSH/oh-my-zsh.sh
 # ------------------------

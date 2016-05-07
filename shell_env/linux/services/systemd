@@ -8,3 +8,31 @@ alias sysd_reload='sudo systemctl daemon-reload'
 alias sysd_show_unit_path='sysd_show_unit_path_f'
 alias sysd_process_tree_recent='sudo systemd-analyze critical-chain --fuzz 1h'
 alias sysd_process_hog='sudo systemd-analyze blame'
+
+alias sd-boot-analyze-hierarchy='sudo systemd-analyze critical-chain'
+alias sd-boot-analyze-time='sudo systemd-analyze blame'
+alias sd-cpu-GET='sudo systemctl show -p CPUShares'
+alias sd-cpu-SET='sudo systemctl set-property httpd.service CPUShares='
+alias sd-groups-by_hierarchy='sudo systemd-cgls'
+alias sd-groups-by_esources='sudo systemd-cgtop'
+alias sd-file_list-by_type='sudo systemctl list-unit-files --type='
+alias sd-analyze-chain-by_object='sudo systemd-analyze critical-chain httpd.service'
+alias sd-file_show-by_name='sudo systemctl show '
+# alias sd-file_edit-by_name='sudo systemctl show ...'
+alias sd-dependency_list-by_object='sudo systemctl list-dependencies '
+alias sd-service-kill='sudo systemctl kill '
+alias sd-service-mask='sudo systemctl mask '
+alias sd-service-status='sudo systemctl status '
+
+# alias sd-sockets-all='sudo systemctl list-unit-files --type=socket'
+
+# alias sd-units-all='sudo systemctl list-unit-files'
+# alias sd-units-failed='sudo systemctl list-unit-files --failed'
+# alias sd-units-properties-GET='systemctl --no-pager show -p "Wants" local-fs.target'
+# alias sd-units-properties-description='systemctl --no-pager show -p "Wants" local-fs.target'
+# alias sd-units-properties-documentation='systemctl --no-pager show -p "Wants" local-fs.target'
+
+# alias sd-units-running='sudo systemctl list-units'
+
+# --> find parent service?
+# --> sstemd-bootchart
