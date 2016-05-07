@@ -8,8 +8,6 @@ export SSHFS=/usr/bin/sshfs
 export IPY=$SERV_HOME/ipy_jupyter/notebooks
 #export PYTHONPATH=$IPY/scripts/startup.py
 
-eval $(luarocks path --bin)
-
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/rsyslog/
