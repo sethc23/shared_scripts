@@ -87,10 +87,19 @@ g-c-between(){ git log $1..$2 --pretty=oneline | wc -l;}
 
 #  --  DIFFS (g-d*)
 g-d-names() { git diff $1 $2 --name-only | more; }
-g-d-added() { git diff $1 $2 --name-status | grep '^A' | sed -r 's/^A\s+//g'; }
-g-d-deleted() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g'; }
+g-d-added() {   if [[ -n "$2" ]]; then 
+                    git diff $1 $2 --name-status | grep '^A' | sed -r 's/^A\s+//g'
+                else
+                    git diff HEAD $1 --name-status | grep '^A' | sed -r 's/^A\s+//g'
+                fi }
+# g-d-added-checkout() {   git checkout ec22396 -- $(g-d-added ec22396) }
+g-d-deleted() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g' }
+# g-d-deleted-remove() { git rm -- $(g-d-deleted $@) }
+g-d-deleted-remove() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g' }
 g-d-modified() { git diff $1 $2 --name-status | grep '^M' | sed -r 's/^M\s+//g'; }
 
+
+g-m() { git merge -s recursive -X ours -m "$1" }
 
 #  --  TAGS (g-t*)
 alias g-t-last='git describe --abbrev=0 --tags'
