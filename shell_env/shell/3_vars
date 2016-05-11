@@ -45,4 +45,4 @@ if [[ $SERVER_ID != 3 ]]; then
     export SHARE3_SERVER=SERVER3
 fi
 
-[[ -n "$(which luarocks | grep -v 'not found')" ]] && eval $(luarocks path --bin)
+[[ -n "$(which luarocks 2>&1 | grep -v 'not found' | grep -v 'no luarocks')" ]] && eval $(luarocks path --bin)

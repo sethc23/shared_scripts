@@ -1,4 +1,6 @@
-#!/bin/zsh
+#!/bin/sh
+
+#set -xv
 
 
 
@@ -91,15 +93,15 @@ g-d-added() {   if [[ -n "$2" ]]; then
                     git diff $1 $2 --name-status | grep '^A' | sed -r 's/^A\s+//g'
                 else
                     git diff HEAD $1 --name-status | grep '^A' | sed -r 's/^A\s+//g'
-                fi }
+                fi; }
 # g-d-added-checkout() {   git checkout ec22396 -- $(g-d-added ec22396) }
-g-d-deleted() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g' }
+g-d-deleted() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g'; }
 # g-d-deleted-remove() { git rm -- $(g-d-deleted $@) }
-g-d-deleted-remove() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g' }
+g-d-deleted-remove() { git diff $1 $2 --name-status | grep '^D' | sed -r 's/^D\s+//g'; }
 g-d-modified() { git diff $1 $2 --name-status | grep '^M' | sed -r 's/^M\s+//g'; }
 
 
-g-m() { git merge -s recursive -X ours -m "$1" }
+g-m() { git merge -s recursive -X ours -m "$1"; }
 
 #  --  TAGS (g-t*)
 alias g-t-last='git describe --abbrev=0 --tags'
@@ -127,7 +129,7 @@ alias g-i-LIST='git ls-files -v | grep "^[[:lower:]]"'
 alias g-a='g-rm-REMAINING_UNSTAGED_DELETED && git add --ignore-removal -- .'
 alias g-ch-n='git checkout -b'
 alias g-l='git log --graph --decorate --pretty=oneline --abbrev-commit --all'
-alias g-reset-FLAGS="git ls-files -o | sed -r "s/'/\\\'/" | grep -v /$ | xargs -I '{}' printf '"%s"\n' {} | xargs -I '{}' git add --ignore-removal -- {}"
+alias g-reset-FLAGS="git ls-files -o | sed -r \"s/'/\\\'/\" | grep -v /$ | xargs -I '{}' printf '\"%s\"\n' {} | xargs -I '{}' git add --ignore-removal -- {}"
 alias g-reset-ALL_FLAGS='for i in 1 2 3 4 5 6; do find ./SERVER$i/. -type f -name "*" -print0 | xargs -0 git add -f --; done'
 alias g-SPARSE_UPDATE='git read-tree -mu HEAD'
 alias g-RESTORE_LOCAL='g-restore_local_f'
@@ -135,16 +137,16 @@ alias g-UNTRACK='git update-index --remove --ignore-missing --force-remove --ass
 
 #  --  SPECIAL (g-X*):
 g_commit_push() {\
-    git commit -m "$1";
-    sleep 1;
-    git push;
+    git commit -m "$1"
+    sleep 1
+    git push
     git status;}
 g_add_commit_push() { \
-    git add --ignore-removal -- .;
+    git add --ignore-removal -- .
     if [ $(git diff --stat --name-only | wc -l) -gt 0 ]; then
-        git diff --stat --name-only | xargs -I '{}' git rm --cached --ignore-unmatch -f -r -- {};
-        #git status --porcelain | grep "^ D " | sed "s/ [A-Z] //g" | xargs git rm --cached --ignore-unmatch -f -r -- ; \
-    fi;
+        git diff --stat --name-only | xargs -I '{}' git rm --cached --ignore-unmatch -f -r -- {}
+        #git status --porcelain | grep "^ D " | sed "s/ [A-Z] //g" | xargs git rm --cached --ignore-unmatch -f -r -- 
+    fi
     g_commit_push "$@";
     }
 alias g-X_='g_commit_push'
@@ -191,14 +193,14 @@ for k,v in submods.iteritems():
     run_cmd('git submodule add -f %(url)s ./%(path)s' % v)
 EOF
 )
-    python -c $cmd
+    python -c $cmd;
     }
 gs_recursive_pull() { \
     git submodule foreach "(\
         git submodule init; \
         git submodule update; \
         git pull; \
-        )&"
+        )&";
 
     
 
@@ -210,6 +212,7 @@ gs_recursive_pull() { \
     
     # git submodule foreach --recursive git pull origin master;
     # git submodule foreach --recursive git checkout master master;
+
     }
 alias gs-init_all='gs_recursive_pull'
 alias gs-status='git submodule foreach --recursive git branch -avv'
