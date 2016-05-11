@@ -56,9 +56,9 @@ if [[ "$OS_NAME" = "Darwin" ]]; then
     MAC_ADDRESSES=$(networksetup -listallhardwareports | \
         env grep -Eo '([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})')
 elif [[ "$OS_NAME" = "Linux" ]]; then
-    PHYS_NAMES=$(env ls /sys/class/net/)
+    IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     MAC_ADDRESSES=()
-    for i in $PHYS_NAMES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
+    for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
 fi
 
 check_if_managed $MAC_ADDRESSES

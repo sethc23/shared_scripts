@@ -1,29 +1,58 @@
 #!/bin/zsh
+# apt_preferences
 
-alias ap_update='sudo apt-get update'
-alias ap_install='sudo apt-get install -y'
-function ap_remove_f() { \
-    sudo apt-get purge $1 && sudo apt-get --purge autoremove; }
-alias ap_remove='ap_remove_f'
-function ap_clean_f() { \
-    sudo apt-get update --fix-missing
-    sudo apt-get clean && sudo apt-get autoclean && sudo apt-get autoremove; \
-    sudo apt-get -f install; \
-    sudo dpkg --configure -a; }
-alias ap_clean='ap_clean_f'
-alias ap_upgrade='sudo apt-get upgrade -y'
-alias ap_download='sudo apt-get download'
-alias ap_fix_local_install='sudo apt-get -f install'
+ap-clean() { \
+    sudo apt-get update
+    sudo apt-get purge --fix-broken --auto-remove
+    sudo apt-get autoclean
+    sudo apt-get clean
+    sudo apt-get update --fix-missing 
+    sudo apt-get install --fix-broken
+    sudo dpkg --configure -a
+    ap-remove-broken
+    ap-remove-residual
+    }
+ap-debug_install() { ap-install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
+ap-remove-broken() {
+    [[ -n "$(sudo -n true 2>&1)" ]] && sudo --validate
+    printf "\n\tLIST 1 of 2:\n\n"
+    sudo dpkg -l | grep "^iU"
+    printf "\n\tLIST 2 of 2:\n\n"
+    grep Broken /var/log/dist-upgrade/apt.log
+    printf "\n\n\tContinue with removing broken packages? [y/n]\t"
+    read user_opt
+    [ "$user_opt" = "y" ] && \
+        sudo apt-get remove --purge \
+        $(sudo dpkg -l | grep '^iU' | awk '{print $2}' | tr '\n' ' ')
+    }
+ap-remove-residual() {
+    [[ -n "$(sudo -n true 2>&1)" ]] && sudo --validate
+    printf "\n\tLIST 1 of 1:\n\n"
+    sudo dpkg -l | grep "^rc"
+    printf "\n\n\tContinue with removing residual packages? [y/n]\t"
+    read user_opt
+    [ "$user_opt" = "y" ] && \
+        sudo apt-get remove --purge \
+        $(sudo dpkg -l | grep '^rc' | awk '{print $2}' | tr '\n' ' ')
+    }
+ap-upgrade_list() { sudo apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t | sort; }
 
 
-alias ap_force_install_local='sudo gdebi'
+alias ap-broken_pkgs='grep Broken /var/log/dist-upgrade/apt.log'
+alias ap-download='sudo apt-get download'
+alias ap-files='apt-file list'
+alias ap-fix_local_install='sudo apt-get -f install'
+alias ap-force_install_local='sudo gdebi'
+alias ap-holds='dpkg --get-selections | grep hold'
+alias ap-install='sudo apt-get install -y'
+alias ap-install-reinstall='sudo apt-get install --reinstall'
+alias ap-policy='sudo apt-cache policy'
+alias ap-search='apt search'
+alias ap-update='sudo apt-get update'
+alias ap-upgrade='sudo apt-get upgrade --assume-yes --with-new-pkgs; sudo apt-get dist-upgrade'
+alias ap-upgrade-release='sudo do-release-upgrade -d'
+alias ap-upgrade-release-settings='cat /etc/update-manager/release-upgrades'
+alias ap-remove='sudo apt-get purge --fix-broken --auto-remove'
+alias ap-remove-force='sudo dpkg --remove -force --force-remove-reinstreq'
 
-function ap_upgrade_list() { sudo apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t | sort; }
-alias ap_policy='sudo apt-cache policy'
-
-function ap_debug_install() { ap_install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
-
-alias ap_search='apt search'
-alias ap_files='apt-file list'
-alias ap_broken_pkgs='grep Broken /var/log/dist-upgrade/apt.log'
-alias ap_holds='dpkg --get-selections | grep hold'
+# E: Unable to correct problems, you have held broken packages.
