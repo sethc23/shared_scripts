@@ -70,6 +70,7 @@ elif [[ -n $(uname -a | grep "Linux") ]]; then
     MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
 elif [[ -n $(uname -a | grep "CYGWIN") ]]; then
     MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
+fi
 
 check_if_managed $MAC_ADDRESSES
 
