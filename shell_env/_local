@@ -1,7 +1,24 @@
 #!/bin/zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_START"
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
+
+# FORMAT: <user>=(<eth0> <wlan0>)
+admin=(c8:2a:14:41:bf:23)
+ub1=(00:1b:63:bb:88:0b)
+ub2=(60:33:4b:97:84:a2 60:33:4b:1e:68:1b)
+ms1=(00-FF-B6-74-19-D5)
+
+MANAGED_OSX_IDS=($admin)
+MANAGED_LINUX_IDS=($ub1 $ub2)
+
+MACHINE_ID=
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_START"
 
 source_sub_dir() {
     for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
@@ -18,104 +35,108 @@ source_files_and_sub_dirs() {
     source_sub_dir "$1"
     }
 
+check_if_managed(){
+    IS_MANAGED_OSX=
+    IS_MANAGED_LINUX=
+    END_LOOP=
+    for i in $MAC_ADDRESSES; do 
+        for j in $1; do
+            if [[ $i = $j ]]; then
+                MACHINE_ID=$i
+                [[ "$OS_NAME" = "Darwin" ]] && IS_MANAGED_OSX=true
+                [[ "$OS_NAME" = "Linux" ]] && IS_MANAGED_LINUX=true
+                END_LOOP=true
+                break
+            fi
+        done
+    done
+    }
+
+OS_NAME=$(uname -a | cut -d ' ' -f1)
+if [[ "$OS_NAME" = "Darwin" ]]; then
+    MAC_ADDRESSES=$(networksetup -listallhardwareports | \
+        env grep -Eo '([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})')
+elif [[ "$OS_NAME" = "Linux" ]]; then
+    IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
+    MAC_ADDRESSES=()
+    for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
+elif [[ "$OS_NAME" = "CYGWIN" ]];
+    MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
+fi
 
 if [[ -n $(uname -a | grep "Darwin") ]]; then
-    MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -E 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')    
+    MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -E 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
 elif [[ -n $(uname -a | grep "Linux") ]]; then
     MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
 elif [[ -n $(uname -a | grep "CYGWIN") ]]; then
     MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
+
+check_if_managed $MAC_ADDRESSES
+
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_1"
+
+if [[ -n "$ZSH_VERSION" ]]; then
+
+    source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
+
+    autoload -U compinit && compinit
+    autoload -U bashcompinit && bashcompinit
+
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_2"
+
+    [[ "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="cobalt2"
+    [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
+
+    plugins=$ZSH_PLUGINS
+
+    [[ $IS_MANAGED_LINUX = true ]] && plugins+=(osx)
+
+    source $ZSH/oh-my-zsh.sh
+    autoload -U compinit && compinit
+    autoload -U bashcompinit && bashcompinit
+
+    [[ -n "$CLIENT_HOST" ]] && \
+       bindkey '\e[A' history-substring-search-up && \
+       bindkey '\e[B' history-substring-search-down
+
+    for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
+
+# elif [[ -n "$BASH_VERSION" ]]; then
+
 fi
- 
-# ub1: 00:1b:63:bb:88:0b
-# ub2: 2e:8a:82:38:77:3e 60:33:4b:97:84:a2
-# admin: c8:2a:14:41:bf:23
-# ms1: 00-FF-B6-74-19-D5
 
-
-if [[ "$MACHINE_ID" = "00:1b:63:bb:88:0b" || "$MACHINE_ID" = "2e:8a:82:38:77:3e" || "$MACHINE_ID" = "60:33:4b:97:84:a2" ]]; then
-
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local_ub2"
-
-    if [[ -n "$ZSH_VERSION" ]]; then
-
-        source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
-        [[ -n "$DEBUG_SHELL" ]] && echo "_local"4$CLIENT_HOST
-
-        autoload -U compinit && compinit
-        autoload -U bashcompinit && bashcompinit
-
-        [[ -n "$DEBUG_SHELL" ]] && echo "_local"5"$CLIENT_HOST"
-
-        [[ "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="cobalt2"
-        [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
-
-        plugins=$ZSH_PLUGINS
-        source $ZSH/oh-my-zsh.sh
-        autoload -U compinit && compinit
-        autoload -U bashcompinit && bashcompinit
-
-        bindkey '\e[A' history-substring-search-up
-        bindkey '\e[B' history-substring-search-down
-
-        for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
-    fi
+if [[ $IS_MANAGED_LINUX = true ]]; then
 
     export LOCAL_PORT=9092
     # export LOCAL_GIT_SYNC='[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
     export LOCAL_GIT_SYNC='[{\"/home/ub2/.scripts\":\"git@github.com:sethc23/shared_scripts.git\"}]'
 
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local"6"$CLIENT_HOST"
-
-    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
-    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
-
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local"7$CLIENT_HOST
-    source_files "$HOME_ENV/.scripts/shell_env/shell"
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local"8$CLIENT_HOST
-
-elif [[ "$MACHINE_ID" = "c8:2a:14:41:bf:23" ]]; then
-
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local_admin"
-
-    if [[ -n "$ZSH_VERSION" ]]; then
-
-        source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
-        [[ -n "$DEBUG_SHELL" ]] && echo "_local_admin_2"
-
-        autoload -U compinit && compinit
-        autoload -U bashcompinit && bashcompinit
-
-        export ZSH_THEME="cobalt2"
-        plugins=$ZSH_PLUGINS
-        plugins+=(osx)
-        source $ZSH/oh-my-zsh.sh
-        compinit
-
-        bindkey '\e[A' history-substring-search-up
-        bindkey '\e[B' history-substring-search-down
-
-        for i in `env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f`; do source $i; done
-
-        # eval "$(register-python-argcomplete /home/ub2/.scripts/syscontrol/sys_control.py)"
-    fi
+elif [[ $IS_MANAGED_OSX = true ]]; then
 
     export LOCAL_PORT=9093
     # export LOCAL_GIT_SYNC=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
-    export LOCAL_GIT_SYNC='[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
+    export LOCAL_GIT_SYNC='[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
 
-    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
+fi
+
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_2"
+source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
+
+[[ $IS_MANAGED_LINUX = true ]] && \
+    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
+[[ $IS_MANAGED_OSX = true ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
-    source_files "$HOME_ENV/.scripts/shell_env/shell"
 
-    [[ -n "$DEBUG_SHELL" ]] && echo $PATH
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_3"
+source_files "$HOME_ENV/.scripts/shell_env/shell"
 
-elif [[ "$MACHINE_ID" = "00-FF-B6-74-19-D5" ]]; then
+[[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
-    source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
-    #source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
-    source_files "$HOME_ENV/.scripts/shell_env/shell"
-
+if [[ ! $IS_MANAGED_LINUX = true ]] || [[ $IS_MANAGED_OSX = true ]]; then
+    unset MANAGED_OSX_IDS
+    unset MANAGED_LINUX_IDS
+    printf "\n\n%s\n\n" "NO MATCH TO MACHINE_ID"
 fi
 
 if [[ "$PROFILE_STARTUP" == true ]]; then
