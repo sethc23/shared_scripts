@@ -60,7 +60,7 @@ elif [[ "$OS_NAME" = "Linux" ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     MAC_ADDRESSES=()
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
-elif [[ "$OS_NAME" = "CYGWIN" ]];
+elif [[ "$OS_NAME" = "CYGWIN" ]]; then
     MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
 fi
 
