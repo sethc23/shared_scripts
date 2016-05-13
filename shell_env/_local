@@ -13,7 +13,11 @@ ms1=(00-FF-B6-74-19-D5)
 MANAGED_OSX_IDS=($admin)
 MANAGED_LINUX_IDS=($ub1 $ub2)
 
-MACHINE_ID=
+# Boolean for iTerm2
+ITERM2=
+[[ "$TERM_PROGRAM" = "iTerm.app" ]] || \
+    [[ "$CLIENT_HOST" = "SERVER3" ]] && \
+    ITERM2=true
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -53,15 +57,17 @@ check_if_managed(){
     }
 
 OS_NAME=$(uname -a | cut -d ' ' -f1)
+MAC_ADDRESSES=()
+MACHINE_ID=
+
 if [[ "$OS_NAME" = "Darwin" ]]; then
-    MAC_ADDRESSES=$(networksetup -getmacaddress Ethernet | \
-        env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
+    MAC_ADDRESSES+=($(networksetup -getmacaddress Ethernet | \
+        env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'))
 elif [[ "$OS_NAME" = "Linux" ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
-    MAC_ADDRESSES=()
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
 elif [[ "$OS_NAME" = "CYGWIN" ]]; then
-    MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
+    MAC_ADDRESSES+=($(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //'))
 fi
 
 check_if_managed $MAC_ADDRESSES
@@ -78,18 +84,18 @@ if [[ -n "$ZSH_VERSION" ]]; then
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_2"
 
-    [[ "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="cobalt2"
-    [[ ! "$CLIENT_HOST" = "SERVER3" ]] && export ZSH_THEME="candy"
+    export ZSH_THEME="candy"
+    [[ -n $ITERM2 ]] && export ZSH_THEME="cobalt2"
 
     plugins=$ZSH_PLUGINS
 
-    [[ $IS_MANAGED_LINUX = true ]] && plugins+=(osx)
+    [[ $IS_MANAGED_OSX = true ]] && plugins+=(osx)
 
     source $ZSH/oh-my-zsh.sh
     autoload -U compinit && compinit
     autoload -U bashcompinit && bashcompinit
 
-    [[ -n "$CLIENT_HOST" ]] && \
+    [[ -n $ITERM2 ]] && \
        bindkey '\e[A' history-substring-search-up && \
        bindkey '\e[B' history-substring-search-down
 
