@@ -89,7 +89,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
 
     plugins=$ZSH_PLUGINS
 
-    [[ $IS_MANAGED_OSX = true ]] && plugins+=(osx)
+    [[ -n $IS_MANAGED_OSX ]] && plugins+=(osx)
 
     source $ZSH/oh-my-zsh.sh
     autoload -U compinit && compinit
@@ -105,13 +105,13 @@ if [[ -n "$ZSH_VERSION" ]]; then
 
 fi
 
-if [[ $IS_MANAGED_LINUX = true ]]; then
+if [[ -n $IS_MANAGED_LINUX ]]; then
 
     export LOCAL_PORT=9092
     # export LOCAL_GIT_SYNC='[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
     export LOCAL_GIT_SYNC='[{\"/home/ub2/.scripts\":\"git@github.com:sethc23/shared_scripts.git\"}]'
 
-elif [[ $IS_MANAGED_OSX = true ]]; then
+elif [[ -n $IS_MANAGED_OSX ]]; then
 
     export LOCAL_PORT=9093
     # export LOCAL_GIT_SYNC=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
@@ -133,7 +133,7 @@ source_files "$HOME_ENV/.scripts/shell_env/shell"
 
 [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
-if [[ ! $IS_MANAGED_LINUX = true ]] || [[ $IS_MANAGED_OSX = true ]]; then
+if [[ -z $IS_MANAGED_LINUX ]] && [[ -z $IS_MANAGED_OSX ]]; then
     unset MANAGED_OSX_IDS
     unset MANAGED_LINUX_IDS
     printf "\n\n%s\n\n" "NO MATCH TO MACHINE_ID"
