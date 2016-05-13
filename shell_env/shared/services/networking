@@ -1,5 +1,10 @@
 #!/bin/zsh
 
+# TO ADD/EXPLORE
+#   arp -- address resolution protocol
+
+
+# <<<   ---   General Tools and Shortcuts   ---   >>>
 get_my_ip_int() {
     if [ `uname` = 'Darwin' ]; then
         _test=`ipconfig getifaddr en0`
@@ -20,24 +25,8 @@ get_my_ip_ext() {
     curl -s 'http://ipv4.nsupdate.info/myip' | \
     sed -r 's/^([0-9]{,3}\.[0-9]{,3}\.[0-9]{,3}\.[0-9]{,3})/\1/g' | \
     xargs -I '{}' printf '%s\n' {}; }
-
-alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
-alias ports_listen_2='sudo netstat -ltnp'
-alias ports_listen_3='nettop'
-alias ports_sockets='netstat -lx'
-alias ports_ssh='lsof -i tcp | grep ^ssh'
-
 net_dig_simple() { dig $1 +nostats +nocomments +nocmd; }
-alias net_dig_simple='net_dig_simple_f'
-
-net_port_check(){
-    nmap -p $1 $2
-    }
-alias net_port_check_help='echo "net_port_check <port> <ip/url>"'
-alias net_route_v4='route -A inet'
-alias net_route_v6='route -A inet6'
-
-# arp -- address resolution protocol
+net_port_check(){ nmap -p $1 $2; }
 
 # <<<   ---   DISTRIBUTED NETWORK (dn_*)   ---   >>>
 dn_remote_tunnel(){
@@ -66,3 +55,28 @@ dn_update_ip(){
     CMD="echo '$a' | curl -g -d @- $URL"
     eval ${CMD}
     }
+
+
+alias net_port_check_help='echo "net_port_check <port> <ip/url>"'
+alias net_route_v4='route -A inet'
+alias net_route_v6='route -A inet6'
+alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
+alias ports_listen_2='sudo netstat -ltnp'
+alias ports_listen_3='nettop'
+alias ports_sockets='netstat -lx'
+alias ports_ssh='lsof -i tcp | grep ^ssh'
+
+alias mac-extract="env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'"
+alias mac-random="openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//'"
+
+if [[ "$OS_NAME" = "Darwin" ]]; then
+    alias mac-eth-orig="networksetup -getmacaddress Ethernet | env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'"
+    alias mac-eth-curr-get='ifconfig en0 | grep ether | sed "s/ *\t*ether //"'
+    alias mac-eth-curr-set='sudo ifconfig en0 ether'
+elif [[ "$OS_NAME" = "Linux" ]]; then
+    alias mac-eth-orig="cat /sys/class/net/eth0/address"
+    alias mac-eth-curr-get='ifconfig eth0 | grep ether | sed "s/ *\t*ether //" | env grep -o -E "([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}"'
+    alias mac-eth-curr-set='sudo ip link set dev eth0 address'
+fi
+
+
