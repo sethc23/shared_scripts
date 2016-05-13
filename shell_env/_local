@@ -54,21 +54,13 @@ check_if_managed(){
 
 OS_NAME=$(uname -a | cut -d ' ' -f1)
 if [[ "$OS_NAME" = "Darwin" ]]; then
-    MAC_ADDRESSES=$(networksetup -listallhardwareports | \
-        env grep -Eo '([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})')
+    MAC_ADDRESSES=$(networksetup -getmacaddress Ethernet | \
+        env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
 elif [[ "$OS_NAME" = "Linux" ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     MAC_ADDRESSES=()
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
 elif [[ "$OS_NAME" = "CYGWIN" ]]; then
-    MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
-fi
-
-if [[ -n $(uname -a | grep "Darwin") ]]; then
-    MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -E 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
-elif [[ -n $(uname -a | grep "Linux") ]]; then
-    MACHINE_ID=$(ifconfig -a|env grep -i ether|head -n 1|sed -r 's/(.*)(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))(.*)/\2/g')
-elif [[ -n $(uname -a | grep "CYGWIN") ]]; then
     MACHINE_ID=$(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //')
 fi
 
