@@ -1,0 +1,16 @@
+
+alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
+alias syslog_osx_config2='sudo emacs /etc/asl.conf'
+alias syslog_push_config='sudo cp -R $HOME_ENV/$SERVER/syslog-ng/syslog-ng.conf /opt/local/etc/'
+alias syslog_load='syslog_push_config; sudo launchctl load -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
+alias syslog_unload='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
+alias syslog_config='sudo emacs /opt/local/etc/syslog-ng.conf'
+alias syslog_reload='syslog_push_config; syslog_unload; syslog_load;'
+alias syslog_kill='kill_by syslog'
+alias sys_log="tail -f /var/log/system.log"
+alias syslog_debug='syslog_push_config; sudo /opt/local/sbin/syslog-ng -Fvedt'
+
+alias SLd='sudo launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist'
+alias SLu='sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist'
+alias SLca='sudo emacs /etc/asl.conf'
+alias SLcs='sudo emacs /etc/syslog.conf'

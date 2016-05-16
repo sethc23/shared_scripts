@@ -4,65 +4,16 @@
 # f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
 # f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
 
-
-alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
-
-alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
+locate_update() { 
+    [[ -L "/usr/local/bin/updatedb" ]] && sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
+    sudo /opt/local/libexec/gnubin/updatedb;
+    }
+open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
+ps_cut(){ env ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
 ssh_f(){
-    
     [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
     mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1 > /dev/null 2>&1;
-}
-
-alias ssh-s1='dn_update_ip && dn_remote_tunnel open && ssh_f ub1'
-alias ssh-s6='dn_update_ip && dn_remote_tunnel open && ssh_f ub6'
-alias ssh-s7='dn_update_ip && dn_remote_tunnel open && ssh_f ub7'
-alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
-alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
-
-alias ssh-s2='dn_update_ip && dn_remote_tunnel open && ssh_f ub2 && ssh-psql && env CLIENT_HOST=SERVER3 ssh ub2'
-
-# ssh -nNL localhost:12501:localhost:12501 ub1 &
-
-# <<< --- OSX REWRITES OF LINUX COMMANDS --- >>>
-#sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
-alias locate_update='sudo /opt/local/libexec/gnubin/updatedb'
-
-open_color_picker_f() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
-alias open_color_picker='open_color_picker_f'
-
-
-
-# <<< --- OSX_IPYTHON --- >>>
-alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
-alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
-
-ps_cut(){ env ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
-alias ps='ps_cut ps'
-alias ps-mem='ps -m'
-alias ps-cpu='ps -r'
-alias ps-threads='pstree'
-
-
-alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
-
-alias rt_update_fw='cd $SERV_HOME/local_config/cisco && scp jffs/etc/config/fw.if cisco:/jffs/etc/config/ 2> /dev/null && rt_ /jffs/etc/config/fw.if 2> /dev/null'
-
-alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
-alias sudo_textedit='f_sudo_textedit'
-
-alias syslog_osx_config1='sudo emacs /etc/syslog.conf'
-alias syslog_osx_config2='sudo emacs /etc/asl.conf'
-alias syslog_push_config='sudo cp -R $HOME_ENV/$SERVER/syslog-ng/syslog-ng.conf /opt/local/etc/'
-alias syslog_load='syslog_push_config; sudo launchctl load -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
-alias syslog_unload='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.syslog-ng.plist'
-alias syslog_config='sudo emacs /opt/local/etc/syslog-ng.conf'
-alias syslog_reload='syslog_push_config; syslog_unload; syslog_load;'
-alias syslog_kill='kill_by syslog'
-alias sys_log="tail -f /var/log/system.log"
-alias syslog_debug='syslog_push_config; sudo /opt/local/sbin/syslog-ng -Fvedt'
-
-
+    }
 test_acro_js() {
     js_content="\
 from appscript import app 
@@ -78,19 +29,27 @@ print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
     }
 
 
-alias xcode='f_sudo_xcode'
+alias adb='~/Android/platform-tools/adb'
+alias fastboot='~/Android/platform-tools/fastboot'
+alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
+alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
+alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
+alias open_color_picker='open_color_picker_f'
+alias ps-cpu='ps -r'
+alias ps-mem='ps -m'
+alias ps-threads='pstree'
+alias ps='ps_cut ps'
+alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
+alias rt_update_fw='cd $SERV_HOME/local_config/cisco && scp jffs/etc/config/fw.if cisco:/jffs/etc/config/ 2> /dev/null && rt_ /jffs/etc/config/fw.if 2> /dev/null'
+alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
+alias ssh-s1='dn_update_ip && dn_remote_tunnel open && ssh_f ub1'
+alias ssh-s2='dn_update_ip && dn_remote_tunnel open && ssh_f ub2 && ssh-psql && env CLIENT_HOST=SERVER3 ssh ub2'
+alias ssh-s6='dn_update_ip && dn_remote_tunnel open && ssh_f ub6'
+alias ssh-s7='dn_update_ip && dn_remote_tunnel open && ssh_f ub7'
+alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
+alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
+alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 
-alias T_out_4='curl http://0.0.0.0:12204/?b=2;'
-alias T_out_3='curl http://0.0.0.0:12204/t3;'
-alias T_out_2='curl http://0.0.0.0:12204/t2;'
-alias T_out_1='curl http://0.0.0.0:12204/t1;'
-alias T_in_2='curl http://0.0.0.0:8888/t2;'
-alias T_in_1='curl http://0.0.0.0:8888/t1?b=2;'
-alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; syslog_push_config; sudo syslog-ng;'
-alias P='echo test'
-alias SK='syslog_kill'
-alias saved_grep="cat redis.conf | grep -n -v '^\w'"
-alias SLd='sudo launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist'
-alias SLu='sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist'
-alias SLca='sudo emacs /etc/asl.conf'
-alias SLcs='sudo emacs /etc/syslog.conf'
+
+
+
