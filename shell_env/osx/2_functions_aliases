@@ -4,13 +4,14 @@
 # f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
 # f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
 
-locate_update() { 
-    [[ -L "/usr/local/bin/updatedb" ]] && sudo ln -s /usr/libexec/locate.updatedb /usr/local/bin/updatedb
-    sudo /opt/local/libexec/gnubin/updatedb;
-    }
+unalias locate_update
+locate_update(){ \
+    [[ ! -L "/usr/local/bin/updatedb" ]] &&
+        sudo ln -nfs /usr/libexec/locate.updatedb /usr/local/bin/updatedb;
+    sudo /opt/local/libexec/gnubin/updatedb; }
 open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 ps_cut(){ env ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
-ssh_f(){
+ssh_f(){ \
     [[ -n "$(ls_mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
     mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1 > /dev/null 2>&1;
     }
