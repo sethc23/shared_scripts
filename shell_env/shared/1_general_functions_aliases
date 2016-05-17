@@ -181,10 +181,11 @@ sn4_backup() { \
     echo $RES >> /var/sockets/supervisor_relay.log;
     echo 'OK';
 }
-alias sn4_ssh_droid_start='curl "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw&message=ssh_droid%20start"'
-alias sn4_ssh_droid_stop='curl "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw&message=ssh_droid%20stop"'
-alias sn4_teamviewer_start='adb shell monkey -p com.teamviewer.quicksupport.market -c android.intent.category.LAUNCHER 1'
-alias sn4_copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
+
+alias gn_ssh_droid_start='curl "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ&message=ssh_droid%20stop"'
+alias gn_ssh_droid_stop='curl "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ&message=ssh_droid%20stop"'
+alias gn_teamviewer_start='adb shell monkey -p com.teamviewer.quicksupport.market -c android.intent.category.LAUNCHER 1'
+alias gn_copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
 
 alias test_nginx_socket='socat - UNIX-CLIENT:/var/log/nginx.sock'
 alias to_log='syslog -s -l error -k Message'
