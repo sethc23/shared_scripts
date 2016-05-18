@@ -3,6 +3,11 @@
 [[ -n "$DEBUG_SHELL" ]] && echo "_shared_"
 
 assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
+build_script_env() {
+    FILE="$HOME_ENV/.scripts/script_env";
+    env | sort | sed -r 's/^([^=]+)=(.*)$/\1="\2"/g' > $FILE;
+    alias | sed -r 's/^(.*)$/alias \1/g' >> $FILE; \
+    }
 cde_f() {
     if [[ -z $1 ]]; then
         if [[ -z `env ls | env grep ENV` ]]; then
@@ -20,6 +25,7 @@ cde_f() {
     fi
     }
 copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
+curl-JSON() { curl -H 'Accept: application/json; indent=4' $1; }
 diff-dir-all() { env colordiff --brief --recursive --width=$(tput cols) $1 $2; }
 diff-dir-left() { diff-dir-all | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 diff-dir-right() { diff-dir-all | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
@@ -62,9 +68,16 @@ find-file() { sudo find -H -s $1 -type f -iregex "$2"; }
 find-file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
 find-folder() { sudo find -H -s $1 -type d -iregex "$2"; }
 find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
-curl-JSON() { curl -H 'Accept: application/json; indent=4' $1; }
-sencha-build() { cd $APORO/static/sencha; sudo sencha app build production; }
 gdiff() { git diff $@ | cdiff -s -w 110; }
+gn_ar_msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(gn_ar_key)&message=$1"; }
+gn_backup() { \
+    sn4_ar_msg ssh_droid_start > /dev/null 2>&1;
+    RES=$($HOME_ENV/.scripts/ENV/bin/celery --workdir=$HOME_ENV/.scripts/worker --app=sys_serv \
+    call --queue=sys_serv_tasks sys_serv_tasks.sn4_backup --args='[]' \
+    --countdown=20 | xargs -I '{}' printf 'sn4_backup [%s %s] expecting git task ID -- %s\n' $(date +%Y-%m-%d\ %H:%M:%S) {});
+    echo $RES >> /var/sockets/supervisor_relay.log;
+    echo 'OK';
+    }
 jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
 newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
@@ -74,6 +87,7 @@ pyprofilewrite() { kernprof.py -l $1; }
 RD() { cd $BD/RD/src; python seamless.py; }
 RDt() { cd $BD/RD/src; python seamless_test.py; }
 retar() { tar -zcvf $1 $2; }
+sencha-build() { cd $APORO/static/sencha; sudo sencha app build production; }
 shell_opts() {
     if [[ "$1" = "show" ]]; then
         [[ -n "$BASH_VERSION" ]] && shopt -p
@@ -82,13 +96,7 @@ shell_opts() {
     }
 source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 
-build_script_env_f() {
-    FILE="$HOME_ENV/.scripts/script_env";
-    env | sort | sed -r 's/^([^=]+)=(.*)$/\1="\2"/g' > $FILE;
-    alias | sed -r 's/^(.*)$/alias \1/g' >> $FILE; \
-    }
-alias build_script_env='make_script_env_f'
-
+#alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
 alias AP_android='cd $APORO/static/sencha/phonegap/platforms/android/'
 alias AP_phonegap_build_android='AP_android; sudo phonegap build android --release;'
 alias AP_sencha='cd $APORO/static/sencha/'
@@ -116,6 +124,11 @@ alias fgrep='fgrep -i --color=auto'
 alias function_names='compgen -A function | sort'
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
 alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME_ENV/django/Dropbox/aporo/static/sencha'
+alias gn_ar_key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
+alias gn_copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
+alias gn_ssh_droid_start='gn_ar_msg "ssh_droid%20start"'
+alias gn_ssh_droid_stop='gn_ar_msg "ssh_droid%20stop"'
+alias gn_teamviewer_start='gn_ar_msg "Launch%20QuickSupport"'
 alias grep='grep -i --color=auto'
 alias grep_folder='grep -r "$1" *'
 alias grok_app='ngrok -hostname app.aporodelivery.com 80'
@@ -128,7 +141,6 @@ alias locate='locate -i'
 alias locate_info='locate -S'
 alias locate_update='sudo /usr/libexec/locate.updatedb'
 alias ls='ls --color --almost-all --classify --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
-#alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
 alias mnt='scr_ed; ./System_Control.py servers mnt'
 alias mnt_EXT_HD='mkdir -p /Volumes/EXT_HD; $SSHFS ub1:/Volumes/EXT_HD /Volumes/EXT_HD -o ConnectTimeout=5'
 alias mysql_cmd='mysql -uroot -pDelivery100%'
@@ -170,23 +182,6 @@ alias scr_ed='scr_env; cd $HOME_ENV/.scripts'
 alias scr_env='source $HOME_ENV/.scripts/ENV/bin/activate'
 alias scr_sync='$HOME_ENV/.scripts/sync_scripts.bash'
 alias ssh_config='emacs $HOME_ENV/.ssh/config; push_ssh_config'
-
-sn4_ar_msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw&message=$1"; }
-alias sn4_ar_key='echo "APA91bG9W7n3uAWVND-jaRRbh0muYlx6znEJgUUFrMnRxGuagYMmRuTJ2OONeHD6ibkj1_nRgM8s7ah1WyDbFAMHX2Rf28dNdzpRHMUJUKPPvseoWDI_pHX2lHaEeoBsD7KZoyG4mfUwgT_Yl1CyHIVpy1Jx9zCrdw"'
-sn4_backup() { \
-    sn4_ar_msg ssh_droid_start > /dev/null 2>&1;
-    RES=$($HOME_ENV/.scripts/ENV/bin/celery --workdir=$HOME_ENV/.scripts/worker --app=sys_serv \
-    call --queue=sys_serv_tasks sys_serv_tasks.sn4_backup --args='[]' \
-    --countdown=20 | xargs -I '{}' printf 'sn4_backup [%s %s] expecting git task ID -- %s\n' $(date +%Y-%m-%d\ %H:%M:%S) {});
-    echo $RES >> /var/sockets/supervisor_relay.log;
-    echo 'OK';
-}
-
-alias gn_ssh_droid_start='curl "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ&message=ssh_droid%20stop"'
-alias gn_ssh_droid_stop='curl "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ&message=ssh_droid%20stop"'
-alias gn_teamviewer_start='adb shell monkey -p com.teamviewer.quicksupport.market -c android.intent.category.LAUNCHER 1'
-alias gn_copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
-
 alias test_nginx_socket='socat - UNIX-CLIENT:/var/log/nginx.sock'
 alias to_log='syslog -s -l error -k Message'
 alias topcpu='ps -ero pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
