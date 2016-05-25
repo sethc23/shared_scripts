@@ -68,6 +68,10 @@ find-file() { sudo find -H -s $1 -type f -iregex "$2"; }
 find-file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
 find-folder() { sudo find -H -s $1 -type d -iregex "$2"; }
 find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
+# sudo find /Users/admin/.config/ -type f -newermt "2016-03-27 18:30" \! -newermt "2016-03-27 18:45"
+# sudo find / -type f -mmin -30
+# Print with quotes
+# find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
 gdiff() { git diff $@ | cdiff -s -w 110; }
 gn_ar_msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(gn_ar_key)&message=$1"; }
 gn_backup() { \
@@ -97,6 +101,15 @@ shell_opts() {
 source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 
 #alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
+# adb shell input text "insert%syour%stext%shere"
+# adb shell input keyevent 82
+# # keycodes http://developer.android.com/reference/android/view/KeyEvent.html
+# adb shell input tap 500 1450
+# # Swipe X1 Y1 X2 Y2 [duration(ms)]:
+# adb shell input swipe 100 500 100 1450 100
+# # LongPress X Y:
+# adb shell input swipe 100 500 100 500 250
+alias adb-fingerprint="awk '{print $1}' < ~/.android/adbkey.pub | openssl base64 -A -d -a | openssl md5 -c"
 alias AP_android='cd $APORO/static/sencha/phonegap/platforms/android/'
 alias AP_phonegap_build_android='AP_android; sudo phonegap build android --release;'
 alias AP_sencha='cd $APORO/static/sencha/'
