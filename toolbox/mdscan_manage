@@ -1,0 +1,125 @@
+#!/bin/zsh
+
+
+# Set Workspace
+BASE_DIR=$(pwd)
+INPUT_DIR=MDSCAN
+OUTPUT_DIR=
+OUTPUT_FILES=()
+EXTRACT_PROCESSED=true
+EXTRACT_ORIGS=
+DRY_RUN=
+VERBOSE=true
+DEBUG=
+
+# Setup Debug Env
+[[ -n "$DEBUG" ]] && set -xv
+
+# Functions
+
+remove_spaces_in_pwd_files_dirs(){
+    try=$(for i in *\ *; do mv "$i" "${i// /}"; done > /dev/null 2>&1)
+    }
+
+get_scan_info(){
+    SCAN_NAME="$(cat document.dat | tr -d '\200-\377' \
+                    | sed -r 's/[^[:print:]]//g' \
+                    | sed -r 's/^([^[:digit:]]*)(.*)(Page0)(.*)$/\2/' \
+                    | sed -r 's/[^[:alnum:]:\.\ -]//g')"
+    SCAN_DATE=$(echo $SCAN_NAME | cut -d ' ' -f1 | sed 's/\./\//g')
+    SCAN_DATE=20$(echo ${SCAN_DATE:${#SCAN_DATE}-8:#SCAN_DATE})       # Get last 8 characters
+    SCAN_TIME_TITLE=$(echo $SCAN_NAME | cut -d ' ' -f2)
+    SCAN_TIME=$(echo $SCAN_TIME_TITLE | cut -d '-' -f1)
+    SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-) 
+    [[ $SCAN_TIME = $SCAN_TITLE ]] && SCAN_TITLE=
+    SCAN_DATETIME="$(date --date="$SCAN_DATE $SCAN_TIME" +'%Y.%m.%d_%H.%M.%S')"
+    SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_DIR $SCAN_TITLE)
+    }
+
+build_pdf(){
+    PG_NAME="$1"".jpg"
+    OUTPUT_FPATH=$(printf '%s.pdf' $SCAN_FNAME)
+    if [[ -e $OUTPUT_FPATH ]]; then
+        tmp=$(uuidgen)
+        tmp=${tmp:0:8}
+        OUTPUT_FPATH=$(printf '%s_%s.pdf' $SCAN_FNAME $tmp)
+    fi
+
+    [[ -z "$DRY_RUN" ]] && convert $(find -type f -name $PG_NAME | xargs) -page Letter "$OUTPUT_FPATH"
+    [[ -n "$DRY_RUN" ]] && echo "$(pwd)/"$OUTPUT_FPATH
+
+    OUTPUT_FILES+="$(pwd)/"$OUTPUT_FPATH
+    }
+
+build_processed_pdf(){ build_pdf page}
+build_orig_pdf(){ build_pdf shot}
+
+# Create Output Dir if not Exist
+[[ -z "$OUTPUT_DIR" ]] && TMP="$(uuidgen)" && OUTPUT_DIR=MDSCAN_OUTPUT_"${TMP:0:8}"
+[[ -z "$DRY_RUN" ]] && mkdir -p $OUTPUT_DIR
+
+# Start in MDScan Dir
+cd $BASE_DIR/$INPUT_DIR
+
+# Remove Spaces
+remove_spaces_in_pwd_files_dirs
+
+# Rename Generic Directories
+try=$(for i in Custom*; do mv $i $(cat $i/folder.dat); done > /dev/null 2>&1)
+
+# Process Files
+EXCLUDE_FOLDERS=(Home Office Trip)
+printf "\n%s\n\n" "EXCLUDE DIRECTORIES: $EXCLUDE_FOLDERS"
+for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///'); do
+    
+    SKIP=
+    for j in $EXCLUDE_FOLDERS; do
+        if [[ $i = $j ]]; then
+            SKIP=true
+            break
+        fi
+    done
+
+    if [[ -z "$SKIP"  ]]; then
+        
+        cd $i
+        remove_spaces_in_pwd_files_dirs
+
+        if [[ -z "$(test -d Scan0 || echo 'not exist')" ]]; then
+
+            SCAN_DIR=$i
+
+            for s in Scan*; do 
+
+                cd $s
+                remove_spaces_in_pwd_files_dirs
+
+                get_scan_info
+                
+                [[ -n "$EXTRACT_PROCESSED" ]] && build_processed_pdf
+                [[ -n "$EXTRACT_ORIGS" ]] && build_orig_pdf
+
+                cd ..
+
+            done
+
+        fi
+        cd ..
+
+    fi
+done
+
+# Return to base dir
+if [[ -z "$DRY_RUN" ]]; then
+    cd $BASE_DIR/$OUTPUT_DIR
+    for i in $OUTPUT_FILES; do
+        mv $i ./
+    done
+fi
+
+MSG="\n\n$OUTPUT_FILES\n\nAbove file list saved to directory: $BASE_DIR/$OUTPUT_DIR\n\n"
+[[ -n "$VERBOSE" ]] && printf "$MSG"
+
+
+# Destroy Debug Env
+[[ -n "$DEBUG" ]] && set +xv
