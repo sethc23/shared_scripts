@@ -1,0 +1,20 @@
+
+gn-ar-msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(gn-ar-key)&message=source;command=:=$USER;$1;"; }
+gn-backup() { \
+    sn4_ar_msg ssh_droid_start > /dev/null 2>&1;
+    RES=$($HOME_ENV/.scripts/ENV/bin/celery --workdir=$HOME_ENV/.scripts/worker --app=sys_serv \
+    call --queue=sys_serv_tasks sys_serv_tasks.sn4_backup --args='[]' \
+    --countdown=20 | xargs -I '{}' printf 'sn4_backup [%s %s] expecting git task ID -- %s\n' $(date +%Y-%m-%d\ %H:%M:%S) {});
+    echo $RES >> /var/sockets/supervisor_relay.log;
+    echo 'OK';
+    }
+
+alias gn-ar-key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
+alias gn-copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
+# alias gn-sshdroid-start='gn-ar-msg "SSHDroid_start"'
+# alias gn-sshdroid-stop='gn-ar-msg "SSHDroid_stop"'
+alias gn-sshd-start='gn-ar-msg "openSSH_start"'
+alias gn-sshd-stop='gn-ar-msg "openSSH_stop"'
+alias gn-teamviewer-start='gn-ar-msg "TeamViewer_start"; /Applications/TeamViewer.app/Contents/MacOS/TeamViewer &'
+alias gn-teamviewer-stop='gn-ar-msg "TeamViewer_stop"; kill_by TeamViewer.app'
+

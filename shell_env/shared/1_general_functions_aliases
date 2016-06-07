@@ -73,15 +73,6 @@ find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 # Print with quotes
 # find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
 gdiff() { git diff $@ | cdiff -s -w 110; }
-gn_ar_msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(gn_ar_key)&message=$1"; }
-gn_backup() { \
-    sn4_ar_msg ssh_droid_start > /dev/null 2>&1;
-    RES=$($HOME_ENV/.scripts/ENV/bin/celery --workdir=$HOME_ENV/.scripts/worker --app=sys_serv \
-    call --queue=sys_serv_tasks sys_serv_tasks.sn4_backup --args='[]' \
-    --countdown=20 | xargs -I '{}' printf 'sn4_backup [%s %s] expecting git task ID -- %s\n' $(date +%Y-%m-%d\ %H:%M:%S) {});
-    echo $RES >> /var/sockets/supervisor_relay.log;
-    echo 'OK';
-    }
 jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
 newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
@@ -137,11 +128,6 @@ alias fgrep='fgrep -i --color=auto'
 alias function_names='compgen -A function | sort'
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
 alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME_ENV/django/Dropbox/aporo/static/sencha'
-alias gn_ar_key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
-alias gn_copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
-alias gn_ssh_droid_start='gn_ar_msg "SSHDroid_start"'
-alias gn_ssh_droid_stop='gn_ar_msg "SSHDroid_stop"'
-alias gn_teamviewer_start='gn_ar_msg "QuickSupport_start"'
 alias grep='grep -i --color=auto'
 alias grep_folder='grep -r "$1" *'
 alias grok_app='ngrok -hostname app.aporodelivery.com 80'

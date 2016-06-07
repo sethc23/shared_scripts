@@ -1,0 +1,10 @@
+#!/data/data/com.termux/files/usr/bin/zsh
+
+export HOME_ENV=$HOME
+export TERM="xterm-color"
+
+alias wifi-cmd='wpa_cli -p /data/misc/wifi/sockets/ -i wlan0'
+wifi_net_bssid(){ wifi-cmd bssid $1 $2; }
+alias wifi-cmd-help='echo "\
+    wifi-cmd [blacklist,bss,disassociate,disconnect,dump,\
+    list_networks,reassociate,status,scan,scan_results,select_network]"'
