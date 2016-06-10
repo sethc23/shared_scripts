@@ -26,6 +26,7 @@ export GIT_REPOS=$HOME/GIT_REPOS
 export G=$GIT_REPOS
 export WORKON_HOME=$HOME_ENV/.virtualenvs
 export PROJECT_HOME=$HOME_ENV/.dev
+export AHOME=/data/data/com.termux/files/home
 
 # setup quick folders for sharing among ubuntu cluster
 for n in 1 2 4 5; do
