@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/data/data/com.termux/files/usr/bin/zsh
 
 [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base"
 
