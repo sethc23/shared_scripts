@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/data/data/com.termux/files/usr/bin/zsh
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -130,6 +130,8 @@ source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
+
+source_files "$HOME_ENV/.scripts/shell_env/android"
 
 [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
