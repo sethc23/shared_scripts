@@ -24,6 +24,18 @@ def _sublime(args):
     open_sublime = "/usr/local/bin/sublime_open %s" % fpath
     run_cmd(open_sublime)
 
+def _local(args):
+    f = args[-1]
+    f_len = len(f)
+    cmd = ''
+    default_open = ['html','md','markdown','pdf','xls','xlsx']
+    for it in default_open:
+        if f.rfind(it)==f_len-len(it):
+            cmd = 'open %s' % f
+    if not cmd:
+        cmd = "/usr/local/bin/sublime_open %s" % f
+    run_cmd(cmd)
+
 
 if __name__ == '__main__':
     from sys import argv
@@ -33,6 +45,8 @@ if __name__ == '__main__':
     
     if args[0]=='sublime':
         _sublime(args[1:])
+    elif args[0]=='local':
+        _local(args[1:])
     else:
         print "Input:",argv
         print "Check file: %s" % __file__
