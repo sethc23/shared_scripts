@@ -19,9 +19,8 @@ gn-backup() { \
     echo $RES >> /var/sockets/supervisor_relay.log;
     echo 'OK';
     }
-gn-ssh-connect() { ssh ub2 zsh <<(
-cat <<'EOF'
-sshd_svc() { curl -s "$URL_BASE;openSSH_$1;"; }
+gn-ssh-remote() { ssh ub2 zsh <<(cat <<'EOF'
+sshd_svc() { curl -s "$URL_BASE;openSSH_$1;" > /dev/null 2>&1; }
 check_gnr_tunnel() { sudo /usr/local/bin/ports_listen|grep sshd|grep 19102|wc -l; }
 AR_KEY="APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ";
 URL_BASE="http://autoremotejoaomgcd.appspot.com/sendmessage?key="$AR_KEY"&message=source;command=:=ub2";
