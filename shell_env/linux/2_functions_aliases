@@ -34,9 +34,6 @@ alias red_keys='redis-cli -h localhost -p 6379 -n 0 keys \*'
 
 alias cel_env='cd $SERV_HOME/aprinto; source ENV/bin/activate'
 
-alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
-alias ports_listen_2='sudo netstat -ltnp'
-
 alias ps-command='ps --sort=comm'
 alias ps-cpu='ps --sort=+%cpu'
 alias ps-mem='ps --sort=+%mem'

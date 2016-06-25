@@ -1,3 +1,14 @@
+#!/bin/zsh
+#
+# ### REGISTER
+#
+# NAME=localhost
+# ID=$(whoami)
+# PUBLIC_IP=localhost
+# LOCAL_IP=127.0.0.1    # $(sudo ifconfig eth0 |grep "inet addr" |awk '{print $2}' |awk -F: '{print $2}')
+# curl "http://autoremotejoaomgcd.appspot.com/registerpc?key=$(gn-ar-key)&name=$NAME&id=$ID&type=linux&publicip=$PUBLIC_IP&localip=$LOCAL_IP"
+#
+# ###
 
 gn-ar-msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(gn-ar-key)&message=source;command=:=$USER;$1;"; }
 gn-backup() { \
@@ -8,13 +19,36 @@ gn-backup() { \
     echo $RES >> /var/sockets/supervisor_relay.log;
     echo 'OK';
     }
+gn-ssh-connect() { ssh ub2 zsh <<(
+cat <<'EOF'
+sshd_svc() { curl -s "$URL_BASE;openSSH_$1;"; }
+check_gnr_tunnel() { sudo /usr/local/bin/ports_listen|grep sshd|grep 19102|wc -l; }
+AR_KEY="APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ";
+URL_BASE="http://autoremotejoaomgcd.appspot.com/sendmessage?key="$AR_KEY"&message=source;command=:=ub2";
+seconds_wait_after_sshd_start=3;
+seconds_wait_before_sshd_restart=15;
+restart_time=0;
+connected=false;
+cnt=0;
+while true; do;
+    [[ $(check_gnr_tunnel) -gt 0 ]] && break;
+    [[ $restart_time = 0 ]] && restart_time=$(date --date=$seconds_wait_before_sshd_restart' seconds' +%s);
+    [[ $cnt -ge 10 ]] && break;
+    sshd_svc start;
+    sleep $seconds_wait_after_sshd_start;
+    [[ ! $(check_gnr_tunnel) -gt 0 ]] && [[ $(date +%s) -ge $restart_time ]] && sshd_svc stop;
+    let cnt=cnt+1;
+done;
+EOF
+) && ssh gnr; }
+
 
 alias gn-ar-key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
 alias gn-copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
 # alias gn-sshdroid-start='gn-ar-msg "SSHDroid_start"'
 # alias gn-sshdroid-stop='gn-ar-msg "SSHDroid_stop"'
-alias gn-sshd-start='gn-ar-msg "openSSH_start"'
-alias gn-sshd-stop='gn-ar-msg "openSSH_stop"'
+alias gn-ssh-start='gn-ar-msg "openSSH_start"'
+alias gn-ssh-stop='gn-ar-msg "openSSH_stop"'
 alias gn-teamviewer-start='gn-ar-msg "TeamViewer_start"; /Applications/TeamViewer.app/Contents/MacOS/TeamViewer &'
 alias gn-teamviewer-stop='gn-ar-msg "TeamViewer_stop"; kill_by TeamViewer.app'
 

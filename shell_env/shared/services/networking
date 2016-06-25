@@ -60,7 +60,7 @@ dn_update_ip(){
 alias net_port_check_help='echo "net_port_check <port> <ip/url>"'
 alias net_route_v4='route -A inet'
 alias net_route_v6='route -A inet6'
-alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
+# alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports_listen_2='sudo netstat -ltnp'
 alias ports_listen_3='nettop'
 alias ports_sockets='netstat -lx'
