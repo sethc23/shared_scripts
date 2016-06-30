@@ -13,12 +13,12 @@ alias toggle_voiceover='osascript -e "`echo -e \"tell application \\"System Even
 
 
 # <<< --- OSX WIFI --- >>>
-alias wifi_bssid='airport-bssid en1'
-alias wifi_connect='networksetup -setairportnetwork en1'
-alias wifi_disconnect='sudo airport -z'
-alias wifi_hardware='networksetup -listallhardwareports'
-alias wifi_log_tail='tail -f /var/log/wifi.log'
-alias wifi_off='networksetup -setairportpower en1 off'
-alias wifi_on='networksetup -setairportpower en1 on'
-alias wifi_renew='sudo ipconfig set en1 DHCP'
-alias wifi_scan='airport scan'
+alias wifi-bssid='airport-bssid en1'
+alias wifi-connect='networksetup -setairportnetwork en1'
+alias wifi-disconnect='sudo airport -z'
+alias wifi-hardware='networksetup -listallhardwareports'
+alias wifi-log_tail='tail -f /var/log/wifi.log'
+alias wifi-off='networksetup -setairportpower en1 off'
+alias wifi-on='networksetup -setairportpower en1 on'
+alias wifi-renew='sudo ipconfig set en1 DHCP'
+alias wifi-scan='airport scan'
