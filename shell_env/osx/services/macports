@@ -1,45 +1,45 @@
 #!/bin/zsh
 
-link_mp_ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+link-mp-ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
     $IPY/ENV/lib/python2.7/site-packages/; }
-link_mp_aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
+link-mp-aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
     $APRINTO/ENV/lib/python2.7/site-packages/; }
-link_mp_check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
-link_mp_ib_confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
-f_mp_check() { port installed "*"$1"*" ; port search "*"$1"*"; }
-f_mp_py() { sudo port select python python$1; }
-f_mp_contents_exe () { port -q contents $1 | grep -E '/s?bin/'; }
-mp_py_select() { echo "admin" | sudo port select python python$1; }
+link-mp-check() { ls -la /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/ | grep -i $1; }
+link-mp-ib-confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1; }
+f-mp-check() { port installed "*"$1"*" ; port search "*"$1"*"; }
+f-mp-py() { sudo port select python python$1; }
+f-mp-contents-exe () { port -q contents $1 | grep -E '/s?bin/'; }
+mp-py-select() { echo "admin" | sudo port select python python$1; }
 
 
-alias mp_check='f_mp_check'
-alias mp_clean_db='port echo leaves'
-#alias mp_clean_db_confirmed="while sudo port uninstall leaves --follow-dependencies; do :; done"
-alias mp_clean_port_all='sudo port clean --all'
-alias mp_clean_port_safe='sudo port clean'
-alias mp_contents_exe='f_mp_contents_exe'
-alias mp_contents_files='port contents'
-alias mp_dependents='port dependents'
-alias mp_info='port info'
-alias mp_install='sudo port install'
-alias mp_install_force='sudo port -n upgrade --force'
-alias mp_installed='port installed'
-alias mp_livecheck='port livecheck'
-alias mp_outdated_get='port outdated'
-alias mp_py_dir='ls /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/'
-alias mp_saveports='port -qv installed > $HOME/Desktop/myports.txt'
-alias mp_search='port search --name --line'
-alias mp_search_full='port search --name'
-alias mp_search_group='port search --glob'
-alias mp_uninstall_follow='sudo port uninstall --follow-dependents'
-alias mp_uninstall_safe='sudo port uninstall'
-alias mp_update='sudo port selfupdate'
-alias mp_upgrade='sudo port upgrade outdated'
-alias mp_upgrade_all='sudo port upgrade outdated'
-alias mp_upgrade_list='port outdated'
-alias mp_variant='port variant'
+alias mp-check='f-mp-check'
+alias mp-clean-db='port echo leaves'
+#alias mp-clean-db_confirmed="while sudo port uninstall leaves --follow-dependencies; do :; done"
+alias mp-clean-port-all='sudo port clean --all'
+alias mp-clean-port-safe='sudo port clean'
+alias mp-contents-exe='f-mp-contents-exe'
+alias mp-contents-files='port contents'
+alias mp-dependents='port dependents'
+alias mp-info='port info'
+alias mp-install='sudo port install'
+alias mp-install-force='sudo port -n upgrade --force'
+alias mp-installed='port installed'
+alias mp-livecheck='port livecheck'
+alias mp-outdated-get='port outdated'
+alias mp-py-dir='ls /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/'
+alias mp-saveports='port -qv installed > $HOME/Desktop/myports.txt'
+alias mp-search='port search --name --line'
+alias mp-search-full='port search --name'
+alias mp-search-group='port search --glob'
+alias mp-uninstall-follow='sudo port uninstall --follow-dependents'
+alias mp-uninstall-safe='sudo port uninstall'
+alias mp-update='sudo port selfupdate'
+alias mp-upgrade='sudo port upgrade outdated'
+alias mp-upgrade-all='sudo port upgrade outdated'
+alias mp-upgrade-list='port outdated'
+alias mp-variant='port variant'
 
-function mp_variant_install_f() {
+function mp-variant-install_f() {
     function get_opts() {
         opt_grp=()
         for i in $opts; do
@@ -52,14 +52,15 @@ function mp_variant_install_f() {
         done
     }
 
-    variants=`mp_variant $1`
+    variants=`mp-variant $1`
     opts=$(echo $variants | tail -n +2 | sed -r 's/^ *//')
     choices=(${=opts})
     echo "Do you wish to adjust for variants?"
     case $yn in
         [1Yy]* ) get_opts; break;;
-        [2Nn]* ) mp_install $1;;
+        [2Nn]* ) mp-install $1;;
         * ) echo "Please select yes or no.";;
     esac
     }
-alias mp_variant_install='mp_variant_install_f'
+
+alias mp-variant-install='mp-variant-install-f'
