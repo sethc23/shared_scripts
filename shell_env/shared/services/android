@@ -39,7 +39,7 @@ while true; do;
     let cnt=cnt+1;
 done;
 EOF
-) && ssh gnr; }
+) && ssh gn; }
 
 
 alias gn-ar-key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
