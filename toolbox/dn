@@ -1,0 +1,123 @@
+#!env zsh
+
+## FUNCTIONS
+dn_update_ip(){
+    SHELL_VARS=("${(@f)$(zsh -ic 'echo "tmp"; echo \"http://info.sanspaper.com/sys/servers/s_idx/$SERVER_ID\"; get_my_ip_int; get_my_ip_ext')}")
+    URL="$SHELL_VARS[2]"
+    IP_INT="$SHELL_VARS[3]"
+    IP_EXT="$SHELL_VARS[4]"
+
+    JSON_1=$(printf '{"s_host":"%s"}' "$(hostname)")
+    JSON_2=$(printf '{"home_env":"%s"}' "$HOME_ENV" )
+    JSON_3=$(printf '{"local_port":"%s"}' "$LOCAL_PORT")
+    JSON_4=$(printf '{"local_ip":"%s","ext_ip":"%s"}' $IP_INT $IP_EXT)
+    JSON_5=$(printf '{"git_sync":%s}' "$LOCAL_GIT_SYNC")
+    JSON_6=$(printf '{"s_path":"%s"}' "$PATH")
+    JSONS=($JSON_1 $JSON_2 $JSON_3 $JSON_4 $JSON_5 $JSON_6)
+    a='{}'; for i in $JSONS; do a=$(jq -nMc "$a * $i"); done
+
+    CMD="echo '$a' | curl -g -d @- $URL"
+    eval ${CMD}
+    }
+
+dn_remote_tunnel(){
+    EXISTS="$(env ps -awx | grep 1$LOCAL_PORT | grep -v grep | wc -l)"
+    if [[ "$1" = "open" ]] && [[ $EXISTS = 0 ]]; then
+        echo $LOCAL_PORT | xargs -I '{}' ssh -nNR 1{}:localhost:{} ub2  > /dev/null 2>&1 &
+    elif [[ "$1" = "close" ]] && [[ $EXISTS = 1 ]]; then
+        kill_by 1$LOCAL_PORT > /dev/null 2>&1
+    fi
+    }
+
+ssh_f(){ \
+    [[ -n "$(df -h | tail -n +2 | cut -d ' ' -f1 | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
+    mkdir -p /Volumes/$1 && sshfs $1:/ /Volumes/$1 > /dev/null 2>&1;
+    }
+
+## LOGIC
+[[ "$1" = "update" ]] && dn_update_ip
+[[ "$1" = "tunnel" ]] && dn_update_ip && \
+    dn_remote_tunnel
+[[ "$1" = "mount" ]] && dn_update_ip && \
+    dn_remote_tunnel && \
+    ssh_f ub2
+[[ "$1" = "connect" ]] && dn_update_ip && \
+    dn_remote_tunnel && \
+    ssh_f ub2 && \
+    env CLIENT_HOST=SERVER3 ssh ub2
+
+# Usage info
+# show_help() {
+#     usage="
+#     $(basename "$0") [-h] [-a file] [-e profile_name '{\"some\": \"JSON\"}'] [-G] [-D profile_name] -- a program to manage iterm2 dynamic profiles
+
+#         where:
+#             -h , --help                             Show this help text
+#             -a <file>, --add=<file>                 Copies <file> content to PROD_DIR.
+#             -e, --extract <profile_name>            Extracts the <profile_name> profile from iterm2 cache asn save to CURRENT_COPY_DIR.
+#             -e, --extract <profile_name> '<json>'   Extracts the <profile_name> profile from the <json> input
+#             -g, --getall                            Extracts all profiles in iterm2 cache,
+#                                                         makes individual files for each profile in LOCAL_DIR, and
+#                                                         lists status of profile content as compared with same profile in PROD_DIR.
+#                                                     Profiles not previously existing in PROD_DIR are copied from LOCAL_DIR.
+
+#             -d,--diff <profile_name>                Extracts all profiles in iterm2 cache and, if different,
+#                                                         opens Beyond Compare for comparing LOCAL_DIR and PROD_DIR versions of <profile_name> profile.
+
+
+#         ________________________________________________________________________________________________________________
+#         ----------------------------------------------------------------------------------------------------------------
+
+#         IMPORTANT FILES:
+
+#             CURRENT_SETTINGS_PATH       :           The path to file containing the iterm2 profile cache
+#                                                         <$CURRENT_SETTINGS_PATH>
+#             LAST_SETTINGS_MD5SUM        :           The last md5sum of the entire current settings plist
+#             CURRENT_COPY_DIR            :           The directory for placing most recent versions of dynamic profiles
+#                                                         <$CURRENT_COPY_DIR>
+#             LOCAL_DIR                   :           The directory for keeping version controlled copies of dynamic profiles.
+#                                                         <$LOCAL_DIR>
+#             PROD_DIR                    :           The original directory for keeping dynamic profiles.
+#                                                         <$PROD_DIR>
+
+#                         ** NOTE:  PROD_DIR is currently symlinked to LOCAL_DIR.
+
+#         OTHER INFO:
+#             Debug:      /var/log/system.log
+#             Info:       https://www.iterm2.com/dynamic-profiles.html
+
+#         "
+#     echo "$usage" >&2
+#     }
+
+# Transform long options to short ones
+# for arg in "$@"; do
+#     shift
+#     case "$arg" in
+#         "--diff") set -- "$@" "-d" ;;
+#         "--extract") set -- "$@" "-e" ;;
+#         "--getall") set -- "$@" "-G" ;;
+#         "--help") set -- "$@" "-h" ;;
+#         *)        set -- "$@" "$arg"
+#     esac
+# done
+
+# Re: OPT_STRING below, see 'getopts' at
+#   http://www.gnu.org/software/bash/manual/bashref.html#Bourne-Shell-Builtins-1
+#
+# verbose getopts handling --> precede OPT_STRING with ':'
+# OPT_STRING=':hs:an:enn:Gs:dnn:s:'
+
+# while getopts $OPT_STRING opt; do
+#   case "$opt" in
+#     h) show_help && exit 1 ;;
+#     a) [[ -n "$2" ]] && diff_dynamic_profile $2 ;;
+#     e) extract_profile $2 $3 ;;
+#     G) get_current_profiles;;
+#     d) [[ -n "$2" ]] && diff_dynamic_profile $2 ;;
+#     :) printf "missing argument for -%s\n" "$OPTARG" >&2
+#        show_help && exit 1 ;;
+#    \?) printf "illegal option: -%s\n" "$OPTARG" >&2
+#        show_help && exit 1 ;;
+#    esac
+# done
