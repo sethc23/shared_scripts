@@ -33,10 +33,10 @@ if [ $2 = "m" ]; then
     #mount -t devpts none $MNT/dev/pts
     mount -o bind /dev $MNT/dev
     mount -t devpts none $MNT/dev/pts
-    LANG= chroot $MNT /bin/bash
+    LANG= chroot $MNT /bin/bash -c 'source /root/.bashenv; exec bash'
 elif [ $2 = "u" ]; then
     cd /
-    for i in /proc /sys /dev/pts$MNT
+    for i in /dev/pts /dev /sys /proc /sys
     do
 	umount -lf $MNT/$i > /dev/null
     done
