@@ -9,6 +9,7 @@ admin=(c8:2a:14:41:bf:23)
 ub1=(00:1b:63:bb:88:0b)
 ub2=(60:33:4b:97:84:a2 60:33:4b:1e:68:1b)
 ms1=(00-FF-B6-74-19-D5)
+gn=(dc:09:4c:15:c1:63)
 
 MANAGED_OSX_IDS=($admin)
 MANAGED_LINUX_IDS=($ub1 $ub2)
@@ -56,18 +57,20 @@ check_if_managed(){
     done
     }
 
-OS_NAME=$(uname -a | cut -d ' ' -f1)
+OS_NAME=$(uname -o)
 MAC_ADDRESSES=()
 MACHINE_ID=
 
 if [[ "$OS_NAME" = "Darwin" ]]; then
     MAC_ADDRESSES+=($(networksetup -getmacaddress Ethernet | \
         env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'))
-elif [[ "$OS_NAME" = "Linux" ]]; then
+elif [[ "$OS_NAME" = "GNU/Linux" ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
 elif [[ "$OS_NAME" = "CYGWIN" ]]; then
     MAC_ADDRESSES+=($(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //'))
+elif [[ "$OS_NAME" = "Android" ]]; then
+    MAC_ADDRESSES+=($(su -c 'cat /sys/class/net/wlan0/address'))
 fi
 
 check_if_managed $MAC_ADDRESSES

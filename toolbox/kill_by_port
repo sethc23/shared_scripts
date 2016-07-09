@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/bash
 
 PID="$(env lsof -sTCP:LISTEN -T | env grep $1$ | column -t | tr -s ' ' | cut -d \  -f2)"
 [[ -n "$PID" ]] && sudo kill -9 "$PID"

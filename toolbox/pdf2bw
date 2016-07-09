@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/bash
 
 # gs      -sOutputFile="bw_$1" \
 #         -dNOPAUSE -dBATCH -dSAFER \

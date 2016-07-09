@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/data/data/com.termux/files/usr/bin/zsh
 
 L="$1"
 R="$2"
