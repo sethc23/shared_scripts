@@ -74,6 +74,7 @@ find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 # find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
 gdiff() { git diff $@ | cdiff -s -w 110; }
 jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
+ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
 newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }

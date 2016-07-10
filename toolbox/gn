@@ -1,0 +1,34 @@
+#!/bin/zsh
+
+assign () { eval "$1=\$(cat; echo .); $1=\${$1%.}"; };
+
+connect(){
+    if [[ -n "$(/usr/local/bin/adb devices|grep 5VT5T16219000835)" ]]; then
+        /usr/local/bin/adb shell
+    else
+        assign SCRIPT < <(cat <<'EOF'
+sshd_svc() { curl -s "$URL_BASE;openSSH_$1;" > /dev/null 2>&1; }
+check_gnr_tunnel() { sudo /usr/local/bin/ports_listen|grep sshd|grep 19102|wc -l; }
+AR_KEY="APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ";
+URL_BASE="http://autoremotejoaomgcd.appspot.com/sendmessage?key="$AR_KEY"&message=source;command=:=ub2";
+seconds_wait_after_sshd_start=3;
+seconds_wait_before_sshd_restart=15;
+restart_time=0;
+connected=false;
+cnt=0;
+while true; do;
+    [[ $(check_gnr_tunnel) -gt 0 ]] && break;
+    [[ $restart_time = 0 ]] && restart_time=$(date --date=$seconds_wait_before_sshd_restart' seconds' +%s);
+    [[ $cnt -ge 10 ]] && break;
+    sshd_svc start;
+    sleep $seconds_wait_after_sshd_start;
+    [[ ! $(check_gnr_tunnel) -gt 0 ]] && [[ $(date +%s) -ge $restart_time ]] && sshd_svc stop;
+    let cnt=cnt+1;
+done;
+EOF
+        );
+        ssh ub2 zsh -c "$SCRIPT" && ssh gnu;
+    fi;
+    }
+
+[[ -z "$1" ]] && connect

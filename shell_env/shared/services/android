@@ -46,7 +46,7 @@ done;
 EOF
         );
         ssh ub2 zsh -c "$SCRIPT" && ssh gnu;
-    fi}
+    fi;}
 
 
 alias gn-ar-key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
