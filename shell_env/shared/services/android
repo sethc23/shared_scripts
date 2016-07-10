@@ -20,8 +20,11 @@ gn-backup() { \
     echo 'OK';
     }
 gn-ssh-remote() { \
-    assign () { eval "$1=\$(cat; echo .); $1=\${$1%.}"; };
-    assign SCRIPT < <(cat <<'EOF'
+    if [[ -n "$(adb devices|grep 5VT5T16219000835)" ]]; then
+        adb shell
+    else
+        assign () { eval "$1=\$(cat; echo .); $1=\${$1%.}"; };
+        assign SCRIPT < <(cat <<'EOF'
 sshd_svc() { curl -s "$URL_BASE;openSSH_$1;" > /dev/null 2>&1; }
 check_gnr_tunnel() { sudo /usr/local/bin/ports_listen|grep sshd|grep 19102|wc -l; }
 AR_KEY="APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ";
@@ -41,8 +44,9 @@ while true; do;
     let cnt=cnt+1;
 done;
 EOF
-);
-    ssh ub2 zsh -c "$SCRIPT" && ssh gnu; }
+        );
+        ssh ub2 zsh -c "$SCRIPT" && ssh gnu;
+    fi}
 
 
 alias gn-ar-key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
