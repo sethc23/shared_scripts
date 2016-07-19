@@ -24,27 +24,49 @@ if [ $1 = "-h" ] || [ $1 = "--help" ]; then
     exit 0
 fi
 
-ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
+ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; cat /proc/mounts|cut -d ' ' -f1,2|awk '{ printf("%-31s %s\n", $1, $2); }'; }
 ls-mounted() { ls-mounts|tail -n +2|sed -r 's/(\s\s)+/ /g'|sed 's/  / /g'|cut -d ' ' -f2; }
 chk() { \
-escaped_var=$(echo $MNT|sed 's/\//\\\//g');
-echo $(ls-mounted|grep $MNT|sed -r 's/'$escaped_var'//'|grep "$1$");
+    escaped_var=$(echo $MNT|sed 's/\//\\\//g');
+    echo $(ls-mounted|grep $MNT|sed -r 's/'$escaped_var'//'|grep "$1$");
 }
 
 MNT=$(echo "$1")
+#ENV="/bin/bash -c 'source /root/.bashenv; exec bash -l'"
+ENV="/bin/su root"
+#[[ -n "$2" ]] && ENV=$(echo "$2")
 
 ## MOUNT
-cp /etc/resolv.conf $MNT/etc/
-[[ -z "$(chk '/proc')" ]] && mount -t proc none $MNT/proc
-[[ -z "$(chk '/sys')" ]] && mount -t sysfs none $MNT/sys
-[[ -z "$(chk '/dev')" ]] && mount -o bind /dev $MNT/dev
-[[ -z "$(chk '/dev/pts')" ]] && mount -t devpts none $MNT/dev/pts
-LANG= chroot $MNT /bin/bash -c 'source /root/.bashenv; exec bash'
+if [[ "$2" != "u" ]]; then
+    cp /etc/resolv.conf $MNT/etc/
+    [[ -z "$(chk '/proc')" ]] && mount -t proc proc $MNT/proc
+    [[ -z "$(chk '/sys')" ]] && \
+	mount -t sysfs sys $MNT/sys && \
+	mount -t selinuxfs selinuxfs $MNT/sys/fs/selinux && \
+	mount -o bind,ro,remount $MNT/sys/fs/selinux
+    [[ -z "$(chk '/dev')" ]] && mount -o bind /dev $MNT/dev && mount -o suid,remount /dev
+    [[ -z "$(chk '/dev/pts')" ]] && mount -o "mode=0620,gid=5" -t devpts devpts $MNT/dev/pts
+    if [[ "$MNT" = "/data/local/kali" ]]; then
+	[[ -z "$(chk '/sdcard')" ]] && mount -o bind /sdcard /data/local/kali/sdcard
+	[[ -z "$(chk '/termux')" ]] && mount -o bind /data/data/com.termux/files /data/local/kali/termux
+    fi
+    for i in \
+	/storage/emulated \
+	/data/local/kali/sdcard; do
+	mount -o suid,exec,atime,relatime,remount $i
+    done
+    mount -o bind,uid=10105,gid=10105,remount /data/local/kali/termux
+    LANG= chroot $MNT $ENV
+fi
+
+#[[ "$(ps|grep chroot_upon|wc -l)" != 1 ]] && exit
+#echo "unmounting..."
 
 ## UN-MOUNT
-for i in dev/pts dev sys proc sys; do
-    umount -lf $MNT/$i > /dev/null 2>&1
-done
-
+if [[ "$2" = "u" ]]; then
+    for i in dev/pts dev sys/fs/selinux sys proc sys; do
+        umount -lf $MNT/$i > /dev/null 2>&1
+    done
+fi
 
 
