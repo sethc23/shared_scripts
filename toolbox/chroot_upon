@@ -31,10 +31,12 @@ chk() { \
     echo $(ls-mounted|grep $MNT|sed -r 's/'$escaped_var'//'|grep "$1$");
 }
 
-MNT=$(echo "$1")
+MNT=$1
 #ENV="/bin/bash -c 'source /root/.bashenv; exec bash -l'"
 ENV="/bin/su root"
-#[[ -n "$2" ]] && ENV=$(echo "$2")
+[[ -n "$2" ]] && [[ "$2" != "m" ]] && ENV=$2
+
+#echo $ENV
 
 ## MOUNT
 if [[ "$2" != "u" ]]; then
