@@ -29,14 +29,32 @@ su-juice() { \
 cat <<'EOF'
 export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin
 for i in $(cat /sdcard/juice_env); do export $i; done
+export ANDROID_DATA=/data
+export HOME=/data/data/com.termux/files/home
 export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;33m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] "
 exec bash -l
 EOF
-)";
+	)";
     [[ -n "$1" ]] && env -i /data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash -c "\
-export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin
-export ANDROID_DATA=/data
-exec bash -lc \"$1\"";
+       export ANDROID_ASSETS=/system/app;
+       export ANDROID_BOOTLOGO=1;
+       export ANDROID_DATA=/data;
+       export ANDROID_ROOT=/system;
+       export ANDROID_SOCKET_zygote_secondary=9;
+       export ANDROID_STORAGE=/storage;
+       export ANDROID_VERSION=N;
+       export ASEC_MOUNTPOINT=/mnt/asec;
+       export BOOTCLASSPATH=/system/framework/core-oj.jar:/system/framework/core-libart.jar:/system/framework/conscrypt.jar:/system/framework/okhttp.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/apache-xml.jar:/system/framework/org.apache.http.legacy.boot.jar;
+       export EXTERNAL_STORAGE=/sdcard;
+       export HOME=/data/data/com.termux/files/home;
+       export JUICESSH_BIN_DIR=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie;
+       export JUICESSH_VERSION=2.1.2;
+       export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin;
+       export SHELL=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash;
+       export SYSTEMSERVERCLASSPATH=/system/framework/services.jar:/system/framework/ethernet-service.jar:/system/framework/wifi-service.jar;
+       export TERM=linux;
+       bash -lc \"$1\";
+       ";
 }
 alias wifi-top='wifi-cmd scan_results|tai$( -n +2|sor) -rk3|head -n 10'
 alias wifi-top-x='wifi-top|grep xfinitywifi|head -n 1|cut -f1'
