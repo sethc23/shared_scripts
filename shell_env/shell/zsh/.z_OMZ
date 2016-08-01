@@ -7,7 +7,7 @@ export ZSH=$HOME_ENV/.scripts/shell_env/shell/zsh/OMZ
 # Uncomment the following line to use hyphen-insensitive completion. Case
 # sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
-# DISABLE_AUTO_UPDATE="true"        #   bi-weekly auto-update checks.
+DISABLE_AUTO_UPDATE="true"        #   bi-weekly auto-update checks.
 # export UPDATE_ZSH_DAYS=13         #   how often to auto-update (in days).
 # DISABLE_LS_COLORS="true"
 # DISABLE_AUTO_TITLE="true"

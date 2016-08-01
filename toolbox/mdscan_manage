@@ -3,7 +3,7 @@
 
 # Set Workspace
 BASE_DIR=$(pwd)
-INPUT_DIR=MDSCAN
+INPUT_DIR=mdscan
 OUTPUT_DIR=
 OUTPUT_FILES=()
 EXTRACT_PROCESSED=true
@@ -22,18 +22,23 @@ remove_spaces_in_pwd_files_dirs(){
     }
 
 get_scan_info(){
-    SCAN_NAME="$(cat document.dat | tr -d '\200-\377' \
+    if [[ -f "document.dat" ]]; then
+        SCAN_NAME="$(cat document.dat | tr -d '\200-\377' \
                     | sed -r 's/[^[:print:]]//g' \
                     | sed -r 's/^([^[:digit:]]*)(.*)(Page0)(.*)$/\2/' \
                     | sed -r 's/[^[:alnum:]:\.\ -]//g')"
-    SCAN_DATE=$(echo $SCAN_NAME | cut -d ' ' -f1 | sed 's/\./\//g')
-    SCAN_DATE=20$(echo ${SCAN_DATE:${#SCAN_DATE}-8:#SCAN_DATE})       # Get last 8 characters
-    SCAN_TIME_TITLE=$(echo $SCAN_NAME | cut -d ' ' -f2)
-    SCAN_TIME=$(echo $SCAN_TIME_TITLE | cut -d '-' -f1)
-    SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-) 
-    [[ $SCAN_TIME = $SCAN_TITLE ]] && SCAN_TITLE=
-    SCAN_DATETIME="$(date --date="$SCAN_DATE $SCAN_TIME" +'%Y.%m.%d_%H.%M.%S')"
-    SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_DIR $SCAN_TITLE)
+
+        SCAN_DATE=$(echo $SCAN_NAME | cut -d ' ' -f1 | sed 's/\./\//g')
+        SCAN_DATE=20$(echo ${SCAN_DATE:${#SCAN_DATE}-8:#SCAN_DATE})       # Get last 8 characters
+        SCAN_TIME_TITLE=$(echo $SCAN_NAME | cut -d ' ' -f2)
+        SCAN_TIME=$(echo $SCAN_TIME_TITLE | cut -d '-' -f1)
+        SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-) 
+        [[ $SCAN_TIME = $SCAN_TITLE ]] && SCAN_TITLE=
+        SCAN_DATETIME="$(date --date="$SCAN_DATE $SCAN_TIME" +'%Y.%m.%d_%H.%M.%S')"
+        SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_DIR $SCAN_TITLE)
+    else
+        SCAN_FNAME="$(uuidgen -t|cut -d '-' -f1)"
+    fi
     }
 
 build_pdf(){
@@ -70,7 +75,7 @@ try=$(for i in Custom*; do mv $i $(cat $i/folder.dat); done > /dev/null 2>&1)
 # Process Files
 EXCLUDE_FOLDERS=(Home Office Trip)
 printf "\n%s\n\n" "EXCLUDE DIRECTORIES: $EXCLUDE_FOLDERS"
-for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///'); do
+for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///' | sort); do
     
     SKIP=
     for j in $EXCLUDE_FOLDERS; do
@@ -79,15 +84,17 @@ for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///
             break
         fi
     done
-
+    
     if [[ -z "$SKIP"  ]]; then
         
-        cd $i
         remove_spaces_in_pwd_files_dirs
 
-        if [[ -z "$(test -d Scan0 || echo 'not exist')" ]]; then
+        if [[ -z "$(test -d $i || echo 'not exist')" ]]; then
 
             SCAN_DIR=$i
+            echo "Scan_dir: "$SCAN_DIR
+
+            cd $SCAN_DIR
 
             for s in Scan*; do 
 
