@@ -74,10 +74,15 @@ if [[ "$2" != "u" ]]; then
         fi
         mount -o suid,exec,dev,atime,remount $MNT/termux
     fi
-    for i in \
-        /storage/emulated; do
-        mount -o suid,exec,atime,relatime,remount $i
-    done
+    # for i in \
+    #     /storage/emulated; do
+    #     mount -o suid,exec,atime,relatime,remount $i
+    # done
+    # mount -o atime,suid,dev,exec,relatime,remount /mnt/runtime/default/emulated
+    # mount -o atime,suid,dev,exec,relatime,remount /mnt/runtime/default/emulated
+    # mount -o atime,relatime,suid,exec,remount /storage/emulated
+    # mount -o dev,exec,atime,relatime,suid,remount /mnt/runtime/read/emulated
+    
     LANG= chroot $MNT $ENV
 fi
 
