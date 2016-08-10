@@ -26,6 +26,8 @@ ITERM2=
 
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_START"
 
+[[ "$CMD_SHELL" = "juice" ]] && source ~/aliases && su-juice && exit
+
 source_sub_dir() {
     for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
         for j in `env find $d -maxdepth 1 -type f | sort`; do 
@@ -139,6 +141,7 @@ source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_5"
 source_files "$HOME_ENV/.scripts/shell_env/android"
 
 [[ -n "$DEBUG_SHELL" ]] && echo $PATH

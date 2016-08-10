@@ -1,14 +1,14 @@
 #!/data/data/com.termux/files/usr/bin/zsh
 
-export USER=root
+#export USER=root
 export USERNAME=$USER
 
 [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base"
 
 if [[ -n "$HOME_ENV" ]]; then
     BASE_DIR="$HOME_ENV/.scripts/shell_env"
-else
 
+else
     [[ -n "$SUDO_USER" ]] && export DISABLE_AUTO_UPDATE=true && export HOME_ENV="$(eval echo ~$SUDO_USER)"
     [[ -z "$SUDO_USER" ]] && export HOME_ENV="$(eval echo ~$USER)"
 
@@ -30,5 +30,19 @@ else
 
 fi
 
-[[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base && source ~/bash.bashrc
-[[ -n "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base && source ~/bash.bashrc
+# [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_to_local"
+# source $BASE_DIR/_local
+echo $USER
+export USER=$(whoami)
+echo $USER
+
+[[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
+[[ -n "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base
+
+# [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_to_local"
+# source $BASE_DIR/_local
+echo $USER
+export USER=$(whoami)
+echo $USER
+
+[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_end"
