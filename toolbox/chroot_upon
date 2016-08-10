@@ -31,7 +31,6 @@ chk() { \
     #escaped_var=$(echo $1|sed 's/\//\\\//g');
     #res=$(ls-mounted|sed -r 's/'$escaped_var'//'|grep "$1"$|head -n 1);
     res=$(echo "$mounts"|grep "$1"$);
-    # res=$(ls-mounted|grep "$1"$);
     [[ -n "$res" ]] && echo "$res";
 }
 
@@ -66,12 +65,11 @@ if [[ "$2" != "u" ]]; then
     [[ -z "$(chk $MNT/dev)" ]] && mount -o bind /dev $MNT/dev && mount -o suid,remount /dev
     [[ -z "$(chk $MNT/dev/pts)" ]] && mount -o "mode=0620,gid=5" -t devpts devpts $MNT/dev/pts
     if [[ "$MNT" = "/data/local/kali" ]]; then
-        #[[ -z "$(chk '/sdcard')" ]] && \
-        #    mount -o bind /sdcard $MNT/sdcard && \
-        #    mount -o suid,exec,dev,atime,remount $MNT/sdcard
+        if [[ -z "$(chk '$MNT/sdcard')" ]]; then
+           mount -o bind /sdcard $MNT/sdcard
+        fi
+        mount -o suid,exec,dev,atime,remount $MNT/sdcard
         if [[ -z "$(chk $MNT/termux)" ]]; then
-            # mount -o bind,uid=10105,gid=10105,suid,exec,atime /data/data/com.termux/files $MNT/termux
-            # mount -o uid=10105,gid=10105,suid,exec,dev,atime,remount $MNT/termux
             mount -o bind,suid,exec,atime /data/data/com.termux/files $MNT/termux
         fi
         mount -o suid,exec,dev,atime,remount $MNT/termux
@@ -88,9 +86,8 @@ fi
 
 ## UN-MOUNT
 if [[ "$2" = "u" ]]; then
-    # sdcard
     for i in \
-        termux \
+        sdcard termux \
         dev/pts dev sys/fs/selinux sys proc
     do
 	[[ -n "$(chk $MNT/$i)" ]] && umount -lf $MNT/$i > /dev/null 2>&1
