@@ -9,6 +9,13 @@ do
 done
 export MEDIA=/system/media
 
+if [[ "$USER" = "root" ]]; then
+    export PROMPT=$(printf '%s\n%s' "%{$fg_bold[white]%}%nroot@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%}# ")
+else
+    export PROMPT=$(printf '%s\n%s' "%{$fg_bold[green]%}"$USER"@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%}# ")
+fi
+
+
 # if [[ "$(whoami)" = "root" ]]; then
 #     ssh_opts='-o "KexAlgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1" -F ~/.ssh/config_root'
 #     alias ssh="ssh $ssh_opts"
