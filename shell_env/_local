@@ -85,12 +85,10 @@ if [[ -n "$ZSH_VERSION" ]]; then
     source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
 
-    export USERNAME="root"
-
     autoload -U compinit && compinit
     autoload -U bashcompinit && bashcompinit
 
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_2" && echo "$USERNAME"
+    [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_2"
 
     export ZSH_THEME="candy"
     [[ -n $ITERM2 ]] && export ZSH_THEME="cobalt2"
@@ -100,8 +98,6 @@ if [[ -n "$ZSH_VERSION" ]]; then
     [[ -n $IS_MANAGED_OSX ]] && plugins+=(osx)
 
     source $ZSH/oh-my-zsh.sh
-    export USERNAME="root"
-    echo "USERNAME: <<$USERNAME>>"
     autoload -U compinit && compinit
     autoload -U bashcompinit && bashcompinit
 

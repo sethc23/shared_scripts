@@ -30,19 +30,8 @@ else
 
 fi
 
-# [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_to_local"
-# source $BASE_DIR/_local
-echo $USER
 export USER=$(whoami)
-echo $USER
-
 [[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
 [[ -n "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base
-
-# [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_to_local"
-# source $BASE_DIR/_local
-echo $USER
-export USER=$(whoami)
-echo $USER
 
 [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_end"
