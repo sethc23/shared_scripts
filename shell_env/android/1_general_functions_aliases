@@ -9,10 +9,15 @@ do
 done
 export MEDIA=/system/media
 
-if [[ "$USER" = "root" ]]; then
-    export PROMPT=$(printf '%s\n%s' "%{$fg_bold[white]%}%nroot@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
-else
-    export PROMPT=$(printf '%s\n%s' "%{$fg_bold[green]%}"$USER"@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
+
+if [[ -n "$ZSH_VERSION" ]]; then
+    if [[ "$USER" = "root" ]]; then
+        export PROMPT=$(printf '%s\n%s' "%{$fg_bold[white]%}%nroot@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
+    elif [[ "$(uname -o)" = "Android" ]]; then
+        export PROMPT=$(printf '%s\n%s' "%{$fg_bold[green]%}"$USER"@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
+    else
+	export PROMPT=$(printf '%s\n%s' "%{$fg_bold[red]%}"$USER"@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
+    fi
 fi
 
 
