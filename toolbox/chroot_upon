@@ -26,10 +26,11 @@ fi
 
 ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; cat /proc/mounts|cut -d ' ' -f1,2|awk '{ printf("%-31s %s\n", $1, $2); }'; }
 ls-mounted() { ls-mounts|tail -n +2|sed -r 's/(\s\s)+/ /g'|sed 's/  / /g'|cut -d ' ' -f2; }
-mounts=$(mount|sed -r 's/[^ ]* on ([^ ]*) .*/\1/')
+
 chk() { \
     #escaped_var=$(echo $1|sed 's/\//\\\//g');
     #res=$(ls-mounted|sed -r 's/'$escaped_var'//'|grep "$1"$|head -n 1);
+    mounts=$(mount|sed -r 's/[^ ]* on ([^ ]*) .*/\1/')
     res=$(echo "$mounts"|grep "$1"$);
     [[ -n "$res" ]] && echo "$res";
 }
@@ -38,9 +39,7 @@ MNT=$1
 DEBUG=
 #ENV="/bin/bash -c 'source /root/.bashenv; exec bash -l'"
 ENV="/bin/su root"
-[[ -n "$2" ]] && [[ "$2" != "m" ]] && ENV=$2
-
-#echo $ENV
+[[ -n "$2" ]] && [[ "$2" != "m" ]] && ENV="${@:2}"
 
 ## MOUNT
 if [[ "$2" != "u" ]]; then
@@ -65,15 +64,17 @@ if [[ "$2" != "u" ]]; then
     [[ -z "$(chk $MNT/dev)" ]] && mount -o bind /dev $MNT/dev && mount -o suid,remount /dev
     [[ -z "$(chk $MNT/dev/pts)" ]] && mount -o "mode=0620,gid=5" -t devpts devpts $MNT/dev/pts
     if [[ "$MNT" = "/data/local/kali" ]]; then
-        if [[ -z "$(chk '$MNT/sdcard')" ]]; then
+        if [[ -z "$(chk $MNT/sdcard)" ]]; then
            mount -o bind /sdcard $MNT/sdcard
         fi
-        mount -o suid,exec,dev,atime,remount $MNT/sdcard
+        ## BELOW CAUSES SUBSEQUENT ERROR RE: "Transport endpoint is not connected"
+        ## mount -o suid,exec,dev,atime,remount $MNT/sdcard
         if [[ -z "$(chk $MNT/termux)" ]]; then
             mount -o bind,suid,exec,atime /data/data/com.termux/files $MNT/termux
         fi
         mount -o suid,exec,dev,atime,remount $MNT/termux
     fi
+
     # for i in \
     #     /storage/emulated; do
     #     mount -o suid,exec,atime,relatime,remount $i
@@ -86,16 +87,13 @@ if [[ "$2" != "u" ]]; then
     LANG= chroot $MNT $ENV
 fi
 
-#[[ "$(ps|grep chroot_upon|wc -l)" != 1 ]] && exit
-#echo "unmounting..."
-
 ## UN-MOUNT
 if [[ "$2" = "u" ]]; then
     for i in \
         sdcard termux \
         dev/pts dev sys/fs/selinux sys proc
     do
-	[[ -n "$(chk $MNT/$i)" ]] && umount -lf $MNT/$i > /dev/null 2>&1
+        for k in $(chk $MNT/$i); do umount -lf $MNT/$i > /dev/null 2>&1; done
     done
     umount -lf $MNT > /dev/null 2>&1
 fi
