@@ -35,6 +35,7 @@ cat <<'EOF'
 export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin
 for i in $(cat /sdcard/juice_env); do export $i; done
 export ANDROID_DATA=/data
+export DROID=/Users/admin/GIT_REPOS/Devices/Android/NEXUS-6P/droid
 export HOME=/data/data/com.termux/files/home
 export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;33m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] "
 exec bash -l
