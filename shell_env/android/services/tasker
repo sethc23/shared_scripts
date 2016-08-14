@@ -1,0 +1,4 @@
+
+last-ui() { TMP=$(env ls -1tr $HOME/|env grep 'UI'|tail -n 1); [ -z "$TMP" ] && echo "no UI in $HOME"; [ -n "$TMP" ] && cat $TMP && [ "$1" = "del" ] && rm $TMP; }
+last-an() { TMP=$(env ls -1tr $HOME/|env grep 'AN'|tail -n 1); [ -z "$TMP" ] && echo "no AN in $HOME"; [ -n "$TMP" ] && cat $TMP && [ "$1" = "del" ] && rm $TMP; }
+

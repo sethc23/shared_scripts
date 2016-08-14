@@ -1,0 +1,15 @@
+
+
+################################
+#
+#   WIFI
+#
+################################
+alias wifi-cmd='wpa_cli -p /data/misc/wifi/sockets/ -i wlan0'
+wifi-net-bssid(){ wifi-cmd bssid $1 $2; }
+alias wifi-cmd-help='echo "\
+    wifi-cmd [blacklist,bss,disassociate,disconnect,dump,\
+    list_networks,reassociate,status,scan,scan_results,select_network]"'
+alias wifi-top='wifi-cmd scan_results|tai$( -n +2|sor) -rk3|head -n 10'
+alias wifi-top-x='wifi-top|grep xfinitywifi|head -n 1|cut -f1'
+alias wifi-x='wifi-cmd bssid xfinitywifi [wifi-top-x]'

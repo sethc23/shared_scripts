@@ -1,0 +1,36 @@
+#!/bin/zsh
+
+ap-get() { mkdir -p $HOME/apt_install; apt-get -y --reinstall --print-uris --download-only install $1 > $HOME/apt_install/tmp; }
+ap-dl() { cat $HOME/apt_install/tmp|grep http|sed -r "s/'([^']*)'.*/\1/"|xargs -I '{}' wget --relative --directory-prefix=$HOME/apt_install {}; }
+ap-install() { cat $HOME/apt_install/tmp|grep http|sed -r "s/'.*\/([^\/]*)'.*/\1/"|xargs -I '{}' dpkg -i $HOME/apt_install/{}; apt-get -f install; }
+ap-update() { \
+    current_dir=$(pwd)
+    echo -n "Updating ..."
+    cd /var/lib/apt/lists;
+    D="http.kali.org_kali_dists_kali-rolling_InRelease"
+    curl -sL 'http://http.kali.org/kali/dists/kali-rolling/InRelease' > $D
+    for i in \
+        http.kali.org_kali_dists_kali-rolling_main_binary-armhf_Packages \
+        http.kali.org_kali_dists_kali-rolling_contrib_binary-armhf_Packages \
+        http.kali.org_kali_dists_kali-rolling_non-free_binary-armhf_Packages \
+        http.kali.org_kali_dists_kali-rolling_main_source_Sources \
+        http.kali.org_kali_dists_kali-rolling_contrib_source_Sources \
+        http.kali.org_kali_dists_kali-rolling_non-free_source_Sources; do
+        FNAME=$(echo $i)".gz"
+        URL="http://"$(echo $FNAME|sed 's/_/\//g')
+        wget --quiet -L --output-document=$FNAME "$URL"
+        gzip -fd $FNAME
+    done
+    echo "Done."
+    cd $current_dir;}
+ap-a-install(){ echo "Getting info for: $1"; ap-get $1; echo "Downloading packages..."; ap-dl >> $HOME/apt_install/dl_out 2>&1; echo "Installing $1"; ap-install >> $HOME/apt_install/install_out; }
+ap-upgrade(){\
+    UPGRADE_INFO=$HOME/apt_install/tmp_upgrade_info
+    UPGRADE_LIST=$HOME/apt_install/tmp_upgrade_list
+    printf '\nGetting upgrade info...\n';
+    apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t | sort > $UPGRADE_INFO;
+    printf '\nExtracting upgrade list...\n';
+    cat $UPGRADE_INFO | cut -d ' ' -f3 > $UPGRADE_LIST;
+    printf '\nStarting install process...\n';
+    for i in $(cat $UPGRADE_LIST); do printf '\nUpgrading %s\n' "$i"; ap-a-install $i; done;
+    rm $UPGRADE_LIST; rm $UPGRADE_INFO;}
