@@ -19,6 +19,15 @@ done
 #
 ################################
 export MEDIA=/system/media
+if [[ -n "$ZSH_VERSION" ]]; then
+    p_color="green"
+    [[ "$USER" = "root" ]] && p_color="white"
+    export PROMPT=$(printf '%s\n%s' "%{$fg_bold[$p_color]%}%n"$USER"@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
+elif [[ -n "$BASH_VERSION" ]]; then
+    export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    [[ (-n "$(which lsb_release)") && ("$(lsb_release -i -s)" = "Kali") ]] && \
+        export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+fi
 #					# if [[ "$(whoami)" = "root" ]]; then
 #					     		    #     ssh_opts='-o "KexAlgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1" -F ~/.ssh/config_root'
 #							    	  	       		      							      #     alias ssh="ssh $ssh_opts"
