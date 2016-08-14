@@ -138,7 +138,8 @@ source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_5"
-source_files "$HOME_ENV/.scripts/shell_env/android"
+ANDROID_ENV="$HOME_ENV/.scripts/shell_env/android"
+test -d $ANDROID_ENV && source_files_and_sub_dirs $ANDROID_ENV
 
 [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
