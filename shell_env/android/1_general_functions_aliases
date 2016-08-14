@@ -18,6 +18,7 @@ done
 #   SHELL VARIABLES & ENV
 #
 ################################
+export DROID=/Users/admin/GIT_REPOS/Devices/Android/NEXUS-6P/droid
 export MEDIA=/system/media
 if [[ -n "$ZSH_VERSION" ]]; then
     p_color="green"
