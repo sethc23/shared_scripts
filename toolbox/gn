@@ -3,8 +3,12 @@
 assign () { eval "$1=\$(cat; echo .); $1=\${$1%.}"; };
 
 connect(){
-    if [[ -n "$(/usr/local/bin/adb devices|grep 5VT5T16219000835)" ]]; then
-        /usr/local/bin/adb shell
+    if [[ -n "$(/usr/local/bin/adb devices | grep 5VT5T16219000835)" ]]; then
+        chk=$(/usr/local/bin/ports_listen | grep adb | grep ':19102')
+        [[ -z $chk ]] && /usr/local/bin/adb forward tcp:19102 tcp:9102
+        chk=$(/usr/local/bin/ports_listen | grep adb | grep ':19202')
+        [[ -z $chk ]] && /usr/local/bin/adb forward tcp:19202 tcp:9202
+        ssh root@localhost -p 19102
     else
         assign SCRIPT < <(cat <<'EOF'
 sshd_svc() { curl -s "$URL_BASE;openSSH_$1;" > /dev/null 2>&1; }
