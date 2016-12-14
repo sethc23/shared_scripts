@@ -24,9 +24,6 @@ export SH=$SERV_HOME
 export BD=$HOME_ENV/BD_Scripts
 export GIT_REPOS=$HOME/GIT_REPOS
 export G=$GIT_REPOS
-[[ -f /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages ]] && \
-    VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python || \
-    VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
 export WORKON_HOME=$HOME_ENV/.virtualenvs
 export PROJECT_HOME=$HOME_ENV/.dev
 export AHOME=/data/data/com.termux/files/home
