@@ -1,3 +1,5 @@
 #!/bin/bash
 
-open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
+#open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
+
+/usr/local/bin/subl -a $1
