@@ -26,6 +26,34 @@ cde_f() {
     }
 copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
 curl-JSON() { curl -H 'Accept: application/json; indent=4' $1; }
+d-image-dir(){
+    SRC_DIR=$1
+    DEFAULT_SAVE_FPATH="/tmp/d-image.img"
+    DIR_SIZE=$(du -sh $SRC_DIR|cut -f1)
+    if [[ -z $(echo $DIR_SIZE|grep 'M') ]]; then
+        error_msg="missing 'M' designation and this fx not configured to handle other designations"
+        echo $error_msg
+        return
+    fi
+    DIR_SIZE=$(echo $DIR_SIZE|sed 's/M$//')
+    IMG_SIZE=$(python -c "print int(round(($DIR_SIZE*0.15)+$DIR_SIZE,0))")
+    [[ -n $2 ]] && DEFAULT_SAVE_FPATH=$2
+    echo "Creating empty, fitted img ($DEFAULT_SAVE_FPATH)"
+    dd if=/dev/zero of=$DEFAULT_SAVE_FPATH bs=1M count=$IMG_SIZE
+    mkfs.ext4 $DEFAULT_SAVE_FPATH
+    MNT_PATH=/mnt/$(uuidgen)
+    sudo mkdir -p $MNT_PATH
+    sudo mount -t ext4 -o loop $DEFAULT_SAVE_FPATH $MNT_PATH
+    sudo cp -ar $SRC_DIR $MNT_PATH/
+    sudo umount $MNT_PATH
+    }
+d-image-remote-from(){
+    SSH_CONFIG=$1
+    IMG_SRC=$2
+    IMG_DEST=$3
+    [[ -z "$(echo $IMG_DEST|grep -E '\.gz$')" ]] && IMG_DEST=$IMG_DEST".gz"
+    ssh $SSH_CONFIG "dd if=$IMG_SRC | gzip -1 -" | dd of=$IMG_DEST
+    }
 diff-dir-all() { env colordiff --brief --recursive --width=$(tput cols) $1 $2; }
 diff-dir-left() { diff-dir-all | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 diff-dir-right() { diff-dir-all | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }

@@ -1,3 +1,11 @@
 #!/bin/bash
 
-open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
+CMD="open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text"
+FPATH=$1
+
+# if [[ "$(uname -s)" != "Darwin" ]]; then
+#     CMD="ssh admin $CMD"
+#     FPATH=/Volumes/$(echo $HOME_ENV|sed 's/.*\///')/$1
+# fi
+
+$CMD $FPATH

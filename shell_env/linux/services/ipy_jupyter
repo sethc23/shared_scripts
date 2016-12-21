@@ -15,6 +15,7 @@ alias ib_BD='cd $BD; source $SERV_HOME/ipython/ENV/bin/activate; ipython'
 alias ib_scr='scr_ed; ipython'
 alias ib_libs='ls $IPY/ENV/lib/python2.7/site-packages/; echo $IPY/ENV/lib/python2.7/site-packages/; echo "/usr/lib/python2.7/dist-packages/"; echo "/usr/local/lib/python2.7/dist-packages"'
 
+alias jupyter_nbconvert='jupyter-nbconvert --to=notebook --nbformat=3 --inplace $SERV_HOME/ipython/notebooks/'
 
 alias svc_ipy_enable='sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/ipy_jupyter/jupyter/jupyter-notebook.service 2> /dev/null;'
 alias svc_ipy_disable='sudo systemctl disable jupyter-notebook.service; sudo systemctl daemon-reload'
