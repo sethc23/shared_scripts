@@ -1,6 +1,7 @@
 #!/bin/bash
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_1"
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_1 - $(readlink -f $0)"
+
 PROFILE_STARTUP=false
 if [[ "$PROFILE_STARTUP" == true ]]; then
     # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html

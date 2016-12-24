@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 #export TERM=screen-256color
-#export TERM=xterm-256color tmux
-export TERM=xterm-color
+export TERM=xterm-256color
+#export TERM=xterm-color
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US:en"
 export LC_COLLATE="C"

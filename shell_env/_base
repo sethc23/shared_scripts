@@ -1,6 +1,8 @@
 #!/bin/zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base"
+[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base - $(readlink -f $0)"
+
+#[[ $TERM != "screen" ]] && exec tmux
 
 if [[ -n "$HOME_ENV" ]]; then
     BASE_DIR="$HOME_ENV/.scripts/shell_env"
@@ -29,3 +31,5 @@ fi
 
 [[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
 [[ -n "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

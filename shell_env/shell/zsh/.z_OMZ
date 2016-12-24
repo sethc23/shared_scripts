@@ -20,15 +20,21 @@ DISABLE_AUTO_UPDATE="true"        #   bi-weekly auto-update checks.
 HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 #plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
-plugins=(zsh-completions autojump last-working-dir git python systemd)
-export ZSH_PLUGINS=$plugins
-source $ZSH/oh-my-zsh.sh
+
+[[ -z $ZSH_PLUGINS ]] && export ZSH_PLUGINS=(zsh-completions autojump last-working-dir git python systemd)
+
+[[ -n $IS_MANAGED_OSX ]] && plugins+=(osx)
+
+export ZSH_THEME="candy"
+[[ -n $ITERM2 ]] && export ZSH_THEME="cobalt2"
+[[ ! -L $HOME_ENV/.shell_local ]] && ZSH_THEME="$(cat $HOME_ENV/.shell_local|grep ZSH_THEME|cut -d = -f2)"
+
 # ------------------------
 
+source $ZSH/oh-my-zsh.sh
+autoload -U compinit && compinit
+autoload -U bashcompinit && bashcompinit
 
-
-
-if [[ ! -L $HOME_ENV/.shell_local ]]; then
-    [[ -z "$ZSH_THEME" ]] && ZSH_THEME="candy" && source $ZSH/oh-my-zsh.sh
-fi
+# ------------------------
+# ------------------------
 
