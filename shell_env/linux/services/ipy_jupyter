@@ -1,12 +1,12 @@
 #!/bin/zsh
 
-function ib_e() { cd $IPY; source ENV/bin/activate; }
-function ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}
+ib_e() { cd $IPY; source ENV/bin/activate; }
+ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}
 
 alias ib='$IPY/ENV/bin/ipython console --profile=nbserver --matplotlib=qt4 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_config='f_sudo_textedit ~/.ipython/profile_nbserver/ipython_config.py'
 alias ib_console='$SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent --color-info --colors=linux --confirm-exit;'
-function ib_console_existing() { $SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent \
+ib_console_existing() { $SERV_HOME/ipython/ENV/bin/ipython console --profile=nbserver --pprint --autoindent \
     --color-info --colors=linux --confirm-exit \
     --existing $SERV_HOME/ipython/config/.ipython/profile_default/security/$1; }
 alias ib_js='f_sudo_xcode ~/.ipython/profile_nbserver/static/custom/custom.js'
