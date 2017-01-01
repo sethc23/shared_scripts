@@ -1,0 +1,6 @@
+
+bindkey -r "^[[5~"
+bindkey -r "^[[6~"
+bindkey "^[[5~" scroll-up
+bindkey "^[[6~" scroll-down
+
