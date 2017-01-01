@@ -1,5 +1,22 @@
 #!/bin/zsh
 
+if [[ -n "$BASH_VERSION" ]]; then
+    SOURCE="${BASH_SOURCE[0]}"
+    while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+        DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+        SOURCE="$(readlink "$SOURCE")"
+        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    done
+    BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+fi
+[[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
+
+source $BASE_DIR/.z_pre_OMZ
+
+# [[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] && \
+#     VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python || \
+#     VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+
 export ZSH=$HOME_ENV/.scripts/shell_env/shell/zsh/OMZ
 
 # ZSH_THEME="robbyrussell"  # see $HOME_ENV/.oh-my-zsh/themes/

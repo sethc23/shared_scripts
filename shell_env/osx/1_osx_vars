@@ -2,6 +2,10 @@
 
 export PATH=/Users/admin/.luarocks/bin:/opt/local/share/luarocks/bin:/usr/local/bin:/opt/local/bin:/usr/local/brew/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin:/opt/local/lib/postgresql95/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
 
+# [[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] && \
+#     VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python || \
+#     VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+
 export HOME=/Users/admin
 export ROOT_GRP=wheel
 export SSHFS=/opt/local/bin/sshfs
