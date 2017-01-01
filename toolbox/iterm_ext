@@ -16,21 +16,11 @@ def growl(msg):
     raise SystemExit
 
 def _sublime(args):
-    if args[1]==os.environ['USER']:
-        fpath = '%s/%s' % (args[2],args[3])
-        cmd = "/usr/local/bin/realfullpath %s" % fpath
-        cmd = cmd.replace('//','/')
-        fpath = run_cmd(cmd)
-    else:
-        D = dict(zip(['prefix','user','dir','match'],args))
-        D["fpath"] = D['match'] if os.path.isabs(D['match']) else os.path.join(D["dir"],D['match'])
-        cmd = "/usr/local/bin/realfullpath %(prefix)s/%(user)s/%(fpath)s" % D
-        cmd = cmd.replace('//','/')
-        fpath = run_cmd(cmd)
-    # print fpath
-    # if not os.path.exists(fpath):
-    #     with open('/tmp/iterm_ext','a') as f:
-    #         f.write('fpath failed: %s' % fpath + '\n')
+    D = dict(zip(['prefix','user','dir','match'],args))
+    D["fpath"] = D['match'] if os.path.isabs(D['match']) else os.path.join(D["dir"],D['match'])
+    cmd = "/usr/local/bin/realfullpath %(prefix)s/%(user)s/%(fpath)s" % D
+    cmd = cmd.replace('//','/')
+    fpath = run_cmd(cmd)
     open_sublime = "/usr/local/bin/subl -a %s" % fpath
     run_cmd(open_sublime)
 

@@ -1,4 +1,10 @@
 #!/bin/bash
 
-PID="$(env ps -awx | grep $1 | grep -v 'grep' | column -t | tr -s ' ' | cut -d \  -f1)"
-[[ -n "$PID" ]] && sudo kill -9 $PID
+#PID="$(env ps -awx | grep $1 | grep -v 'grep' | column -t | tr -s ' ' | cut -d \  -f1)"
+#[[ -n "$PID" ]] && sudo kill -9 $PID
+
+if [[ $(uname -o) = "Darwin" ]]; then
+    env ps aux | env grep $1 | grep -v 'grep' | awk '{print $2}' | xargs -I '{}' kill -9 {}
+else
+    env ps -C $1 -o pid,tty,comm,args --no-headers|sed -r 's/\s*([0-9]+)\s(.*)/\1/' | xargs -I '{}' kill -9 {}
+fi
