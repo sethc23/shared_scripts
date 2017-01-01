@@ -26,6 +26,34 @@ cde_f() {
     }
 copy_back_aliases() { cp -R $HOME_ENV/.alias_shared $HOME_ENV/.scripts/.alias_shared; }
 curl-JSON() { curl -H 'Accept: application/json; indent=4' $1; }
+d-image-dir(){
+    SRC_DIR=$1
+    DEFAULT_SAVE_FPATH="/tmp/d-image.img"
+    DIR_SIZE=$(du -sh $SRC_DIR|cut -f1)
+    if [[ -z $(echo $DIR_SIZE|grep 'M') ]]; then
+        error_msg="missing 'M' designation and this fx not configured to handle other designations"
+        echo $error_msg
+        return
+    fi
+    DIR_SIZE=$(echo $DIR_SIZE|sed 's/M$//')
+    IMG_SIZE=$(python -c "print int(round(($DIR_SIZE*0.15)+$DIR_SIZE,0))")
+    [[ -n $2 ]] && DEFAULT_SAVE_FPATH=$2
+    echo "Creating empty, fitted img ($DEFAULT_SAVE_FPATH)"
+    dd if=/dev/zero of=$DEFAULT_SAVE_FPATH bs=1M count=$IMG_SIZE
+    mkfs.ext4 $DEFAULT_SAVE_FPATH
+    MNT_PATH=/mnt/$(uuidgen)
+    sudo mkdir -p $MNT_PATH
+    sudo mount -t ext4 -o loop $DEFAULT_SAVE_FPATH $MNT_PATH
+    sudo cp -ar $SRC_DIR $MNT_PATH/
+    sudo umount $MNT_PATH
+    }
+d-image-remote-from(){
+    SSH_CONFIG=$1
+    IMG_SRC=$2
+    IMG_DEST=$3
+    [[ -z "$(echo $IMG_DEST|grep -E '\.gz$')" ]] && IMG_DEST=$IMG_DEST".gz"
+    ssh $SSH_CONFIG "dd if=$IMG_SRC | gzip -1 -" | dd of=$IMG_DEST
+    }
 diff-dir-all() { env colordiff --brief --recursive --width=$(tput cols) $1 $2; }
 diff-dir-left() { diff-dir-all | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 diff-dir-right() { diff-dir-all | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
@@ -75,6 +103,17 @@ find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
 gdiff() { git diff $@ | cdiff -s -w 110; }
 jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
 ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
+man() {
+    env \
+        LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+        LESS_TERMCAP_md=$(printf "\e[1;31m") \
+        LESS_TERMCAP_me=$(printf "\e[0m") \
+        LESS_TERMCAP_se=$(printf "\e[0m") \
+        LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+        LESS_TERMCAP_ue=$(printf "\e[0m") \
+        LESS_TERMCAP_us=$(printf "\e[1;32m") \
+            man "$@"
+    }
 newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
@@ -91,6 +130,15 @@ shell_opts() {
     fi
     }
 source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
+zsh_retheme() {
+    if [[ -n $1 ]]; then
+        export ZSH_THEME=$1
+        source $ZSH/oh-my-zsh.sh 
+    fi
+    if [[ ! -n $1 ]]; then
+        echo "\nUsage: zsh_retheme 'some_theme_name'"
+    fi
+    }
 
 #alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
 # adb shell input text "insert%syour%stext%shere"
@@ -135,6 +183,7 @@ alias grok_app='ngrok -hostname app.aporodelivery.com 80'
 alias grok_mysql='ngrok -proto tcp 3306'
 alias grok_printer='ngrok -hostname printer.aporodelivery.com 80'
 alias hist_cmds="history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"
+alias irssi='TERM=screen-256color irssi'
 alias killall="killall -9"
 alias l-test="printf 'package.loaded.tmp=nil\nt=require\"tmp\"\nt.test()' | luap --"
 alias locate='locate -i'
@@ -186,8 +235,10 @@ alias test_nginx_socket='socat - UNIX-CLIENT:/var/log/nginx.sock'
 alias to_log='syslog -s -l error -k Message'
 alias topcpu='ps -ero pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
 alias topmem='ps -emo pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
+alias tmux='tmux -2'
 alias umnt='sudo umount -f /Volumes/'
 alias untar='tar -zxvf'
+alias weechat='TERM=screen-256color weechat'
 alias z_local="emacs $SH/local_config/shell/.shell_local"
 alias z_omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
 alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"

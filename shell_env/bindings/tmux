@@ -1,0 +1,5 @@
+
+bindkey -r "^[[A"
+bindkey -r "^[[B"
+bindkey "^[[A" history-search-backward
+bindkey "^[[B" history-search-forward

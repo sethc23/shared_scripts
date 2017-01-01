@@ -22,7 +22,7 @@ ITERM2=
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_START"
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_START - $(readlink -f $0)"
 
 source_sub_dir() {
     for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
@@ -76,24 +76,8 @@ check_if_managed $MAC_ADDRESSES
 
 if [[ -n "$ZSH_VERSION" ]]; then
 
-    source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
-
-    autoload -U compinit && compinit
-    autoload -U bashcompinit && bashcompinit
-
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_2"
-
-    export ZSH_THEME="candy"
-    [[ -n $ITERM2 ]] && export ZSH_THEME="cobalt2"
-
-    plugins=$ZSH_PLUGINS
-
-    [[ -n $IS_MANAGED_OSX ]] && plugins+=(osx)
-
-    source $ZSH/oh-my-zsh.sh
-    autoload -U compinit && compinit
-    autoload -U bashcompinit && bashcompinit
+    source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
 
     [[ -n $ITERM2 ]] && \
        bindkey '\e[A' history-substring-search-up && \

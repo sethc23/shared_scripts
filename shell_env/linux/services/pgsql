@@ -15,7 +15,7 @@ alias svc_pgsql_status='sudo systemctl status postgresql9.5.service'
 #alias pg_SHUTDOWN='sudo su postgres -c "pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart"'
 
 alias pg_tmp_start_with_echo="sudo su postgres -c '/usr/lib/postgresql/9.5/bin/pg_ctl start -D $PG_DATA_DIR -l /tmp/pgsql -o\" -i -E\"'"
-function pg_tmp_start_with_echo_and_debug() {     \
+pg_tmp_start_with_echo_and_debug() {     \
     sudo su postgres -c "/usr/lib/postgresql/9.5/bin/postgres -D /var/lib/postgresql/9.5/main -i -E -c log_destination='stderr' -c logging_collector='on' -c log_directory='/tmp/pgsql' -c log_statement='all' -c log_min_messages='debug' -c log_min_duration_statement=0"; }
 alias pg_tmp_start_with_echo_and_debug='pg_tmp_start_with_echo_and_debug'
 alias pg_tmp_start="sudo su postgres -c '/usr/lib/postgresql/9.5/bin/pg_ctl start -D $PG_DATA_DIR -o\" -i\"'"
@@ -24,14 +24,24 @@ alias pg_tmp_stop="sudo su postgres -c '/usr/lib/postgresql/9.5/bin/pg_ctl stop 
 alias psql94='sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres"'
 alias psql95='sudo su postgres -c "psql --host=0.0.0.0 --port=8801 --username=postgres"'
 
-function psql_c() { sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres -c '$1'"; }
-function pg_load_dump_file() { \
+psql_c() { sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres -c '$1'"; }
+pg_load_dump_file() { \
     OUT_FILE_NAME=echo "$1" | sed -r 's/(.*)\/([^/]*)(\.sql)$/\2_OUT/'; \
     echo $OUT_FILE_NAME;}
     #DB_NAME=echo $1 | sed -r 's/(.*)\/([^_]*)_([^_]*)([^/]*)(\.sql)$/\3/'; \
     #sudo su postgres -c 'psql --host=0.0.0.0 --port=8800 --username=postgres -c "create database $DB_NAME;"'; \
     #sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres --dbname=$DB_NAME -f $1" >> $OUT_FILE_NAME 2>&1; \
     #unset OUT_FILE_NAME DB_NAME;}
+
+copy_server_to_server(){
+    DATABASE=routing
+    cat <<-EOF | sudo runuser postgres -
+        psql -h 0.0.0.0 -p 8806 -c 'DROP DATABASE IF EXISTS $DATABASE;';
+        psql -h 0.0.0.0 -p 8806 -c 'CREATE DATABASE $DATABASE;';
+        pg_dump -h 0.0.0.0 -p 8800 -Fc --dbname=$DATABASE | pg_restore -h 0.0.0.0 -p 8806 --dbname=$DATABASE;
+EOF
+    }
+
 export PG_DATA_DIR=/var/lib/postgresql/9.5/main
 alias _pg_reload='sudo su postgres -c "/usr/lib/postgresql/9.5/bin/pg_ctl reload -D $PG_DATA_DIR"'
 

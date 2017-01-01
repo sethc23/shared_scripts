@@ -3,26 +3,28 @@
 
 # Set Workspace
 BASE_DIR=$(pwd)
-INPUT_DIR=mdscan
-OUTPUT_DIR=
-OUTPUT_FILES=()
+INPUT_DIR=
+UUID_AS_FNAME=true
+OUTPUT_DIR_NAME=
+EXCLUDE_FOLDERS=(Home Office Trip .Projects)
+TMP_IMAGE_DIR=_images
 EXTRACT_PROCESSED=true
 EXTRACT_ORIGS=
+ROTATION=
+# BUILD_METHOD=normal
+BUILD_METHOD=image_extraction
 DRY_RUN=
+SINGLE_DIR=
 VERBOSE=true
 DEBUG=
-
-# Setup Debug Env
-[[ -n "$DEBUG" ]] && set -xv
 
 # Functions
 
 remove_spaces_in_pwd_files_dirs(){
     try=$(for i in *\ *; do mv "$i" "${i// /}"; done > /dev/null 2>&1)
     }
-
 get_scan_info(){
-    if [[ -f "document.dat" ]]; then
+    if [[ (-z "$UUID_AS_FNAME") && (-f "document.dat") ]]; then
         SCAN_NAME="$(cat document.dat | tr -d '\200-\377' \
                     | sed -r 's/[^[:print:]]//g' \
                     | sed -r 's/^([^[:digit:]]*)(.*)(Page0)(.*)$/\2/' \
@@ -35,13 +37,13 @@ get_scan_info(){
         SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-) 
         [[ $SCAN_TIME = $SCAN_TITLE ]] && SCAN_TITLE=
         SCAN_DATETIME="$(date --date="$SCAN_DATE $SCAN_TIME" +'%Y.%m.%d_%H.%M.%S')"
-        SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_DIR $SCAN_TITLE)
+        SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_GROUP_DIR $SCAN_TITLE)
     else
         SCAN_FNAME="$(uuidgen -t|cut -d '-' -f1)"
     fi
     }
-
 build_pdf(){
+
     PG_NAME="$1"".jpg"
     OUTPUT_FPATH=$(printf '%s.pdf' $SCAN_FNAME)
     if [[ -e $OUTPUT_FPATH ]]; then
@@ -50,83 +52,202 @@ build_pdf(){
         OUTPUT_FPATH=$(printf '%s_%s.pdf' $SCAN_FNAME $tmp)
     fi
 
-    [[ -z "$DRY_RUN" ]] && convert $(find -type f -name $PG_NAME | xargs) -page Letter "$OUTPUT_FPATH"
-    [[ -n "$DRY_RUN" ]] && echo "$(pwd)/"$OUTPUT_FPATH
+    if [[ $BUILD_METHOD = normal ]]; then
+        [[ -z "$DRY_RUN" ]] && convert $(find ./ -type f -name $PG_NAME | sort | xargs) $ROTATION -page Letter "$OUTPUT_FPATH"
+        [[ -n "$DRY_RUN" ]] && echo "$(pwd)/"$OUTPUT_FPATH
+
+    elif [[ $BUILD_METHOD = image_extraction ]]; then
+        [[ -z "$DRY_RUN" ]] && convert *.jpg $ROTATION -page Letter "$OUTPUT_FPATH"
+        [[ -n "$DRY_RUN" ]] && echo "$(pwd)/"$OUTPUT_FPATH
+    fi
 
     OUTPUT_FILES+="$(pwd)/"$OUTPUT_FPATH
     }
-
 build_processed_pdf(){ build_pdf page}
 build_orig_pdf(){ build_pdf shot}
+process_page_dir(){
+    PAGE_DIR=$1
+    cd $PAGE_DIR
 
-# Create Output Dir if not Exist
-[[ -z "$OUTPUT_DIR" ]] && TMP="$(uuidgen)" && OUTPUT_DIR=MDSCAN_OUTPUT_"${TMP:0:8}"
-[[ -z "$DRY_RUN" ]] && mkdir -p $OUTPUT_DIR
-
-# Start in MDScan Dir
-cd $BASE_DIR/$INPUT_DIR
-
-# Remove Spaces
-remove_spaces_in_pwd_files_dirs
-
-# Rename Generic Directories
-try=$(for i in Custom*; do mv $i $(cat $i/folder.dat); done > /dev/null 2>&1)
-
-# Process Files
-EXCLUDE_FOLDERS=(Home Office Trip)
-printf "\n%s\n\n" "EXCLUDE DIRECTORIES: $EXCLUDE_FOLDERS"
-for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///' | sort); do
+    get_scan_info
     
-    SKIP=
-    for j in $EXCLUDE_FOLDERS; do
-        if [[ $i = $j ]]; then
-            SKIP=true
-            break
-        fi
-    done
-    
-    if [[ -z "$SKIP"  ]]; then
-        
-        remove_spaces_in_pwd_files_dirs
+    [[ -n "$EXTRACT_PROCESSED" ]] && build_processed_pdf
+    [[ -n "$EXTRACT_ORIGS" ]]     && build_orig_pdf
 
-        if [[ -z "$(test -d $i || echo 'not exist')" ]]; then
+    cd ..
+    }
+process_scan_group_dir(){
+    SCAN_GROUP_DIR=$1
+    cd $SCAN_GROUP_DIR
 
-            SCAN_DIR=$i
-            echo "Scan_dir: "$SCAN_DIR
+    remove_spaces_in_pwd_files_dirs
 
-            cd $SCAN_DIR
+    if [[ $BUILD_METHOD = normal ]]; then
+        for SCAN_DIR in Scan*; do 
+            process_page_dir $SCAN_DIR
+            [[ -n "$SINGLE_DIR" ]] && return
+        done
+    elif [[ $BUILD_METHOD = image_extraction ]]; then
 
-            for s in Scan*; do 
+        if [[ -z "$(bash -c 'for s in Scan*; do break; done' 2>&1)" ]]; then
 
-                cd $s
-                remove_spaces_in_pwd_files_dirs
-
-                get_scan_info
+            for SCAN_DIR in Scan*; do
+                cd $SCAN_DIR
+                [[ -n "$VERBOSE" ]] && echo "Page Dir: "$SCAN_DIR
                 
-                [[ -n "$EXTRACT_PROCESSED" ]] && build_processed_pdf
-                [[ -n "$EXTRACT_ORIGS" ]] && build_orig_pdf
+                [[ -z "$DRY_RUN" ]] && extract_images && cd $TMP_IMAGE_DIR && CLEANUP+="$(pwd)"
+                for f in $(find . -type f | grep -E 'jpg'$ | sort); do
+                    REL_FPATH=$(python -c "z='$f'; print(z.lstrip('./'))")
+                    PDF_FNAME=$(python -c "z='$REL_FPATH'; print(z.replace('.jpg','.pdf'))")
+                    OUT_FPATH="$OUTPUT_DIR/"$PDF_FNAME
+                    OUTPUT_FILES+="$PDF_FPATH"
+                    [[ -n "$VERBOSE" ]] && echo "Converting: $REL_FPATH $OUT_FPATH"
+                    [[ -n "$DRY_RUN" ]] && break 2
+                    [[ -z "$DRY_RUN" ]] && convert $REL_FPATH $ROTATION -page Letter "$OUT_FPATH"
+                done
+                [[ -z "$DRY_RUN" ]] && cd ..
 
                 cd ..
-
             done
 
         fi
-        cd ..
-
     fi
-done
 
-# Return to base dir
-if [[ -z "$DRY_RUN" ]]; then
-    cd $BASE_DIR/$OUTPUT_DIR
-    for i in $OUTPUT_FILES; do
-        mv $i ./
+    cd ..
+
+    }
+package_images(){
+    # Setup Debug Env
+    [[ -n "$DEBUG" ]] && set -xv
+
+    # Setup Defaults
+    [[ -n "$ROTATION" ]] && ROTATION="-rotate $ROTATION"
+    #   Create Output Dir if not Exist
+    [[ -z "$OUTPUT_DIR_NAME" ]] && OUTPUT_DIR_NAME=MDSCAN_OUTPUT_"${$(uuidgen):0:8}"
+    OUTPUT_DIR="$BASE_DIR/$OUTPUT_DIR_NAME"
+    EXCLUDE_FOLDERS+=$OUTPUT_DIR_NAME
+    OUTPUT_FILES=()
+    CLEANUP=()
+    [[ -n "$VERBOSE" ]] && echo "Output Dir: $OUTPUT_DIR"
+    [[ -z "$DRY_RUN" ]] && mkdir -p $OUTPUT_DIR
+
+    # Start in MDScan Dir
+    cd $BASE_DIR/$INPUT_DIR
+
+    # Remove Spaces
+    remove_spaces_in_pwd_files_dirs
+
+    # Rename Generic Directories
+    try=$(for i in Custom*; do mv $i $(cat $i/folder.dat); done > /dev/null 2>&1)
+
+    # Process Files
+    printf "\n%s\n\n" "EXCLUDE DIRECTORIES: $EXCLUDE_FOLDERS"
+    for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///' | sort); do
+        
+        SKIP=
+        for j in $EXCLUDE_FOLDERS; do
+            if [[ $i = $j ]]; then
+                SKIP=true
+                break
+            fi
+        done
+        
+        if [[ -z "$SKIP"  ]]; then
+            
+            remove_spaces_in_pwd_files_dirs
+
+            if [[ -z "$(test -d $i || echo 'not exist')" ]]; then
+
+                SCAN_GROUP_DIR=$i
+                echo "Scan Group Dir: "$SCAN_GROUP_DIR
+
+                process_scan_group_dir $SCAN_GROUP_DIR
+
+            fi
+        fi
     done
-fi
 
-MSG="\n\n$OUTPUT_FILES\n\nAbove file list saved to directory: $BASE_DIR/$OUTPUT_DIR\n\n"
-[[ -n "$VERBOSE" ]] && printf "$MSG"
+    # Return to base dir
+    if [[ -z "$DRY_RUN" ]]; then
+        if [[ $BUILD_METHOD = normal ]]; then
+            cd $OUTPUT_DIR
+            for i in $OUTPUT_FILES; do
+                mv $i ./
+            done
+        fi
+    fi
+
+    for i in $CLEANUP; do rm -fr $i; done
+
+    MSG="\n\n$OUTPUT_FILES\n\nAbove file list saved to directory: $OUTPUT_DIR\n\n"
+    [[ -n "$VERBOSE" ]] && printf "$MSG"
 
 
-# Destroy Debug Env
-[[ -n "$DEBUG" ]] && set +xv
+    # Destroy Debug Env
+    [[ -n "$DEBUG" ]] && set +xv
+    }
+
+extract_images(){
+
+    remove_spaces_in_pwd_files_dirs
+
+    _image_name="page"
+    [[ -n "$EXTRACT_PROCESSED" ]]   && _image_name="page"
+    [[ -n "$EXTRACT_ORIGS" ]]       && _image_name="shot"
+    
+    [[ -z "$TMP_IMAGE_DIR" ]]       && TMP_IMAGE_DIR="_images"
+    mkdir -p $TMP_IMAGE_DIR
+
+    cnt=0
+    for i in $(find ./ -iname $_image_name"[.]jpg" -printf "\"%p\"\n"|xargs -I '{}' echo {}|sort); do
+        CNT=$(python -c "print '%05d' % ($cnt)")
+        UUID=$(echo "${$(uuidgen -t):1:7}")
+        EPOCH=$(date +%s)
+        FNAME="$EPOCH"_"$CNT"_"$UUID".jpg
+        FPATH="$TMP_IMAGE_DIR/$FNAME"
+        cp $i $FPATH || echo "err: 'cp $i $FPATH'"
+        let cnt+=1
+    done
+
+    }
+compare_packaged_with_completed(){
+
+    remove_spaces_in_pwd_files_dirs
+    
+    BASE_DIR="/home/ub2/ARCHIVE/MDSCAN"
+    _from_dir="$BASE_DIR/packaged"
+    _to_dir="$BASE_DIR/completed"
+    
+    for i in $(find $_from_dir/ -type f -printf "\"%p\"\n"|xargs -I '{}' echo {}|sort); do
+        FNAME=$(python -c "z='$i'; print(z[z.rfind('/')+1:])")
+        FNAME_BASE=$(python -c "z='$FNAME'; print(z[:z.rfind('.')])")
+        CHK_FNAME=$FNAME_BASE"_ocr.pdf"
+        if [[ -n $(env ls $_to_dir|grep $CHK_FNAME) ]]; then
+            
+            # _from=$(md5sum $_from_dir/$i|cut -d ' ' -f1)
+            # _to=$(md5sum $_to_dir/$i|cut -d ' ' -f1)
+            # if [[ $_from = $_to ]]; then
+            #echo "ok - $i"
+            # else
+            #     #echo "fail - $i $_from $_to"
+            # fi
+            # mv $_from_dir/$i $_to_dir/
+
+        else
+            # echo " ?? - $i"
+            NEW_TMP_PATH="$_from_dir/$CHK_FNAME"
+            pypdfocr $i
+            mv $NEW_TMP_PATH $_to_dir
+
+        fi
+        # echo $i $CHK_FNAME && return
+        
+    done
+    }
+
+# remove_spaces_in_pwd_files_dirs
+# extract_images
+# compare_packaged_with_completed
+
+package_images
+

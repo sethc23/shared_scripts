@@ -28,4 +28,11 @@ else
 fi
 
 [[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
-[[ -n "$ZSH_VERSION" ]] && source $BASE_DIR/shell/zsh/_base
+if [[ -n "$ZSH_VERSION" ]]; then
+    source $BASE_DIR/shell/zsh/_base
+    source $BASE_DIR/bindings/zsh
+fi
+[[ -n "$TMUX" ]] && source $BASE_DIR/bindings/tmux
+
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
