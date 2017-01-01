@@ -1,4 +1,5 @@
 import                                  os,hashlib,re,json,calendar
+from types                              import NoneType
 from uuid                               import uuid4 as uuid
 import                                  datetime as DT
 import                                  pandas as pd
@@ -11,13 +12,13 @@ np.set_printoptions(                    linewidth=200,threshold=np.nan)
 from subprocess                         import Popen as sub_popen
 from subprocess                         import PIPE as sub_PIPE
 
-# from sqlalchemy                 import create_engine
-# import                              logging
+# from sqlalchemy                         import create_engine
+# import                                  logging
 # logging.basicConfig()
-# logging.getLogger(              'sqlalchemy.engine').setLevel(logging.WARNING)
-# from psycopg2                   import connect                  as pg_connect
+# logging.getLogger(                      'sqlalchemy.engine').setLevel(logging.WARNING)
+# from psycopg2                           import connect as pg_connect
 
-# T = {'DB_NAME':'system',
+# T = {'DB_NAME':'fileserver',
 #      'DB_HOST':'0.0.0.0',
 #      'DB_PORT':'8800',
 #      'DB_USER':'postgres',
@@ -125,7 +126,7 @@ def get_file_idx_plus(dir_or_dir_list,**kwargs):
         dir_or_dir_list = [dir_or_dir_list]
     df = None
     for d in dir_or_dir_list:
-        if df==None:
+        if type(df)==NoneType:
             df = get_file_list(d)
         else:
             nf = get_file_list(d)
