@@ -1,0 +1,61 @@
+#!env python
+
+from subprocess import Popen as sub_popen
+from subprocess import PIPE as sub_PIPE
+
+def run_cmd(cmd):
+    p = sub_popen(cmd,stdout=sub_PIPE,shell=True,executable='/bin/zsh')
+    (_out,_err) = p.communicate()
+    assert _err is None
+    return _out.strip('\n\r')
+
+import os,re
+base_dir = os.getcwd()
+with open(base_dir + '/.gitmodules','r') as f:
+    x = f.readlines()
+submods = {}
+for i in range(len(x)):
+    it = x[i].strip('\n\t ')
+    if it.count('[submodule'):
+        mod = re.match('.*"([^"]+)".*',it).groups()[0]
+        params,pt = {},0
+        while True:
+            try:
+                pt += 1
+                p = x[i+pt]
+                if p.count('[submodule'):
+                    break
+                else:
+                    p = p.strip('\n\t ')
+                    k,v = p.split('=')
+                    k,v = k.strip(),v.strip()
+                    params[k]=v
+            except:
+                break
+        submods[mod]=params
+PWD=run_cmd('pwd')
+CMDS=[]
+for k,v in submods.iteritems():
+    host='origin'
+    if v['url'].count('github.com'):
+        v['host']='github'
+    elif v['url'].count('gitlab.com'):
+        v['host']='gitlab'
+    v['pwd']=PWD
+    # run_cmd('git submodule add -f %(url)s ./%(path)s' % v)
+    # print 'k:',k
+    # print 'v:',v
+    cmd="""
+        cd %(path)s
+        git init
+        git remote add %(host)s %(url)s
+        git fetch %(host)s
+        LATEST_COMMIT="$(git log --abbrev-commit --pretty=oneline --all|head -n 1|cut -d ' ' -f1)"
+        LATEST_BRANCH="$(git branch -r --contains $LATEST_COMMIT|cut -d '/' -f2)"
+        git checkout -b $LATEST_BRANCH %(host)s/$LATEST_BRANCH
+        cd %(pwd)s
+        """ % v
+    CMDS.append(cmd)
+# print cmd
+run_cmd(';'.join(CMDS))
+# run_cmd('git submodule add -f %(url)s ./%(path)s' % v)
