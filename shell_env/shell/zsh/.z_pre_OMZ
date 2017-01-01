@@ -1,3 +1,7 @@
-
+#!/bin/zsh
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+[[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] && \
+    VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python || \
+    VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
