@@ -1,23 +1,14 @@
 #!/bin/bash
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-CMD="open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text"
-FPATH=$1
+# CMD="open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text"
+# FPATH=$1
+
 
 # if [[ "$(uname -s)" != "Darwin" ]]; then
 #     CMD="ssh admin $CMD"
 #     FPATH=/Volumes/$(echo $HOME_ENV|sed 's/.*\///')/$1
 # fi
 
-$CMD $FPATH
-=======
-#open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
+# open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
 
 /usr/local/bin/subl -a $1
->>>>>>> 00a27fd0221df446fcf1bf6647e78037ab37c884
-=======
-#open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
-
-/usr/local/bin/subl -a $1
->>>>>>> 00a27fd0221df446fcf1bf6647e78037ab37c884
