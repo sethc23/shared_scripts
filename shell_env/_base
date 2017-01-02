@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base"
+[[ -n "$DEBUG_SHELL" ]] && echo "START-shell_env_base"
 
 if [[ -n "$HOME_ENV" ]]; then
     BASE_DIR="$HOME_ENV/.scripts/shell_env"
@@ -27,12 +27,16 @@ else
 
 fi
 
-[[ -n "$BASH_VERSION" ]] && source $BASE_DIR/shell/bash/_base
-if [[ -n "$ZSH_VERSION" ]]; then
-    source $BASE_DIR/shell/zsh/_base
-    source $BASE_DIR/bindings/zsh
-fi
-[[ -n "$TMUX" ]] && source $BASE_DIR/bindings/tmux
+BASE_DIR_base=$BASE_DIR
 
+[[ -n "$BASH_VERSION" ]] && source $BASE_DIR_base/shell/bash/_base
+if [[ -n "$ZSH_VERSION" ]]; then
+    source $BASE_DIR_base/shell/zsh/_base
+    source $BASE_DIR_base/bindings/zsh
+fi
+
+[[ -n "$TMUX" ]] && source $BASE_DIR_base/bindings/tmux
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+[[ -n "$DEBUG_SHELL" ]] && echo "END-shell_env_base"

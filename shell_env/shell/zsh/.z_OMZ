@@ -1,23 +1,13 @@
 #!/bin/zsh
 
-if [[ -n "$BASH_VERSION" ]]; then
-    SOURCE="${BASH_SOURCE[0]}"
-    while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-        DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-        SOURCE="$(readlink "$SOURCE")"
-        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-    done
-    BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-fi
-[[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
-
-source $BASE_DIR/.z_pre_OMZ
+THIS_DIR=$(readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
+source $THIS_DIR/.z_pre_OMZ
 
 # [[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] && \
 #     VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python || \
 #     VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
 
-export ZSH=$HOME_ENV/.scripts/shell_env/shell/zsh/OMZ
+export ZSH=$THIS_DIR/OMZ
 
 # ZSH_THEME="robbyrussell"  # see $HOME_ENV/.oh-my-zsh/themes/
 # CASE_SENSITIVE="true"
@@ -44,10 +34,9 @@ HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy
 
 export ZSH_THEME="candy"
 [[ -n $ITERM2 ]] && export ZSH_THEME="cobalt2"
-[[ ! -L $HOME_ENV/.shell_local ]] && ZSH_THEME="$(cat $HOME_ENV/.shell_local|grep ZSH_THEME|cut -d = -f2)"
+[[ -f $HOME_ENV/.shell_local ]] && ZSH_THEME="$(cat $HOME_ENV/.shell_local|grep ZSH_THEME|cut -d = -f2)"
 
 # ------------------------
-
 source $ZSH/oh-my-zsh.sh
 autoload -U compinit && compinit
 autoload -U bashcompinit && bashcompinit
