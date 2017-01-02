@@ -1,6 +1,8 @@
 #!/bin/zsh
 
-THIS_DIR=$(readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
+[[ -f /opt/local/libexec/gnubin/readlink ]] \
+    && THIS_DIR=$(/opt/local/libexec/gnubin/readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
+    || THIS_DIR=$(readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
 source $THIS_DIR/.z_pre_OMZ
 
 # [[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] && \

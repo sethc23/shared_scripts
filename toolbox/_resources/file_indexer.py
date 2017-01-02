@@ -141,7 +141,7 @@ def get_file_idx_plus(dir_or_dir_list,**kwargs):
 
         df['f_last_modified_2'] = df.fpath.map(lambda s: os.path.getmtime(s) )
         df['f_created_2'] = df.fpath.map(lambda s: os.path.getctime(s) )
-    
+
     if enumerate_fname_dupes:
         df = get_consolidated_paths_and_enum_dupes(df)
 
@@ -272,7 +272,48 @@ def _pdf_has_text():
     print 'len:',len(chk)
     return True if len(chk) else False
 
+def redo_pdf_ocr(fpath):
+    cmd = """
+        PREFIX="_ppm_"
+        SRC="/tmp/pdf_to_do"
+        source ~/.virtualenvs/dev/bin/activate
+        cd /home/kali/PROJECTS/INTARCIA/AGREEMENTS_ocr
+        for i in $(cat $SRC); do
+            BASE_DIR=${i:a:h}
+            FNAME=$(echo $i|sed -r 's/(.*)\/([^/]+)$/\2/')
+            BASE_FNAME=$(echo "$FNAME"|sed 's/\.pdf//')
+            NEW_PDF=$FNAME
+            NEW_OCR=$BASE_FNAME"_ocr.pdf"
+            /usr/bin/pdftoppm $i $PREFIX
+          /usr/bin/convert $(env ls -1|env grep -E \^"$PREFIX") -type Grayscale -page Letter "$NEW_PDF"
+          ~/.virtualenvs/dev/bin/python /home/kali/.virtualenvs/dev/bin/pypdfocr "$NEW_PDF"
+          rm ./$PREFIX*
+          rm $NEW_PDF
+          cat $SRC | grep -v $i > /tmp/src
+          cat /tmp/src > $SRC
+        done
+        """
+    D = {
+        'fpath' : fpath
+        ,'fname' : os.path.basename
+        }
+    cmd = """
+        PREFIX="_ppm_"
+        source ~/.virtualenvs/dev/bin/activate
 
+        FNAME="%(fname)s"
+        BASE_FNAME=$(echo "$FNAME"|sed 's/\.pdf//')
+        NEW_PDF=$BASE_FNAME"_reocr.pdf"
+        NEW_OCR=$BASE_FNAME"_ocr.pdf"
+
+        pdftoppm $%(fpath)s $PREFIX
+        convert $(env ls -1|env grep -E \^"$PREFIX") -type Grayscale -page Letter "$NEW_PDF"
+        pypdfocr "$NEW_PDF"
+        rm ./$PREFIX*
+        #rm $NEW_PDF
+
+        """ % D
+    run_cmd(cmd)
 
 def file_info(fpath,info_type,FROM_CMD_LINE=True):
     def pdf_to_text(cmd=''):
@@ -344,7 +385,7 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
 
     fpath_pdf = '%s.pdf'%fpath[:fpath.rfind('.')]
     fpath_pdf_ocr = '%s_ocr.pdf'%fpath[:fpath.rfind('.')]
-    
+
     if info_type=='metadata':
         # cmd="""\
         #         pdfinfo -meta %s | \
@@ -362,7 +403,7 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
                 ]) + ';\n'
             cmd = pdf_to_text(cmd)
         elif f_ext=='msg':
-            # converting 'msg' (where `file <filename>.msg`='Composite Document File V2 Document') 
+            # converting 'msg' (where `file <filename>.msg`='Composite Document File V2 Document')
             #   --> Run: `cpan -i Email::Outlook::Message`
             #   --> Usage: msgconvert <fpath>
             cmd = ';\n'.join([
@@ -388,7 +429,7 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
                 print 'still no text:',fpath
                 raise SystemError
             cmd="""lynx --dump -nomargins -dont_wrap_pre \
-                    <(pdftotext -q -nopgbrk %s -)""" % fpath            
+                    <(pdftotext -q -nopgbrk %s -)""" % fpath
         elif MS_EXTS.count(f_ext):
             cmd = ';\n'.join([
                 "libreoffice --headless --invisible --convert-to pdf '"+fpath+"' --outdir "+fpath_dir+" >/dev/null 2>&1",
@@ -398,7 +439,7 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
         else:
             print('unknown file to be gotten')
             raise SystemError
-    
+
     elif info_type=='html_text':
         print 'not configured yet'
         raise SystemError
@@ -467,7 +508,7 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         to_sql('drop table if exists new_f;')
         pd.read_json(json_fpath).to_sql('new_f',eng)
         to_sql("""
-            with 
+            with
                 sel as (select array_agg(md5) all_md5s from agreements)
                 ,to_rm as (select array_agg(n.uid) rm_uids from new_f n, sel s where array[n.md5::uuid] && s.all_md5s)
             delete from new_f n using to_rm t where array[n.uid] && t.rm_uids;
@@ -483,9 +524,9 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         df['new_uid'] = None
 
         max_uid = pd.read_sql("""
-            select 
+            select
                 case when f1.m_uid>f2.m_uid then f1.m_uid else f2.m_uid end r
-            from 
+            from
                 (select max(uid) m_uid from agreements) f1
                 ,(select max(uid) m_uid from agreements_skipped) f2
             """,eng).r.tolist()[0]
@@ -517,11 +558,11 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         return
     def rm_dupe_md5():
         """
-        with 
+        with
             sel as (select array_agg(md5) all_md5s from agreements)
-            ,to_rm as (select array_agg(n.uid) rm_uids from new_f n, sel s 
+            ,to_rm as (select array_agg(n.uid) rm_uids from new_f n, sel s
                        where array[n.md5::uuid] && s.all_md5s)
-        delete from new_f n using to_rm t 
+        delete from new_f n using to_rm t
         where array[n.uid] && t.rm_uids;
         """
         df = pd.read_sql("select * from new_f",eng)
@@ -551,13 +592,13 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         assert len(df[df.rm==True]) == len(df[df.rm_note.isnull()==False])
 
         sf = df[df.rm==True].copy()
-        
+
         if len(sf)>0:
             to_sql('drop table if exists tmp_new_f')
             sf.to_sql('tmp_new_f',eng)
             q = """
-                insert into agreements_skipped (uid,fext,fname,fpath_orig,md5,f_last_modified,f_created,notes) 
-                select 
+                insert into agreements_skipped (uid,fext,fname,fpath_orig,md5,f_last_modified,f_created,notes)
+                select
                     t.uid,t.fext,t.fname,t.fpath,t.md5::uuid
                     ,to_timestamp(t.f_last_modified)::timestamp without time zone
                     ,to_timestamp(t.f_created)::timestamp without time zone
@@ -569,13 +610,13 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
                 where array[n.uid] && s.all_uids;
 
                 drop table if exists tmp_new_f;
-                
+
                 """
             to_sql(q)
             df = pd.read_sql("select * from new_f",eng)
-            
+
         return
-    
+
     def update_agreements_with_new_files(df):
         if df.columns.tolist().count('fpath'):
             df.rename(columns={'fpath':'fpath_orig'},inplace=True)
@@ -584,7 +625,7 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         df.to_sql('new_f',eng)
         to_sql("""
             insert into agreements (uid,fext,fname,fpath_orig,fpath_cons,md5,f_last_modified,f_created,is_new)
-            select 
+            select
                 t.uid,t.fext,t.fname,t.fpath_orig,t.fpath_cons,t.md5::uuid
                 ,to_timestamp(t.f_last_modified)::timestamp without time zone
                 ,to_timestamp(t.f_created)::timestamp without time zone
@@ -592,12 +633,12 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
             from new_f t;
 
             drop table if exists new_f;
-            
+
             """)
         return
     def get_new_fpaths(chk_list=None,dest_dir=None):
         chk_list=[it.hex for it in pd.read_sql('select md5 r from agreements',eng).r.tolist()]
-        if not dest_dir: 
+        if not dest_dir:
             dest_dir = '/home/kali/PROJECTS/INTARCIA/AGREEMENTS_cons'
         df = get_file_list(dest_dir)
         df['md5'] = df.fpath.map(lambda s: md5(s) )
@@ -683,7 +724,7 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         df['chk_md5'] = df[df.fpath_cons.isin(dest_dir_files)].fpath_cons.map(lambda s: md5(s) )
         drop_idx = df[df['chk_md5']==df['md5']].index.tolist()
         df.ix[drop_idx,'fpath_cons'].map(lambda s: os.remove(s))
-            
+
         df.drop(drop_idx,axis=0,inplace=True)
 
         # Find matching fnames, flagging if different md5s else removing src copy
@@ -699,12 +740,12 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
         df.drop(drop_idx,axis=0,inplace=True)
 
 
-        
+
 
     """
     FROM_DIR="/home/kali/PROJECTS/INTARCIA/scripts/new_files/AGREEMENTS_cons"
     TO_DIR="/home/kali/PROJECTS/INTARCIA/AGREEMENTS_cons"
-    for i in $(env ls -1 $FROM_DIR); do 
+    for i in $(env ls -1 $FROM_DIR); do
         if [[ -n "$(env ls -1 $TO_DIR|grep $i)" ]]; then
             if [[ "$(md5sum $FROM_DIR/$i|cut -d ' ' -f1)" != "$(md5sum $TO_DIR/$i|cut -d ' ' -f1)" ]]; then
                 echo "copy $FROM_DIR/$i to $TO_DIR/$i"  >> _out
@@ -716,7 +757,7 @@ def consolidate_dirs_and_clean_paths(consol_dir='AGREEMENTS_cons',exclude_files=
     done
 
     """
-    
+
     # copy files into single directory and rename with fpath_cons values
     df['fpath_escaped'] = df.fpath_.map(lambda s: s.replace('$',r'\\\$'))
     cmds = df.ix[:,['fpath_escaped','fpath_cons']].apply(lambda s: """cp \\"%s\\" %s""" % tuple(s),axis=1).tolist()
@@ -806,8 +847,9 @@ class SQL:
 
 
 if __name__ == '__main__':
-    from sys import argv    
+    from sys import argv
     args = argv[1:]
+    print args
     FROM_CMD_LINE=True
 
     if not args:
