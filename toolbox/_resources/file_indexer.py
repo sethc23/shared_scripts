@@ -1,3 +1,23 @@
+
+
+"""
+
+Image processing
+    Rescaling
+        convert to 300dpi
+    Binarisation
+        convert grayscale
+    Noise Removal
+    Rotation / Deskewing
+    Border Removal
+    Tools / Libraries
+    Examples
+
+
+
+
+"""
+
 import                                  os,hashlib,re,json,calendar
 from types                              import NoneType
 from uuid                               import uuid4 as uuid
@@ -294,8 +314,8 @@ def redo_pdf_ocr(fpath):
         done
         """
     D = {
-        'fpath' : fpath
-        ,'fname' : os.path.basename
+        'fpath' : os.path.abspath(fpath)
+        ,'fname' : os.path.basename()
         }
     cmd = """
         PREFIX="_ppm_"
@@ -306,7 +326,7 @@ def redo_pdf_ocr(fpath):
         NEW_PDF=$BASE_FNAME"_reocr.pdf"
         NEW_OCR=$BASE_FNAME"_ocr.pdf"
 
-        pdftoppm $%(fpath)s $PREFIX
+        pdftoppm %(fpath)s $PREFIX
         convert $(env ls -1|env grep -E \^"$PREFIX") -type Grayscale -page Letter "$NEW_PDF"
         pypdfocr "$NEW_PDF"
         rm ./$PREFIX*
@@ -849,7 +869,6 @@ class SQL:
 if __name__ == '__main__':
     from sys import argv
     args = argv[1:]
-    print args
     FROM_CMD_LINE=True
 
     if not args:

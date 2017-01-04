@@ -1,2 +1,2 @@
 #!env bash
-env python $HOME/.scripts/toolbox/_resources/file_indexer.py ${@:2}
+env python $HOME/.scripts/toolbox/_resources/file_indexer.py ${@:1}
