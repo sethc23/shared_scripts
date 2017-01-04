@@ -13,11 +13,11 @@ open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 
 ps_cut(){ env ps -ax -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
 ssh_f(){ \
     [[ -n "$(ls-mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
-    mkdir -p /Volumes/$1; sshfs $1:/ /Volumes/$1 > /dev/null 2>&1;
+    mkdir -p /Volumes/$1; sshfs $1:/ /Volumes/$1 -o follow_symlinks > /dev/null 2>&1;
     }
 test_acro_js() {
     js_content="\
-from appscript import app 
+from appscript import app
 app(u'Adobe Acrobat Pro').activate()
 print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
     js_file=$(cat /Volumes/ub2/home/ub2/gDrive/Reference/PDF/acrobat_js_test.js);\
