@@ -5,10 +5,6 @@
     || THIS_DIR=$(readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
 source $THIS_DIR/.z_pre_OMZ
 
-# [[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] && \
-#     VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python || \
-#     VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
-
 export ZSH=$THIS_DIR/OMZ
 
 # ZSH_THEME="robbyrussell"  # see $HOME_ENV/.oh-my-zsh/themes/

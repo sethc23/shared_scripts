@@ -28,6 +28,12 @@ export WORKON_HOME=$HOME_ENV/.virtualenvs
 export PROJECT_HOME=$HOME_ENV/.dev
 export AHOME=/data/data/com.termux/files/home
 
+[[ -d /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/virtualenvwrapper/ ]] \
+    && VIRTUALENVWRAPPER_PYTHON=/opt/local/bin/python \
+    || VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+
+[[ -f $HOME_ENV/.pythonrc.py ]] && export PYTHONSTARTUP="$HOME_ENV/.pythonrc.py"
+
 # setup quick folders for sharing among ubuntu cluster
 for n in 1 2 4 5; do
     if [[ $n != $SERVER_ID ]]; then
@@ -45,5 +51,7 @@ if [[ $SERVER_ID != 3 ]]; then
     export SHARE3=/Volumes/admin/Users/admin
     export SHARE3_SERVER=SERVER3
 fi
+
+
 
 [[ -n "$(which luarocks 2>&1 | grep -v 'not found' | grep -v 'no luarocks')" ]] && eval $(luarocks path --bin)
