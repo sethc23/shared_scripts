@@ -1,4 +1,25 @@
-#!/bin/bash
+#!/usr/local/bin/zsh
 
-cmds="${@:1}"
-/usr/bin/emacs -nw $cmds
+THIS_PID="$(echo $$)"
+ARGS="${@:1}"
+EMACS="/usr/local/bin/emacs-25.1"
+
+[[ $(uname -o) == Darwin ]] \
+    && PROC_CMD="/opt/local/bin/pfind Emacs|head -n 1|tr -d ' '" \
+    && SERVER_CMD="open -a Emacs"
+
+[[ $(uname -o) == GNU/Linux ]] \
+    && PROC_CMD="env ps -C emacs-25.1 -o pid=|head -n 1|tr -d ' '" \
+    && SERVER_CMD="$EMACS --daemon"
+
+SERVER="$(eval $PROC_CMD)"
+if [[ -z $SERVER ]]; then
+    eval $SERVER_CMD
+    SERVER="$($PROC_CMD)"
+    [[ -z $SERVER ]] && echo 'Issue starting emacs server' && exit 99
+fi
+
+SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1)"
+
+emacsclient -s $SOCKET -c $ARGS
+
