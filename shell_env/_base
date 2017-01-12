@@ -29,14 +29,24 @@ fi
 
 BASE_DIR_base=$BASE_DIR
 
-[[ -n "$BASH_VERSION" ]] && source $BASE_DIR_base/shell/bash/_base
-if [[ -n "$ZSH_VERSION" ]]; then
+[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"2
+
+if [[ -n "$BASH_VERSION" ]]; then
+    source $BASE_DIR_base/shell/bash/_base
+    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3b1
+    test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3b2
+elif [[ -n "$ZSH_VERSION" ]]; then
     source $BASE_DIR_base/shell/zsh/_base
+    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3z1
     source $BASE_DIR_base/bindings/zsh
+    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3z2
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3z3
 fi
 
 [[ -n "$TMUX" ]] && source $BASE_DIR_base/bindings/tmux
+[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"4
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 [[ -n "$DEBUG_SHELL" ]] && echo "END-shell_env_base"

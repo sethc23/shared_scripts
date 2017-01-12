@@ -1,5 +1,10 @@
 
-bindkey -r "^[[A"
-bindkey -r "^[[B"
-bindkey "^[[A" history-search-backward
-bindkey "^[[B" history-search-forward
+[[ -n "$BASH_VERSION" ]] && BIND_CMD="bind"
+[[ -n "$ZSH_VERSION" ]] && BIND_CMD="bindkey"
+
+if [[ -n "$ZSH_VERSION" ]]; then
+    eval "$BIND_CMD -r '^[[A'"
+    eval "$BIND_CMD -r '^[[B'"
+    eval "$BIND_CMD '^[[A' history-search-backward"
+    eval "$BIND_CMD '^[[B' history-search-forward"
+fi
