@@ -4,22 +4,66 @@ THIS_PID="$(echo $$)"
 ARGS="${@:1}"
 EMACS="/usr/local/bin/emacs-25.1"
 
-[[ $(uname -o) == Darwin ]] \
-    && PROC_CMD="/opt/local/bin/pfind Emacs|head -n 1|tr -d ' '" \
-    && SERVER_CMD="open -a Emacs"
+_emacs_socket(){
+    [[ $(uname -o) == Darwin ]] \
+        && PROC_CMD="/opt/local/bin/pfind Emacs 2> /dev/null |head -n 1|tr -d ' '" \
+        && SERVER_CMD="open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args -f server-start"
 
-[[ $(uname -o) == GNU/Linux ]] \
-    && PROC_CMD="env ps -C emacs-25.1 -o pid=|head -n 1|tr -d ' '" \
-    && SERVER_CMD="$EMACS --daemon"
+    [[ $(uname -o) == GNU/Linux ]] \
+        && PROC_CMD="env ps -C emacs-25.1 -o pid=|head -n 1|tr -d ' '" \
+        && SERVER_CMD="$EMACS --daemon"
 
-SERVER="$(eval $PROC_CMD)"
-if [[ -z $SERVER ]]; then
-    eval $SERVER_CMD
-    SERVER="$($PROC_CMD)"
-    [[ -z $SERVER ]] && echo 'Issue starting emacs server' && exit 99
-fi
+    SERVER="$(eval $PROC_CMD)"
+    if [[ -z $SERVER ]]; then
+        echo "Starting emacs daemon...\n\n" && eval $SERVER_CMD
+        SERVER="$(eval $PROC_CMD)"
+        [[ -z $SERVER ]] && echo 'Issue starting emacs server' && exit 99
+    fi
 
-SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1)"
+    SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1)"
 
-emacsclient -s $SOCKET -c $ARGS
+    echo $SOCKET
+    }
+_emacs_gui(){
+    _emacs_socket
+    if [[ -n $SOCKET ]]; then
+        emacsclient -s $SOCKET -c $ARGS
+    else
+        echo "No socket for emacsclient"
+    fi
+    }
 
+_emacs_gui
+
+
+# follow links
+
+#
+
+# if [[ -z $SOCKET ]]; then
+#     kill -9 $SERVER
+#     eval $SERVER_CMD
+#     SERVER="$($PROC_CMD)"
+#     [[ -z $SERVER ]] && echo 'Issue starting emacs server' && exit 99
+# fi
+
+
+# --batch                     do not do interactive display; implies -q
+# --chdir DIR                 change to directory DIR
+# --daemon                    start a server in the background
+# --debug-init                enable Emacs Lisp debugger for init file
+# --display, -d DISPLAY       use X server DISPLAY
+# --no-desktop                do not load a saved desktop
+# --no-init-file, -q          load neither ~/.emacs nor default.el
+# --no-loadup, -nl            do not load loadup.el into bare Emacs
+# --no-site-file              do not load site-start.el
+# --no-x-resources            do not load X resources
+# --no-site-lisp, -nsl        do not add site-lisp directories to load-path
+# --no-splash                 do not display a splash screen on startup
+# --no-window-system, -nw     do not communicate with X, ignoring $DISPLAY
+# --quick, -Q                 equivalent to:
+#                               -q --no-site-file --no-site-lisp --no-splash
+#                               --no-x-resources
+# --script FILE               run FILE as an Emacs Lisp script
+# --terminal, -t DEVICE       use DEVICE for terminal I/O
+# --user, -u USER             load ~USER/.emacs instead of your own
