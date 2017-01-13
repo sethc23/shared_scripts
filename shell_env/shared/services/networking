@@ -57,14 +57,7 @@ dn_update_ip(){
     }
 
 
-alias net_port_check_help='echo "net_port_check <port> <ip/url>"'
-alias net_route_v4='route -A inet'
-alias net_route_v6='route -A inet6'
-# alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
-alias ports_listen_2='sudo netstat -ltnp'
-alias ports_listen_3='nettop'
-alias ports_sockets='netstat -lx'
-alias ports_ssh='lsof -i tcp | grep ^ssh'
+
 
 alias mac-extract="env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'"
 alias mac-random="openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//'"
@@ -79,4 +72,27 @@ elif [[ "$OS_NAME" = "Linux" ]]; then
     alias mac-eth-curr-set='sudo ip link set dev eth0 address'
 fi
 
+alias net-port-check-help='echo "net_port_check <port> <ip/url>"'
+alias net-route-4='route -A inet'
+alias net-route-6='route -A inet6'
+# alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
+alias ports_listen='lsof -nRP -w -iTCP -sTCP:LISTEN|grep -v "UNKNOWN"'
+alias ports-listen-2='sudo netstat -ltnp'
+alias ports-listen-3='nettop'
+alias ports-sockets='netstat -lx'
+alias ports-ssh='lsof -i tcp | grep ^ssh'
 
+# ocat -i <onion_id>
+# ocat -o <IPv6 addr>
+# ocat_log(){ printf 'File: %s\n\n' "$HOME/.ocat/connect_log"; cat $HOME/.ocat/connect_log; }
+# ocat \
+#     -a /tmp/tor_incoming.log
+#     -b              # background (default)
+#     -B              # foreground
+#     -f /etc/tor/torrc
+#     -l [ip:]port    # incoming binding (default: 127.0.0.1:8060)
+#     -L /tmp/tor.log
+#     -t              # SOCKS IP and/or port
+#     -U              # bidirectional
+
+# sudo ocat -a /tmp/tor_incoming.log -B -d 7 -f /etc/tor/torrc -L /tmp/tor.log -U 26aattdcwf746h3k.onion
