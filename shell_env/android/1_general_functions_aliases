@@ -51,13 +51,13 @@ last-an() { TMP=$(env ls -1tr $HOME/|env grep 'AN'|tail -n 1); [ -z "$TMP" ] && 
 ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
 ls-mounted() { ls-mounts|tail -n +2|sed -r 's/(\s\s)+/ /g'|sed 's/  / /g'|cut -d ' ' -f2; }
 alias m-list-blocks="df -h|grep '/dev/block'|sed -r 's/[ ]+/|/g'|cut -d '|' -f1,6|sed 's/|/ /'"
-alias su-root="su --preserve-environment -c \"export HOME=$HOME; source ~/bash.bashrc; exec zsh\""
-alias su-user="su --login u0_a105 -c \"export HOME=$HOME; source ~/bash.bashrc; exec zsh\""
+alias su-root="su --preserve-environment -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
+alias su-user="su --login u0_a83 -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
 su-juice() { \
     [[ -z "$1" ]] && env -i /data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash -c "$(
 cat <<'EOF'
 export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin
-for i in $(cat /sdcard/juice_env); do export $i; done
+for i in $(cat /data/data/com.termux/files/envs/juice_env|grep -v LD_LIBRARY_PATH); do export $i; done
 export ANDROID_DATA=/data
 export HOME=/data/data/com.termux/files/home
 export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;33m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] "
@@ -96,7 +96,7 @@ alias updatedb='updatedb --database-root /data/data/com.termux'
 am() { R=$(echo "'$@'"); su-juice "am $R"; }
 alias clip-g='su-juice "/data/data/com.termux/files/usr/libexec/termux-api Clipboard"'
 clip-s(){ su-juice "echo $@|/data/data/com.termux/files/usr/libexec/termux-api Clipboard -e api_version 2 --ez set true"; }
-alias cmd='env -i /system/bin/cmd'
+# alias cmd='env -i /system/bin/cmd'
 dumpsys() { R=$(echo "'$@'"); su-juice "dumpsys $R"; }
 #        # input(){ \
 #        #     [[ "$1" = "text" ]] && bash -c "unset LD_LIBRARY_PATH; input text \"$2\";";
@@ -104,7 +104,8 @@ dumpsys() { R=$(echo "'$@'"); su-juice "dumpsys $R"; }
 #        #     }
 input() { R=$(echo "'$@'"); su-juice "input $R"; }
 alias loc-get='su-juice "/data/data/com.termux/files/usr/libexec/termux-api Location"'
-alias pm='env -i /system/bin/cmd package'
+pm(){ X="$(echo $(echo $@|sed 's/\n/ /g'))"; su-juice "pm $X"; }
+#alias pm='env -i /system/bin/cmd package'
 alias pm-list='pm list packages|sed "s/package://"'
 pm-name() { pm list packages|grep -i $1|sed 's/^package://'|sort; }
 pm-path() { pm list packages -f |grep -i $1|sed 's/^package://'|sed 's/=.*//'|sort; }

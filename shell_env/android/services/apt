@@ -2,6 +2,8 @@
 
 [[ (-z "$(which lsb_release)") || ("$(lsb_release -is)" != "Kali") ]] && return
 
+for f in ap-get ap-dl ap-install ap-update ap-a-install ap-upgrade; do unalias $f > /dev/null 2>&1; unset -f $f > /dev/null 2>&1; done
+
 ap-get() { mkdir -p $HOME/apt_install; apt-get -y --reinstall --print-uris --download-only install $1 > $HOME/apt_install/tmp; }
 ap-dl() { cat $HOME/apt_install/tmp|grep http|sed -r "s/'([^']*)'.*/\1/"|xargs -I '{}' wget --relative --directory-prefix=$HOME/apt_install {}; }
 ap-install() { cat $HOME/apt_install/tmp|grep http|sed -r "s/'.*\/([^\/]*)'.*/\1/"|xargs -I '{}' dpkg -i $HOME/apt_install/{}; apt-get -f install; }
