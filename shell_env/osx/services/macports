@@ -9,7 +9,7 @@ link-mp-ib-confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1
 f-mp-check() { port installed "*"$1"*" ; port search "*"$1"*"; }
 f-mp-py() { sudo port select python python$1; }
 f-mp-contents-exe () { port -q contents $1 | grep -E '/s?bin/'; }
-mp-py-select() { echo "admin" | sudo port select python python$1; }
+
 
 
 alias mp-check='f-mp-check'
@@ -38,6 +38,10 @@ alias mp-upgrade='sudo port upgrade outdated'
 alias mp-upgrade-all='sudo port upgrade outdated'
 alias mp-upgrade-list='port outdated'
 alias mp-variant='port variant'
+alias mp-version-list='port select --list'
+mp-version-all(){ port select --summary; }
+mp-version-list(){ port select --list $1; echo "\n"; port select --show $1; }
+mp-version-select(){ sudo port select $1 $2; }
 
 function mp-variant-install_f() {
     function get_opts() {

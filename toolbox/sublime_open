@@ -1,14 +1,33 @@
-#!/bin/bash
+#!env zsh
 
-# CMD="open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text"
-# FPATH=$1
+# (from realpath man ...)
+#
+# -e, --canonicalize-existing
+#        all components of the path must exist
+#
+# -m, --canonicalize-missing
+#        no path components need exist or be a directory
+#
 
+_params="${@: 1:-1}"
+_target=$(echo "${@: -1}"|sed -r 's/[ ]/\\ /g')
 
-# if [[ "$(uname -s)" != "Darwin" ]]; then
-#     CMD="ssh admin $CMD"
-#     FPATH=/Volumes/$(echo $HOME_ENV|sed 's/.*\///')/$1
-# fi
+FPATH=$(realpath -e "$_target" 2> /dev/null)
+FPATH=$(echo "$FPATH"|sed -r 's/[ ]/\\ /g')
 
-# open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text $1
+test -e "$FPATH" || (echo "Unreadable target path: '"$_target"'" && exit 99)
 
-/usr/local/bin/subl -a $1
+SSH_CMD=
+CMD_BASE="open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text"
+
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    SSH_CMD="ssh admin"
+    FPATH="/Volumes/$USER/$FPATH"
+fi
+
+CMD="$(echo $SSH_CMD $CMD_BASE $FPATH)"
+[[ -n $_params ]] && CMD="$CMD --args "$_params
+
+echo $CMD
+
+eval $CMD
