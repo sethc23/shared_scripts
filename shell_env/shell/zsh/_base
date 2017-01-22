@@ -1,4 +1,4 @@
-#!/bin/bash
+#!env zsh
 
 [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_1 - $(readlink -f $0)"
 
