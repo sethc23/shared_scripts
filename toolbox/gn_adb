@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# CONNECT_METHOD --> ( nc | ssh )
+
+[[ -n $1 ]] && SSH_USER="$1"            || SSH_USER="root"
+[[ -n $2 ]] && SSH_HOSTNAME="$2"        || SSH_HOSTNAME="localhost"
+[[ -n $3 ]] && SSH_PORT="$3"            || SSH_PORT="9102"
+[[ -n $4 ]] && CONNECT_METHOD="$4"      || CONNECT_METHOD="nc"
+
+echo "$SSH_USER - $SSH_HOSTNAME - $SSH_PORT - $CONNECT_METHOD" > /tmp/ssh_tmp
+
+DEV_QUAL="Nexus_6P"
+CLIENT_IP="10.0.0.60"
+CLIENT_ADB_PORT="5555"
+CLIENT_ADDR="$CLIENT_IP:$CLIENT_ADB_PORT"
+
+ADB_STATUS="$(/usr/local/bin/adb devices -l|grep $DEV_QUAL)"
+
+[[ -z $(echo $ADB_STATUS|grep -v offline) ]]    \
+    && echo 'offline' >> /tmp/ssh_tmp \
+    && /usr/local/bin/adb kill-server           \
+    && ADB_STATUS=
+
+if [[ -z $ADB_STATUS ]]; then
+    [[ -z "$(ping $CLIENT_IP -c 1 -t 1|grep ' 0.0% packet loss')" ]]   \
+        && echo "Client unreachable at '$CLIENT_IP'"  >> /tmp/ssh_tmp                 \
+        && exit 99
+    [[ ! "$(/usr/local/bin/adb connect $CLIENT_ADDR|tail -n 1)" = "connected to $CLIENT_ADDR" ]]    \
+        && echo "Unable to connect to device '$DEV_QUAL' at '$CLIENT_ADDR'"     >> /tmp/ssh_tmp                    \
+        && exit 99
+fi
+
+if [[ -z $(sudo lsof -nRP -w -iTCP -sTCP:LISTEN|grep adb|grep $SSH_PORT) ]]; then
+    /usr/local/bin/adb forward tcp:$SSH_PORT tcp:$SSH_PORT
+    echo 'forwarded' >> /tmp/ssh_tmp
+    sudo lsof -nRP -w -iTCP -sTCP:LISTEN >> /tmp/ssh_tmp
+fi
+
+# [[ -z $(sudo lsof -nRP -w -iTCP -sTCP:LISTEN|grep adb|grep 1$SSH_PORT) ]]
+
+# echo 'running' >> /tmp/ssh_tmp
+exec /usr/bin/nc "$SSH_HOSTNAME" "$SSH_PORT"
+
+# [[ $CONNECT_METHOD = "nc" ]] && exec /usr/bin/nc "$SSH_HOSTNAME" "$SSH_PORT"
+# [[ $CONNECT_METHOD = "ssh" ]] && ssh $SSH_USER@$SSH_HOSTNAME -p $SSH_PORT -o "ProxyUseFdpass yes"
+# ssh -NR 1$SSH_PORT:localhost:$SSH_PORT $SSH_USER@$SSH_HOSTNAME -p $SSH_PORT
+# exec ssh $SSH_USER@$SSH_HOSTNAME -p $SSH_PORT -vvv
+# exec /usr/bin/nc "$SSH_HOSTNAME" "$SSH_PORT"
+
+# SSH_GW=; [[ -z $(sudo lsof -nRP -w -iTCP -sTCP:LISTEN|grep adb|grep 1$SSH_PORT) ]] && SSH_GW="-L 19102:localhost:9102"; ssh $SSH_GW gnr
+
+# gn-ar-msg "adbwifi_start"          adb_wifi - setprop service.adb.tcp.port 5555; stop adbd; start adbd
+# gn-ar-msg "openSSH_start"     eval $(which sshd)
+# su-juice "wm density reset"
+# root@localhost:~$ su-juice "wm density 952"
+# root@localhost:~$ su-juice "wm density 392"
+# source /data/data/com.termux/files/home/.bashrc; cd ~/; exec /data/data/com.termux/files/usr/bin/bash -l eval $(which sshd)
+# am start eu.chainfire.supersu/eu.chainfire.supersu.pro.MainActivity
+# source /data/data/com.termux/files/home/.bashenv; cd ~/; exec /data/data/com.termux/files/usr/bin/bash -l eval $(which sshd)
+# source /data/data/com.termux/files/home/.bashenv; cd ~/; exec /data/data/com.termux/files/usr/bin/bash -l "eval $(which sshd)"

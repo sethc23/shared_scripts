@@ -1,3 +1,77 @@
 #!/bin/bash
 
-sudo $(which lsof) -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN'
+[[ -z $1 ]] \
+    && sudo $(which lsof) -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN' \
+    && exit 99
+
+
+
+if [[ $1 = clean-tcp ]]; then
+    # visudo contains "ALL     ALL=(ALL) NOPASSWD: /usr/bin/lsof *"
+    in_data=$(sudo $(which lsof) -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN'|column -t | tr -s ' ')
+    /usr/local/bin/python -c "$(cat <<EOF
+
+import re
+import pandas as pd
+
+res = """$in_data"""
+
+print_fmts = [('COMMAND','%-10s')
+              ,('PID','%+6s')
+              ,('PPID','%-6s')
+              ,('USER','%-8s')
+              ,('TYPE','%-4s')
+              # ,('NODE','%-3s')
+              ,('NAME','%s')
+             ]
+
+repl_strs = [(r' 127.0.0.1:',' 0:')
+             ,(r' \[::1\]:',' 0:')
+             ,(r' \(LISTEN\)','')
+            ]
+
+h_cols = [it[0] for it in print_fmts]
+for (_patt,_repl) in repl_strs:
+    res=re.sub(_patt,_repl,res)
+res = res.split('\n')
+
+
+headers = res[0].split()
+df = pd.DataFrame(map(lambda r: dict(zip(headers,r.split())),res[1:]))
+
+drop_idx = []
+for _,idx in df.groupby('DEVICE').groups.iteritems():
+    if len(idx)>1:
+        drop_idx.extend(idx[1:])
+df.drop(drop_idx,axis=0,inplace=True)
+
+drop_idx = []
+for _,idx in df.groupby('NAME').groups.iteritems():
+    if len(idx)>1:
+        # df.drop(idx,axis=0,inplace=True)
+        drop_idx.extend(idx[1:])
+df.drop(drop_idx,axis=0,inplace=True)
+
+convert_idx,drop_idx = [],[]
+for _,idx in df.groupby('PID').groups.iteritems():
+    g = df.ix[idx,:]
+    if sorted(g['TYPE'].tolist())==['IPv4','IPv6']:
+        # assert sorted(g['TYPE'].tolist())==['IPv4','IPv6'],'ERROR: unexpected grouping type'
+        convert_idx.append(idx[0])
+        drop_idx.extend(idx[1:])
+df.set_value(convert_idx,'TYPE','_4_6')
+df.drop(drop_idx,axis=0,inplace=True)
+df['cmd_lower'] = df['COMMAND'].str.lower()
+df = df.sort_values(['USER','cmd_lower'],ascending=[False,True]).ix[:,h_cols]
+
+print_fmts_dict = {}
+for (col,fmt) in print_fmts:
+    # print_fmts_dict[col]=lambda s: fmt % s
+    df[col] = df[col].map(lambda s: fmt % s)
+    df.rename(columns={col:fmt % col},inplace=True)
+print(df.to_string(index=False,formatters=print_fmts_dict))
+
+EOF
+)"
+fi
+
