@@ -57,18 +57,18 @@ d-image-remote-from(){
 diff-dir-all() { env colordiff --brief --recursive --width=$(tput cols) $1 $2; }
 diff-dir-left() { diff-dir-all | grep "Only in $(echo $1 | sed 's/[^/]*$//')"; }
 diff-dir-right() { diff-dir-all | grep "Only in $(echo $2 | sed 's/[^/]*$//')"; }
-diff-dir-right-copy-left() { 
+diff-dir-right-copy-left() {
     here=$(echo $(pwd))
     f=$(diff-dir-right $1 $2 | awk '{print $3$4}' | sed 's/:/\//g' | sed 's/\/\//\//g');
     repl_part=$(echo $2 | sed 's/\//\\\//g');
-    for from_file in $f 
+    for from_file in $f
         do
             to_file=$(echo $1$from_file | sed "s/$repl_part//g")
             cmd=$(echo "cp -R "$here/$from_file $to_file)
             #cmd=$(echo $here/$from_file $to_file)
-            
+
             sh -c "$cmd"
-            
+
             # | xargs cp -R
             #cp -R $(echo $from_file $to_file)
         done;
@@ -133,7 +133,7 @@ source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 zsh_retheme() {
     if [[ -n $1 ]]; then
         export ZSH_THEME=$1
-        source $ZSH/oh-my-zsh.sh 
+        source $ZSH/oh-my-zsh.sh
     fi
     if [[ ! -n $1 ]]; then
         echo "\nUsage: zsh_retheme 'some_theme_name'"
@@ -168,11 +168,13 @@ alias cy_build='cd $BD/RD/src/cython_exts/; python cy-build.py build_ext -i;'
 alias cy_clean='cd $BD/RD/src/cython_exts/; sudo python cy-build.py clean;'
 alias cy_folder='cd $BD/RD/src/cython_exts/;'
 alias cy_help='cd $BD/RD/src/cython_exts/; python cy-build.py --help-commands;'
-alias dir_size='du -sh'
+alias dir_size='du -Lsh'
+alias du='du -L'
 alias ec2="ssh -i $HOME_ENV/.ssh/grp1.pem ec2-user@ec2-54-164-189-68.compute-1.amazonaws.com -p 10101"
 alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
 alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
 alias egrep='egrep -i --color=auto'
+alias find='find -L'
 alias fgrep='fgrep -i --color=auto'
 alias function_names='compgen -A function | sort'
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
