@@ -52,7 +52,7 @@ ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -
 ls-mounted() { ls-mounts|tail -n +2|sed -r 's/(\s\s)+/ /g'|sed 's/  / /g'|cut -d ' ' -f2; }
 alias m-list-blocks="df -h|grep '/dev/block'|sed -r 's/[ ]+/|/g'|cut -d '|' -f1,6|sed 's/|/ /'"
 alias su-root="su --preserve-environment -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
-alias su-user="su --login u0_a83 -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
+alias su-user="su --login u0_a97 -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
 su-juice() { \
     [[ -z "$1" ]] && env -i /data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash -c "$(
 cat <<'EOF'
@@ -112,9 +112,9 @@ pm-path() { pm list packages -f |grep -i $1|sed 's/^package://'|sed 's/=.*//'|so
 pm-pkg() { pm list packages|sed 's/package://'|env grep -i $1; }
 pm-activities() { pm-path $(pm-pkg $1)|xargs -I '{}' aapt l -a {}|env grep -i activi|env grep -v 'E: activity ('; }
 pm-activities-launchable() { \
-    for i in $(pm list packages -f |grep -i $1|sed 's/^package://'|sed 's/=.*//'|sort); do  
+    for i in $(pm list packages -f |grep -i $1|sed 's/^package://'|sed 's/=.*//'|sort); do
         echo "PACKAGE: $i"
-        for k in $(aapt dump badging $i|grep 'launchable-activity'|sed "s/launchable-activity: name='//"|sed "s/'.*//"|sort); do 
+        for k in $(aapt dump badging $i|grep 'launchable-activity'|sed "s/launchable-activity: name='//"|sed "s/'.*//"|sort); do
             echo '\t'$k
         done
     done; }
@@ -136,7 +136,7 @@ alias g-display='su-juice "dumpsys window|grep -A 1 Display|grep -B 1 init"'
 #
 ################################
 localize_ssh(){ \
-    for i in ssh_config sshd_config; do 
+    for i in ssh_config sshd_config; do
         rm /data/data/com.termux/files/usr/etc/ssh/$i
     ln -nfs /data/data/com.termux/files/home/android/config/etc/ssh/$i /data/data/com.termux/files/usr/etc/ssh/
     done; }
