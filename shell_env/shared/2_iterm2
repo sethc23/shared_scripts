@@ -8,18 +8,19 @@ if [[ $CLIENT_HOST = "SERVER3" ]] || [[ $ITERM_SHELL = true ]]; then
     [[ -n "$BASH_VERSION" ]] && test -e "${HOME_ENV}/.iterm2_shell_integration.bash" && source "${HOME_ENV}/.iterm2_shell_integration.bash"
     [[ -n "$ZSH_VERSION" ]] && [[ -f "${HOME_ENV}/.iterm2_shell_integration.zsh" ]] && source "${HOME_ENV}/.iterm2_shell_integration.zsh"
 
+
+    iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
+    export iterm2_hostname="$USER"
+    iterm2_print_user_vars() {
+        iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
+        iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-);
+        iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
+    }
+    alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
+
 else
     return
 fi
-
-iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
-export iterm2_hostname="$USER"
-iterm2_print_user_vars() {
-    iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
-    iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-);
-    iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
-}
-alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
 
 
 # load special functions and aliases if shell controlled by iTerm2
