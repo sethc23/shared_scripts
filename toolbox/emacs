@@ -2,7 +2,10 @@
 
 THIS_PID="$(echo $$)"
 ARGS="${@:1}"
-EMACS="/usr/local/bin/emacs-25.1"
+ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
+EMACS="$ENV /usr/local/bin/emacs-25.1"
+
+export PATH=’/Users/admin/.emacs.d/term-cmd:$PATH
 
 _emacs_socket(){
     [[ $(uname -o) == Darwin ]] \
