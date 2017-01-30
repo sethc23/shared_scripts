@@ -2,15 +2,18 @@
 
 THIS_PID="$(echo $$)"
 ARGS="${@:1}"
+FPATH="${@:${#@}}"
+[[ -z $(zsh -c "echo $FPATH|env grep -i -v -E ^\"[-]\"") ]] \
+    && FPATH=
 ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
-EMACS="$ENV /usr/local/bin/emacs-25.1"
+EMACS="$ENV /usr/local/bin/emacs-25.1-app"
 
 export PATH=’/Users/admin/.emacs.d/term-cmd:$PATH
 
 _emacs_socket(){
     [[ $(uname -o) == Darwin ]] \
         && PROC_CMD="/opt/local/bin/pfind Emacs 2> /dev/null |head -n 1|tr -d ' '" \
-        && SERVER_CMD="open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args -f server-start"
+        && SERVER_CMD="open -a /Applications/Emacs.app/Contents/MacOS/Emacs $FPATH --args -f server-start"
 
     [[ $(uname -o) == GNU/Linux ]] \
         && PROC_CMD="env ps -C emacs-25.1 -o pid=|head -n 1|tr -d ' '" \
@@ -22,7 +25,7 @@ _emacs_socket(){
         SERVER="$(eval $PROC_CMD)"
         [[ -z $SERVER ]] && echo 'Issue starting emacs server' && exit 99
     fi
-
+    
     SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1)"
 
     echo $SOCKET
@@ -30,7 +33,7 @@ _emacs_socket(){
 _emacs_gui(){
     _emacs_socket
     if [[ -n $SOCKET ]]; then
-        emacsclient -s $SOCKET -c $ARGS
+        emacsclient -s $SOCKET -n $ARGS
     else
         echo "No socket for emacsclient"
     fi
