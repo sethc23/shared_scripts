@@ -1,23 +1,35 @@
 #!/usr/local/bin/zsh
 
+[[ -z "$(echo $PATH|grep -E 'term[-]cmd')" ]] \
+    && export PATH=/Users/admin/.emacs.d/term-cmd:$PATH
+
+START_FILE="~/.emacs.org/seth.org"
+THIS_FILE="${@:0}"
 THIS_PID="$(echo $$)"
 ARGS="${@:1}"
 FPATH="${@:${#@}}"
-[[ -z $(zsh -c "echo $FPATH|env grep -i -v -E ^\"[-]\"") ]] \
-    && FPATH=
-ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
-EMACS="$ENV /usr/local/bin/emacs-25.1-app"
+   
+if [ $FPATH = $THIS_FILE ] \
+    || [ -z $(zsh -c "echo $FPATH|env grep -i -v -E ^\"[-]\"") ] \
+    ; then
+    FPATH=$START_FILE
+fi
 
-export PATH=’/Users/admin/.emacs.d/term-cmd:$PATH
+# ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
+ENV=
+# OPTS="-f server-start --geometry=350x600"
+OPTS="-f server-start --visit $FPATH"
+EMACS_CL="$ENV /usr/local/bin/emacs-25.1-app --daemon $OPTS"
+EMACS_GUI="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args $OPTS"
 
 _emacs_socket(){
     [[ $(uname -o) == Darwin ]] \
         && PROC_CMD="/opt/local/bin/pfind Emacs 2> /dev/null |head -n 1|tr -d ' '" \
-        && SERVER_CMD="open -a /Applications/Emacs.app/Contents/MacOS/Emacs $FPATH --args -f server-start"
+        && SERVER_CMD=$EMACS_GUI
 
     [[ $(uname -o) == GNU/Linux ]] \
         && PROC_CMD="env ps -C emacs-25.1 -o pid=|head -n 1|tr -d ' '" \
-        && SERVER_CMD="$EMACS --daemon"
+        && SERVER_CMD=$EMACS_CL
 
     SERVER="$(eval $PROC_CMD)"
     if [[ -z $SERVER ]]; then
@@ -33,7 +45,9 @@ _emacs_socket(){
 _emacs_gui(){
     _emacs_socket
     if [[ -n $SOCKET ]]; then
-        emacsclient -s $SOCKET -n $ARGS
+        echo "$ENV emacsclient -s $SOCKET -n -c $FPATH"
+        $ENV emacsclient -s $SOCKET -n -c $FPATH
+        # eval("$ENV emacsclient -s $SOCKET -n -c $FPATH")
     else
         echo "No socket for emacsclient"
     fi

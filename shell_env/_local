@@ -114,6 +114,8 @@ source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
+[[ -n $IS_MANAGED_OSX ]] && unset -f port
+
 [[ -n "$DEBUG_SHELL" ]] && echo $PATH
 
 if [[ -z $IS_MANAGED_LINUX ]] && [[ -z $IS_MANAGED_OSX ]]; then

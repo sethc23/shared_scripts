@@ -54,7 +54,7 @@ g-b-r-DELETE-REMOTE() { git push $1 --delete $2; }
 alias g-b-name='git rev-parse --abbrev-ref HEAD'
 g_b_sync(){ \
     if [[ "$1" = "push" ]]; then
-        git push -f . $(g-b-name):$1; 
+        git push -f . $(g-b-name):$1;
         REMOTE_NAME=$(git rev-parse --abbrev-ref --symbolic-full-name @{upstream} | cut -d / -f1);
         git push $REMOTE_NAME $1;
     elif [[ "$1" = "fetch" ]]; then
@@ -84,12 +84,12 @@ alias g-c='git commit -m'
 g-c-EMAIL() { git show -s --format=%ce $1 | head -n 1; }
 g-c-DATE() { git show -s --format=%ai $1 | head -n 1; }
 g-c-DATE_EPOCH() { git show -s --format=%at $1 | head -n 1; }
-alias g-c-latest='git log --abbrev-commit --pretty=oneline | head -n 1 | cut -d \  -f 1'
+alias g-c-latest='git log --abbrev-commit --pretty=oneline --max-count=1| cut -d \  -f 1'
 g-c-between(){ git log $1..$2 --pretty=oneline | wc -l;}
 
 #  --  DIFFS (g-d*)
 g-d-names() { git diff $1 $2 --name-only | more; }
-g-d-added() {   if [[ -n "$2" ]]; then 
+g-d-added() {   if [[ -n "$2" ]]; then
                     git diff $1 $2 --name-status | grep '^A' | sed -r 's/^A\s+//g'
                 else
                     git diff HEAD $1 --name-status | grep '^A' | sed -r 's/^A\s+//g'
@@ -145,7 +145,7 @@ g_add_commit_push() { \
     git add --ignore-removal -- .
     if [ $(git diff --stat --name-only | wc -l) -gt 0 ]; then
         git diff --stat --name-only | xargs -I '{}' git rm --cached --ignore-unmatch -f -r -- {}
-        #git status --porcelain | grep "^ D " | sed "s/ [A-Z] //g" | xargs git rm --cached --ignore-unmatch -f -r -- 
+        #git status --porcelain | grep "^ D " | sed "s/ [A-Z] //g" | xargs git rm --cached --ignore-unmatch -f -r --
     fi
     g_commit_push "$@";
     }
@@ -202,14 +202,14 @@ gs_recursive_pull() { \
         git pull; \
         )&";
 
-    
+
 
     # git config --list|env egrep \^submodule
     # git submodule foreach --recursive git submodule init;
     # git submodule foreach --recursive git submodule update;
-    
+
     # git branch --remotes --list --contains 6a1b854 | sed 's/^ *//'
-    
+
     # git submodule foreach --recursive git pull origin master;
     # git submodule foreach --recursive git checkout master master;
 

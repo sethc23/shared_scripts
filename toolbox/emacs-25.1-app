@@ -1,20 +1,23 @@
-#!env zsh
+#!/usr/local/bin/zsh
+
+[[ -z "$(echo $PATH|grep term|grep cmd)" ]] \
+    && export PATH=/Users/admin/.emacs.d/term-cmd:$PATH
+
+ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
+OPEN_CMD="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args"
 
 FPATH=""
 [[ -n $1 ]] && FPATH=$1
-echo 'her'
+#  [[ -n $FPATH ]] && FPATH="/tmp/$(python -c "import uuid; print(uuid.uuid4().hex[:7])")
+
 
 if [[ -n $FPATH ]]; then
     FPATH=$(realpath $FPATH)
     if [[ True = $(python -c "import os; print(os.path.exists('$FPATH'))") ]]; then
-        # echo 'her3'
-        # LISP_CMD="(org-open-file-with-emacs \"$FPATH\")"
-        # echo "--eval $LISP_CMD" #--daemon"
-        # open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args --eval $LISP_CMD
-             #--daemon
-        exit 99
+        LISP_CMD="(org-open-file-with-emacs \"$FPATH\")"
+        OPEN_CMD+=" --eval $LISP_CMD"
     fi
 fi
-#FPATH="/tmp/$(python -c "import uuid; print(uuid.uuid4().hex[:7])")
-echo 'her2'
-open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args "--daemon"
+
+OPEN_CMD+=" --daemon"
+eval ${OPEN_CMD}
