@@ -1,6 +1,8 @@
 #!/bin/zsh
 
-export PATH=/Users/admin/.luarocks/bin:/opt/local/share/luarocks/bin:/usr/local/bin:/opt/local/bin:/usr/local/brew/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin:/opt/local/lib/postgresql95/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
+# export PATH=/Users/admin/.luarocks/bin:/opt/local/share/luarocks/bin:/usr/local/bin:/opt/local/bin:/usr/local/brew/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin:/opt/local/lib/postgresql95/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
+export PATH=/usr/local/bin:/opt/local/bin:/usr/local/brew/bin:/opt/local/include:/opt/local/lib:/opt/local/sbin:/opt/local/include/boost:/opt/local/include/google:/opt/local/libexec/gnubin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
+export mp-android-dir="cd /opt/local/share/java/android-sdk-macosx/tools"
 
 export HOME=/Users/admin
 export ROOT_GRP=wheel
