@@ -1,0 +1,54 @@
+#!/bin/zsh
+
+customize_iso(){
+    CWD="$(pwd)"
+    ISO_FILE="$1"
+    [[ -z $ISO_FILE ]] \
+        && ISO_FILE="$(env ls -1 ./*iso|head -n 1)"
+    cd /tmp
+    take /tmp/custom_iso
+    mkdir -p mnt
+    sudo mount -o loop $CWD/$ISO_FILE mnt
+    mkdir -p extracted
+    sudo rsync --exclude=\*/filesystem.squashfs -a mnt/ extracted
+    sudo unsquashfs mnt/live/filesystem.squashfs
+    sudo mv squashfs-root edit
+    # sudo cp /etc/resolv.conf edit/etc/
+    sudo mount -o bind /run/ edit/run
+    sudo cp /etc/hosts edit/etc/
+    sudo mount --bind /dev/ edit/dev
+
+    mount -t proc none $MNT/proc
+    mount -t sysfs none $MNT/sys
+    mount -t devpts none $MNT/dev/pts
+    mount -o bind /dev $MNT/dev
+    LANG= chroot $MNT /bin/bash
+
+    sudo chroot edit /bin/bash
+    mount -t proc none /proc
+    mount -t sysfs none /sys
+    mount -t devpts none /dev/pts
+    }
+
+backup_pgsql(){
+    SRC_PATH="/var/lib/postgresql/9.5"
+    IMG_NAME="pgsql9.5_fs"
+    MOUNT="/mnt/tmp"
+
+    d-compress $SRC_PATH /tmp/$IMG_NAME.img;
+    sudo mkfs.ext4 /tmp/$IMG_NAME.img;
+    sudo mkdir -p $MOUNT;
+    sudo mount -t ext4 -o loop /tmp/$IMG_NAME.img $MOUNT;
+    sudo cp -ar $SRC_PATH $MOUNT/
+    sudo umount $MOUNT
+    }
+d-compress(){
+    SRC_PATH=$1
+    IMG_PATH=$2
+    DEFAULT_SAVE_FPATH="/tmp/d-compressed.gz";
+    [[ -n $IMG_PATH ]] && DEFAULT_SAVE_FPATH=$IMG_PATH;
+    DIR_SIZE=$(sudo du -s $SRC_PATH|cut -f1);
+    IMG_SIZE=$(python -c "print int(round((($DIR_SIZE*0.20)+$DIR_SIZE)/1000.0,0))");
+    [[ -n $IMG_PATH ]] && DEFAULT_SAVE_FPATH=$IMG_PATH;
+    dd if=/dev/zero of=$DEFAULT_SAVE_FPATH bs=1M count=$IMG_SIZE;
+    }

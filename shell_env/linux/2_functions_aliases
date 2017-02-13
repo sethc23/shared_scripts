@@ -3,28 +3,6 @@
 aporo_env() {              source $APORO/ENV/bin/activate; }
 aporo() {                  cd $APORO; aporo_env; }
 aporo_ib() {               aporo; ipython; }
-backup_pgsql(){
-    SRC_PATH="/var/lib/postgresql/9.5"
-    IMG_NAME="pgsql9.5_fs"
-    MOUNT="/mnt/tmp"
-
-    d-compress $SRC_PATH /tmp/$IMG_NAME.img;
-    sudo mkfs.ext4 /tmp/$IMG_NAME.img;
-    sudo mkdir -p $MOUNT;
-    sudo mount -t ext4 -o loop /tmp/$IMG_NAME.img $MOUNT;
-    sudo cp -ar $SRC_PATH $MOUNT/
-    sudo umount $MOUNT
-    }
-d-compress(){
-    SRC_PATH=$1
-    IMG_PATH=$2
-    DEFAULT_SAVE_FPATH="/tmp/d-compressed.gz";
-    [[ -n $IMG_PATH ]] && DEFAULT_SAVE_FPATH=$IMG_PATH;
-    DIR_SIZE=$(sudo du -s $SRC_PATH|cut -f1);
-    IMG_SIZE=$(python -c "print int(round((($DIR_SIZE*0.20)+$DIR_SIZE)/1000.0,0))");
-    [[ -n $IMG_PATH ]] && DEFAULT_SAVE_FPATH=$IMG_PATH;
-    dd if=/dev/zero of=$DEFAULT_SAVE_FPATH bs=1M count=$IMG_SIZE;
-    }
 ib_konnect() {             sudo $IPY/ENV/bin/ipython console --existing \
     $HOME/.ipython/profile_default/security/kernel-$1.json; kill $1;
     }
@@ -33,7 +11,7 @@ newalias_linux() {         echo "alias "$1 >> $HOME/.alias_linux; source_bash; p
 
 # f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
 # alias kill_by='f_kill_by'
-    
+
 alias blog_serv_local='github-pages check-health && bundle update && bundle exec jekyll serve --baseurl "" --port 4000'
 alias BT_off='sudo /etc/init.d/bluetooth stop'
 alias BT_on='sudo /etc/init.d/bluetooth start'

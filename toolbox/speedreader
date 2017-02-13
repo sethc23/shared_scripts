@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# /usr/local/bin/cliclick kd:cmd t:"c" ku:cmd
+# sleep 1
+[[ -n $1 ]] && /bin/sh --norc -c "echo \"$@\" | pbcopy"
+
+# echo "$@" >> /dev/ttys001
+
+
+_clipboard="(yank)"
+
+_eval_input=$_clipboard
+
+[[ -f $1 ]] && echo "not configured to read files yet" && exit 99
+
+# echo $_eval_input
+
+_eval_cmd="$(
+cat <<-EOF
+    (progn
+
+      (defun buffer-exists (bufname) (not (eq nil (get-buffer bufname))))
+      (if (buffer-exists "SPEED READER")  (kill-buffer "SPEED READER"))
+
+      (make-frame '(
+        (name . "SPEED READER")
+      ))
+      (switch-to-buffer "SPEED READER")
+      (erase-buffer)
+      (tool-bar-here-mode 0)
+      (beacon-mode 0)
+      (blink-cursor-mode 0)
+      (doom-hide-mode-line-mode)
+      (transient-mark-mode 0)
+
+      (modify-frame-parameters nil '(
+        (user-position . t)
+        (left . 620)
+        (top . 260)
+        (height . 10)
+        (width . 120)
+        (modeline)
+        (horizontal-scroll-bars)
+        (vertical-scroll-bars)
+        (cursor-type)
+      ))
+
+      $_eval_input
+
+      (spray-mode)
+      (spray-stop)
+      (beginning-of-buffer)
+      (spray-backward-word)
+      (message "Hit \"Spacebar\" to start.")
+
+    )
+EOF
+)"
+
+
+
+/Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient                             \
+    --frame-parameters "(left . +100)"  \
+    --eval "$_eval_cmd"                 \
+    --no-wait                           \
+    --quiet                             \
+    >/dev/null 2>&1
+
+osascript -e 'tell application "Emacs.app" to activate'
+
+
+
+
+
+
+#
+#
+# Python 3.6
+#
+# import fileinput
+# for line in fileinput.input():
+#     process(line)
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
