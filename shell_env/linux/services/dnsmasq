@@ -4,3 +4,12 @@ alias svc_dnsm_disable='sudo systemctl disable $SERV_HOME/dns/dnsmasq/dnsmasq.se
 alias svc_dnsm_start='sudo systemctl start dnsmasq.service'
 alias svc_dnsm_stop='sudo systemctl stop dnsmasq.service; sudo systemctl daemon-reload'
 alias svc_dnsm_status='sudo systemctl status dnsmasq.service'
+
+
+
+# /usr/local/sbin/dnsmasq \
+#     --resolv-file=$SERV_HOME/dns/dnsmasq/static_dns-cogswell_vpn.conf \
+#     --dns-loop-detect \
+#     --pid-file=/var/run/dnsmasq.pid \
+#     --log-async \
+#     --log-facility=-

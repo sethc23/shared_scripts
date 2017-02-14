@@ -1,0 +1,738 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ZSH",
+				"ZSH_THEME"
+			],
+			[
+				"CLIENT",
+				"CLIENT_HOST"
+			],
+			[
+				"dig",
+				"dig_simple_f"
+			],
+			[
+				"install",
+				"install_fresh"
+			],
+			[
+				"l_",
+				"l_header_val"
+			],
+			[
+				"chk",
+				"chk_a"
+			],
+			[
+				"exit",
+				"exit_button"
+			],
+			[
+				"next",
+				"next_button"
+			],
+			[
+				"prev",
+				"prev_button"
+			],
+			[
+				"widget",
+				"widget_component"
+			],
+			[
+				"page",
+				"page_title"
+			],
+			[
+				"__",
+				"__settings__\t(emt.py)"
+			],
+			[
+				"get",
+				"getpass"
+			],
+			[
+				"column",
+				"column_name"
+			],
+			[
+				"Syste",
+				"SystemExit\texit"
+			],
+			[
+				"Sys",
+				"SystemExit\texit"
+			],
+			[
+				"fin",
+				"find_cl_compatible_vpn"
+			],
+			[
+				"ma",
+				"maximize_window"
+			],
+			[
+				"window",
+				"window_position"
+			],
+			[
+				"ex",
+				"exec_cmds"
+			],
+			[
+				"vp",
+				"vpn_connection"
+			],
+			[
+				"_state",
+				"_state_abbr"
+			],
+			[
+				"user",
+				"user_name"
+			],
+			[
+				"failed",
+				"failed_proxies"
+			],
+			[
+				"get_",
+				"get_proxy"
+			],
+			[
+				"trulia",
+				"trulia_feed_config"
+			],
+			[
+				"en",
+				"enumerated_idx"
+			],
+			[
+				"br",
+				"browser"
+			],
+			[
+				"browser",
+				"browser_type"
+			],
+			[
+				"C",
+				"ChoicesCompleter"
+			],
+			[
+				"no",
+				"non_help_in_args"
+			],
+			[
+				"arg_",
+				"arg_val"
+			],
+			[
+				"new",
+				"new_it"
+			],
+			[
+				"THIS",
+				"THIS_PC"
+			],
+			[
+				"pa",
+				"parser_objs"
+			],
+			[
+				"main",
+				"main_choices"
+			],
+			[
+				"BUILD",
+				"BUILD_HOME"
+			],
+			[
+				"cp",
+				"cp_src"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 293.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"sort",
+				"SortBy: Alphabetically"
+			],
+			[
+				"so",
+				"SortBy: Alphabetically"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: List Unmanaged Packages"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"Sub",
+				"SublimeBookmarks: Show All Bookmarks "
+			],
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"pack",
+				"Package Control: Remove Package"
+			],
+			[
+				"pretty",
+				"HTMLPrettify"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"beau",
+				"HTMLBeautify"
+			],
+			[
+				"h",
+				"HTMLBeautify"
+			],
+			[
+				"packa",
+				"Package Control: Enable Package"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 186.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+	],
+	"file_history":
+	[
+		"/Users/admin/.openvpn/wrt6_vpn.conf",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/1_shell_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/1_general_functions_aliases",
+		"/Users/admin/SERVER3/dns/dnsmasq/manage",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/dnsmasq",
+		"/Users/admin/SERVER3/dns/dnsmasq/static_dns-cogswell_vpn_4.conf",
+		"/Users/admin/SERVER3/dns/dnsmasq/static_dns-cogswell_vpn.conf",
+		"/Users/admin/tmp",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/_base",
+		"/Volumes/admin/Volumes/gnr/data/data/com.termux/files/home/android",
+		"/Volumes/admin/Volumes/gnr/data/data/com.termux/files/home",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/networking",
+		"/Users/admin/.openvpn/mbp2.ovpn",
+		"/Volumes/admin/Users/admin/SERVER3/dns/manage",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/bash/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/bindings/tmux",
+		"/Users/admin/init.el",
+		"/Users/admin/.emacs.d/init.el",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/2_functions_aliases",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/1_osx_vars",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/3_vars",
+		"/Volumes/ub2/home/ub2/.scripts/toolbox/emacs",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/.z_OMZ",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/oh-my-zsh.sh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/_local",
+		"/Volumes/ub2/home/ub2/SERVER2/nginx/config.sh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/ipy_jupyter",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/2_functions_aliases",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/syslog_rsyslog",
+		"/Volumes/ub2/.tmux/.tmux.conf",
+		"/Users/admin/SERVER3/local_config/.irssi/config",
+		"/Users/admin/.ssh/config",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/2_colors",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/pgsql",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/android/1_general_functions_aliases",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/android",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/autojump",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/syslog",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/systemd",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/iptables",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/git",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/mitmproxy",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/apt",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/__syslog_rsyslog_more_zsh_functions",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/bash/_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/syslog_rsyslog_more_zsh_functions",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/nginx",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/file_server",
+		"/Volumes/ub2/home/ub2/.scripts/system_settings.py",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/osx_settings",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/2_iterm2",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/postfix",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/aws",
+		"/Users/admin/GIT_REPOS/cups-pdf-for-mac-os-x/cups-pdf/src/cups-pdf.c",
+		"/Volumes/ub2/home/ub2/u_tmp",
+		"/Users/admin/SERVER3/local_config/shell/iterm2/DynamicProfiles/ub1",
+		"/Volumes/ub2/home/ub2/SERVER2/local_config/shell/.shell_local",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/1_linux_vars",
+		"/Users/admin/SERVER3/local_config/shell/iterm2/DynamicProfiles/ub2",
+		"/Users/admin/SERVER3/local_config/shell/iterm2/CurrentProfiles/ub2",
+		"/Users/admin/.scripts/.gitmodules",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/aprinto",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/rabbitmq",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/serv",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/supervisor",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/elasticsearch",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/kibana",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/realms",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/macports",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/_script",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/zsh/.z_OMZ",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/zsh/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/zsh/_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/bash/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/2_git_functions_aliases",
+		"/Users/admin/SERVER3/local_config/shell/.shell_local",
+		"/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/1_base",
+		"/Users/admin/.scripts/shell_env/zsh/_base",
+		"/Users/admin/.scripts/shell_env/zsh/.z_OMZ",
+		"/Users/admin/.scripts/shell_env/bash/_base",
+		"/Users/admin/.scripts/system_argparse.py",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/3_python",
+		"/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/Default.sublime-keymap",
+		"/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/SublimeBookmarks/Default.sublime-keymap",
+		"/Volumes/ub2/home/ub2/SERVER2/realms_wiki/realms_wiki.service",
+		"/Volumes/ub2/home/ub2/SERVER2/nginx/setup/nginx/sites-available/run_system.conf",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_config.yml",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_wiki/index.html",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_data/wiki.csv",
+		"/Volumes/ub2/home/ub2/SERVER2/nginx/setup/nginx/sites-available/run_blog_wiki.conf",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/CNAME",
+		"/Volumes/ub2/home/ub2/SERVER2/realms_wiki/realms_wiki.service_bak",
+		"/Volumes/ub2/home/ub2/.scripts/git/hooks/post-update",
+		"/Volumes/ub2/home/ub2/SERVER2/realms_wiki/realms/templates/wiki/page.html",
+		"/Volumes/ub2/home/ub2/SERVER2/realms_wiki/realms/templates/wiki/index.html",
+		"/Users/admin/.scripts/shell_env/_base",
+		"/Volumes/ub2/home/ub2/SERVER2/nginx/setup/nginx/sites-available/run_blog.conf",
+		"/Volumes/ub2/home/ub2/SERVER2/realms_wiki_old/realms-wiki.json",
+		"/Volumes/ub2/home/ub2/SERVER2/realms_wiki/realms/config/__init__.py",
+		"/Users/admin/.scripts/bash_env/_linux",
+		"/Users/admin/SERVER3/local_config/.profile",
+		"/Users/admin/crontab",
+		"/Volumes/ub2/home/ub2/.scripts/bash_env/_linux_vars",
+		"/Volumes/ub2/home/ub2/.scripts/bash_env/_shared_vars",
+		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/install_fresh",
+		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter-notebook.service",
+		"/Volumes/ub2/home/ub2/.scripts/bash_env/_base",
+		"/Volumes/ub2/home/ub2/BUILD/install_SERVER.bash",
+		"/Volumes/ub2/home/ub2/BUILD/install_ipy.sh",
+		"/Volumes/ub2/home/ub2/.scripts/bash_env/_bash",
+		"/Volumes/ub2/home/ub2/.scripts/bash_env/_completers/pip-completion.bash",
+		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter/jupyter/notebook/static/index.js",
+		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter/config/jupyter_notebook_config.py",
+		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter/config/jupyter_nbconvert_config.py",
+		"/Volumes/ub2/etc/init/realms-wiki.conf",
+		"/Volumes/ub2/home/ub2/SERVER2/nginx/nginx.service",
+		"/Volumes/ub2/home/ub2/SERVER2/realms-wiki/realms-wiki.service",
+		"/Users/admin/.scripts/bash_env/_colors",
+		"/Users/admin/.scripts/bash_env/_bash",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/Gemfile",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/.git/modules/sethc23.github.io.wiki/config",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/.git/modules/_wiki/t",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/py_scripts/wiki_data_file_generator.py",
+		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/wiki/index.html"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"<project>",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env",
+			"<project>",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env/linux",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env/linux",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services",
+			"<project>",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env/linux",
+			"/Volumes/ub2/home/ub2/.scripts/shell_env",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"$OVPN_HOME",
+			"/Users/admin/",
+			"/Users/admin/.openvpn",
+			"virtualenv",
+			"alias ([^_=]+)_",
+			"alias ([^_]+)_",
+			"term",
+			"function ",
+			"c_f_blue",
+			"assign() {  eval \"$1=\\$(cat; echo .); $1=\\${$1%.}\";}",
+			"ports_listen",
+			"lua",
+			"work",
+			"workon",
+			"= true",
+			"CLIENT",
+			"\"$CLIENT_HOST\" = \"SERVER3\"",
+			"luarock",
+			"ipt_",
+			"ap_",
+			"sys",
+			"sour",
+			"passwd",
+			"Conf_UserPrefix",
+			"kill_by",
+			"-main",
+			"alias sl_",
+			"alias emacs",
+			"emacs",
+			"\"DEBUG_SHELL\"",
+			"CLIENT_HOST",
+			"shell_local",
+			"SERV_HOME",
+			"alias SERV_HOME",
+			"alias SH",
+			"less",
+			"sudo systemctl link ([^\\s']+)",
+			"^function ",
+			"kill_by",
+			"^function ",
+			"HOME_ENV",
+			"9.4",
+			"PG_",
+			"init",
+			"PATH",
+			"ipt_flush",
+			"get_my_ip_int",
+			"top",
+			"alias ps",
+			"tag",
+			"iterm",
+			"virtualenv",
+			"rsyslog.service",
+			"rsyslog_",
+			"/home/ub2/SERVER2/",
+			"SERVER2",
+			"GIT_CONFIG",
+			"elasticsearch",
+			"serve",
+			"tag",
+			"(~/|\\$HOME/)",
+			"(~|\\$HOME)",
+			"~",
+			"non-root",
+			"completer",
+			"mini",
+			"rvm",
+			"zsh",
+			"completer",
+			"edit",
+			"/edit{{",
+			"/edit/",
+			"iterm",
+			"ng_rel",
+			"ng_",
+			"wiki",
+			"sort(",
+			"sort(co",
+			"sort(col",
+			"sort(",
+			"sort(col",
+			"sort",
+			"^([^ ]*)(.*)",
+			"ii  ",
+			"ap_mount -t proc none /proc\nmount -t sysfs none /sys\nmount -t devpts none /dev/pts\nexport HOME=/root\nexport LC_ALL=C\ndbus-uuidgen > /var/lib/dbus/machine-id\ndpkg-divert --local --rename --add /sbin/initctl\nln -s /bin/true /sbin/initctl\napt-get update\nsystemctl status sshd\nsystemctl enable sshd\napt-get install git\ncd root/\ngit clone https://github.com/kelleyk/livessh.git\ngit clone https://github.com/sethc23/shared_scripts.git --origin github ./.scripts\ngit clone https://github.com/sethc23/SERVER0.git\n./SERVER0/local_config/setup_env\nsource .bashrc\n./livessh/customize.d/10-openssh\n./livessh/customize.d/60-fstab-entries\npasswd\nssh-keygen -t rsa -b 4096\ncd /etc/ssh/\nln -s /root/SERVER0/local_config/sshd_config\nSystem.map-4.3.0-kali1-amd64  config-4.3.0-kali1-amd64      initrd.img-4.3.0-kali1-amd64  vmlinuz-4.3.0-kali1-amd64\nroot@SERVER2:~# ap_clean\nsudo: unable to resolve host SERVER2: No such file or directory\nsudo: unable to resolve host SERVER2: No such file or directory\nReading package lists... Done\nBuilding dependency tree\nReading state information... Done\n0 upgraded, 0 newly installed, 0 to remove and 314 not upgraded.\nsudo: unable to resolve host SERVER2: No such file or directory\nReading package lists... Done\nBuilding dependency tree\nReading state information... Done\n0 upgraded, 0 newly installed, 0 to remove and 314 not upgraded.\nsudo: unable to resolve host SERVER2: No such file or directory\n[01:55:38]\nrm -rf /tmp/* ~/.bash_history\nrm /var/lib/dbus/machine-id\nrm /etc/resolv.conf\nrm /sbin/initctl\ndpkg-divert --rename --remove /sbin/initctl\n",
+			"find",
+			"f_find_in_files",
+			"find_in_file",
+			"http://wiki.sanspaper.com/",
+			"(^.*$)",
+			"\".*",
+			"<li><a tabindex=\"-1\" href=\"#\" data-value=\"",
+			"(http://wiki.sanspaper.com)(/static/vendor/)(.*?)/([^/]+)\\n",
+			"(http://realms.io/static/vendor/)(.*?)/([^/]+)\\n",
+			"/([^/]+)\\n",
+			"http://realms.io/static/vendor/",
+			"http://wiki.sanspaper.com",
+			" Failed to load resource: the server responded with a status of 404 (Not Found)",
+			"(id=\"\\d+)([^\"]+)\\.([^\"]+)",
+			"(id=\"\\d+)--([^\"]+)",
+			" class=\"group\"",
+			" class=\"subgroup\"",
+			"</h1",
+			"<h1",
+			"(<h\\d)(.*?)(>)([^<]*)(</a>)(</h)",
+			"(<h\\d )(.*?)(>)([^<]*)(</a>)(</h)",
+			"section",
+			"class=\"bs-docs-section ref-area ref\" ",
+			"class=\"bs-docs-section ref-area ref\"",
+			"(?s)(\\n)(\\w+|\\s)(</a></h1>)(.*?)(</div>)",
+			"^(\\s+)(\\w+|\\s)(</a></h1>)",
+			"(?s)(\\n\\s+)(</a></h1>)",
+			"(?s)(<a href=\"#)(.*?)(\">)(\\n\\s+)(.*?</a>)",
+			"(?s)(<a href=\"#)(.*?)(\">)(</a>)(.*?)(</h1>)",
+			"a class=\"anchorjs-link \" ",
+			" (aria-label=\"Anchor link for: ).*?(\" data-anchorjs-icon=\"\" style=\"font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;\")",
+			" class=\"anchorjs-link \" href=\"#Android_Android.md\" aria-label=\"Anchor link for: Android_Android.md\" data-anchorjs-icon=\"\" style=\"font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;\"",
+			"(?s)<div class=\"ref-content_md\">.*?</div>",
+			"^[[:space:]]?\\n",
+			"^[\\s]+$",
+			"translations",
+			"create_markdown_from_path",
+			"[]\n",
+			"iterm",
+			"bh.comp",
+			"git submodule status",
+			"from_page",
+			"self._widget"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"/tmp/root/.openvpn",
+			"/tmp/root/",
+			"$OVPN_HOME",
+			"alias \\1-",
+			"",
+			"ap-",
+			"",
+			"\"$DEBUG_SHELL\"",
+			"sudo systemctl enable \\1 2> /dev/null",
+			"",
+			"9.5",
+			"postgresql@9.4-main.service",
+			"pgsql_",
+			"$SERV_HOME/",
+			"kibana",
+			"\\$HOME_ENV/",
+			"\\$HOME_ENV",
+			"$HOME_ENV",
+			"{{",
+			"/",
+			"sort(by=",
+			"\\1",
+			"",
+			"http://realms.io/",
+			"wget \\1",
+			"http://wiki.sanspaper.com/static/vendor/ace-builds/src/theme-\\1.js",
+			"",
+			"wget http://realms.io/\\2\\3/\\4 && mv ./\\4 ./\\3/\\n",
+			"mv ./\\3 ./\\2/\\n",
+			"mv ./\\3 ./\\2\\n",
+			"\\n",
+			"",
+			"http://realms.io",
+			"",
+			"\\1\\2\\3",
+			"\\1\\2",
+			"",
+			"</h3",
+			"<h3",
+			"\\1\\3\\4\\6",
+			"div",
+			"",
+			"\\3\\5",
+			"\\2\\3",
+			"\\2",
+			"\\1\\2\\3\\5",
+			"\\1\\2\\3\\5\\4\\6",
+			"a ",
+			"a",
+			"",
+			"bh.widget.comp",
+			"self.widget",
+			"close_widget()",
+			"traits",
+			"self.BS",
+			"self.ws.",
+			"self.pg.",
+			": \"\",",
+			"T.sys_eng",
+			" nat ",
+			"Pro",
+			"$SERV_HOME",
+			"<\\1>\\t\\t\\2\\t\\t</\\3>",
+			"diff_files",
+			"diff_dir_",
+			"@task",
+			"1.52",
+			"10.0.1",
+			"$server_ip",
+			"${server_ip}",
+			"self.T.br"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"folders":
+	[
+		{
+			"path": "/Volumes/ub2/home/ub2/.scripts/shell_env"
+		},
+		{
+			"path": "/Volumes/ub2/home/ub2/.scripts/toolbox"
+		}
+	],
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 30.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 236.0
+	},
+	"pinned_build_system": "",
+	"project": "",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/scripts.sublime-workspace"
+			]
+		],
+		"width": 778.0
+	},
+	"select_symbol":
+	{
+		"height": 347.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 434.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 304.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
