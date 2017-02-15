@@ -1,2 +1,29 @@
 #!/usr/bin/env zsh
 
+e-recompile(){
+    _start(){
+        CWD=$(pwd)
+        cd $HOME_ENV/.emacs.d
+        ln -nfs /Applications/Emacs.app/Contents/MacOS/Emacs /usr/local/bin/emacs
+        }
+    _end(){
+        ln -nfs $HOME_ENV/.scripts/toolbox/emacs /usr/local/bin/emacs
+        cd $CWD
+        unset CWD
+        }
+    _error(){
+        echo "\nERROR\n";
+        _end;
+        return 0;
+        }
+    _start
+    #find ~/.emacs.d -type f -regex ".*elc$" | xargs -I '{}' rm -fr {}
+    find ~/.emacs.d/.cask/25.1/elpa -name "*elc" -delete
+    # find /usr/local/share/emacs/25.1 -type f -regex ".*elc$"|xargs -I '{}' rm -fr {}
+    echo '\nCLEANING'       && make clean       || return _error
+    echo '\nMAKE'           && make             || return _error
+    echo '\nCOMPILE\n'      && make compile     || return _error
+    echo '\nAUTOLOADS\n'    && make autoloads   || return _error
+    echo '\nSNIPPETS\n'     && make snippets    || return _error
+    _end
+}
