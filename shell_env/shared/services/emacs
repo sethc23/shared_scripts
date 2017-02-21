@@ -4,7 +4,9 @@ e-recompile(){
     _start(){
         CWD=$(pwd)
         cd $HOME_ENV/.emacs.d
-        ln -nfs /Applications/Emacs.app/Contents/MacOS/Emacs /usr/local/bin/emacs
+        [[ $(uname -o) = Darwin ]] \
+            && ln -nfs /usr/local/bin/emacs-25.1-x11 /usr/local/bin/emacs
+            # && ln -nfs /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs /usr/local/bin/emacs
         }
     _end(){
         ln -nfs $HOME_ENV/.scripts/toolbox/emacs /usr/local/bin/emacs
