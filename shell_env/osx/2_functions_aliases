@@ -40,6 +40,8 @@ alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
 alias rm='rmtrash'
 alias rt_update_fw='cd $SERV_HOME/local_config/cisco && scp jffs/etc/config/fw.if cisco:/jffs/etc/config/ 2> /dev/null && rt_ /jffs/etc/config/fw.if 2> /dev/null'
 
+alias subl='open -a "Sublime Text"'
+
 alias ssh-psql='ssh -nNL localhost:8802:localhost:8800 ub2 &'
 alias ssh-s1='dn_update_ip && dn_remote_tunnel open && ssh_f ub1'
 alias ssh-s2='dn_update_ip && dn_remote_tunnel open && ssh_f ub2 && ssh-psql && env CLIENT_HOST=SERVER3 ssh ub2'
