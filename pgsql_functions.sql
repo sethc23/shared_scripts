@@ -1,1 +1,0 @@
-../BD_Scripts/pgsql_base/base_functions.sql

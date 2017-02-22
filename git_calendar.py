@@ -16,10 +16,10 @@ py_path.append(                                 os_environ['BD'] + '/html')
 from webpage_scrape                         import scraper
 D                                           =   scraper('phantom').browser.window
 
-from secrets                                import github
-username,pw                                 =   'sethc23',github
+from secrets                                import github_user,github_pw
+username,pw                                 =   github_user,github_pw
 login                                       =   'https://github.com/session'
-homepage                                    =   'https://github.com/sethc23'
+homepage                                    =   'https://github.com/' + github_user
 
 D.get(                                          login)
 sleep(                                          10)
