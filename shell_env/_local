@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------------
 
 
+
 # FORMAT: <user>=(<eth0> <wlan0>)
 admin=(c8:2a:14:41:bf:23)
 ub1=(00:1b:63:bb:88:0b)
@@ -39,6 +40,35 @@ source_files_and_sub_dirs() {
     source_sub_dir "$1"
     }
 
+
+path-uniq(){
+    python -c "$(
+cat <<-EOF
+_path = "$PATH".split(':')
+checked = []
+for it in _path:
+    if not checked.count(it):
+        checked.append(it)
+print(':'.join(checked))
+EOF
+    )"
+    }
+path-regex-rm(){
+    python -c "$(
+cat <<-EOF
+import re
+_regex = "$1"
+_path = "$PATH".split(':')
+checked = []
+for it in _path:
+    if ( not checked.count(it)
+         and not re.search(r"(?i)"+_regex,it) ):
+        checked.append(it)
+print(':'.join(checked))
+EOF
+    )"
+    }
+
 check_if_managed(){
     IS_MANAGED_OSX=
     IS_MANAGED_LINUX=
@@ -55,6 +85,8 @@ check_if_managed(){
         done
     done
     }
+
+export PATH="$(path-regex-rm virtualenv)"
 
 OS_NAME=$(uname -a | cut -d ' ' -f1)
 MAC_ADDRESSES=()

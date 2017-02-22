@@ -20,6 +20,7 @@ export HISTFILESIZE=10000000
 export EDITOR=`which emacs`
 export LESS='-R'
 export LESSOPEN='$HOME_ENV/.lessfilter'
+export S_PATH="$HOME_ENV/.config/me"
 
 if [[ -n "$BASH_VERSION" ]]; then
 
