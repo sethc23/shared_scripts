@@ -21,11 +21,11 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/rsyslog/
 
 # ---------------------------------------
 # Amazon
-export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.2.4
-export PATH=/usr/local/aws:$EC2_HOME/bin:$PATH
-export AWS_ACCESS_KEY=AKIAIBP2K5VUV7PUEG2A
-export AWS_SECRET_KEY=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
-export EC2_URL=https://ec2.us-east-1.amazonaws.com
+# export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.2.4
+# export PATH=/usr/local/aws:$EC2_HOME/bin:$PATH
+# export AWS_ACCESS_KEY=AKIAIBP2K5VUV7PUEG2A
+# export AWS_SECRET_KEY=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
+# export EC2_URL=https://ec2.us-east-1.amazonaws.com
 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 export AWS_HOME=$SERV_HOME/aws
 export AWS_CONFIG_FILE=$AWS_HOME/.aws/config

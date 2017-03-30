@@ -74,6 +74,8 @@ check_if_managed $MAC_ADDRESSES
 
 [[ -n "$DEBUG_SHELL" ]] && echo "_local_1"
 
+[[ -f /etc/environment ]] && source /etc/environment
+
 if [[ -n "$ZSH_VERSION" ]]; then
 
     source $HOME_ENV/.scripts/shell_env/shell/zsh/_env 
@@ -119,19 +121,19 @@ elif [[ -n $IS_MANAGED_OSX ]]; then
 
 fi
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_2"
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_3"
 source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_3"
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_4"
 [[ "$OS_NAME" = "Linux" ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
 [[ "$OS_NAME" = "Darwin" ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_4"
+[[ -n "$DEBUG_SHELL" ]] && echo "_local_5"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
-[[ -n "$DEBUG_SHELL" ]] && echo $PATH
+[[ -n "$DEBUG_SHELL" ]] && printf "\n\tPATH:\t%s\n\n" $PATH
 
 if [[ -z $IS_MANAGED_LINUX ]] && [[ -z $IS_MANAGED_OSX ]]; then
     unset MANAGED_OSX_IDS
