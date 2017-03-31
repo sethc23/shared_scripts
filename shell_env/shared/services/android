@@ -10,6 +10,27 @@
 #
 # ###
 
+ar-register(){
+    echo "usage: ar-register KEY NAME ID TYPE=linux PUBLIC_IP LOCAL_IP"
+    curl "http://autoremotejoaomgcd.appspot.com/registerpc?     \
+                        key=YOUR_KEY                            \
+                        name=NAME_TO_APPEAR_ON_YOUR_PHONE       \
+                        id=ANY_UNIQUE_ID                        \
+                        type=linux                              \
+                        publicip=YOUR_PUBLIC_IP_OR_HOST_NAME    \
+                        localip=                                \
+                            $(sudo ifconfig eth0 |grep "inet addr" |awk '{print $2}' |awk -F: '{print $2}')"
+    curl "http://autoremotejoaomgcd.appspot.com/registerpc?     \
+                        key=$(ngn-ar-key)                            \
+                        name="mbp2"       \
+                        id=ANY_UNIQUE_ID                        \
+                        type=linux                              \
+                        publicip=YOUR_PUBLIC_IP_OR_HOST_NAME    \
+                        localip=                                \
+                            $(sudo ifconfig eth0 |grep "inet addr" |awk '{print $2}' |awk -F: '{print $2}')"
+    }
+
+ngn-ar-msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(ngn-ar-key)&message=source;command=:=$USER;$1;"; }
 gn-ar-msg() { curl "http://autoremotejoaomgcd.appspot.com/sendmessage?key=$(gn-ar-key)&message=source;command=:=$USER;$1;"; }
 gn-backup() { \
     sn4_ar_msg ssh_droid_start > /dev/null 2>&1;
@@ -48,7 +69,7 @@ EOF
         ssh ub2 zsh -c "$SCRIPT" && ssh gnu;
     fi;}
 
-
+alias ngn-ar-key='echo "APA91bHL0Lshroozr4eoHXSgSxGjz4tTiYsNqfM5-RNNYL5lfgG8boO6HL4M1TkBI9HqbnH03M8CyRo4Eiia6H-DvD5A6LpeIBjFEmVlxm-GXmR2zptJ5O9cvw8TJE4Vy9Pu8mJX_7nw"'
 alias gn-ar-key='echo "APA91bGo63VaMmbthWvp12By5s81H01e2nBdK6Xz4dZJSyjoDY-TDsELImTbZykAC0CUSiBsjsu0BoVzu389iIS-608AdBOiKnAOtaNXsjPONEeM6-Sdrz4lwfT90UVuCNtoFmWOIEQQ"'
 alias gn-copy_screen_png_here='adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png && adb shell rm /sdcard/screen.png'
 # alias gn-sshdroid-start='gn-ar-msg "SSHDroid_start"'

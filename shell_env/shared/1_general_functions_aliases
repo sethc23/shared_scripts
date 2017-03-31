@@ -130,6 +130,11 @@ shell_opts() {
     fi
     }
 source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
+# uuid_new(){
+    # python uuid.uuid4().hex[:7]
+    # dbus-uuidgen
+    # uuidgen -r, uuidgen -t
+    # }
 zsh_retheme() {
     if [[ -n $1 ]]; then
         export ZSH_THEME=$1
