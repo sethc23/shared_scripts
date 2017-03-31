@@ -109,14 +109,14 @@ MACHINE_LABEL_NAME=
 MACHINE_LABEL_ADDR=
 
 
-# if [[ -n $(cat /proc/cmdline|grep android) ]]; then
-#     _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
-#     _android_serial=$(echo "$android_info" | grep serialno | cut -d '=' -f2)
-#     [[ $_android_serial = 5VT5T16219000835 ]]               \
-#         && MACHINE_LABEL_NAME=5T21
-#     [[ $_android_serial = 5VT7N16909000324 ]]               \
-#         && MACHINE_LABEL_NAME=7N90
-# fi
+if [[ -n $(cat /proc/cmdline|grep android) ]]; then
+    _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
+    _android_serial=$(echo "$android_info" | grep serialno | cut -d '=' -f2)
+    [[ $_android_serial = 5VT5T16219000835 ]]               \
+        && MACHINE_LABEL_NAME=5T21
+    [[ $_android_serial = 5VT7N16909000324 ]]               \
+        && MACHINE_LABEL_NAME=7N90
+fi
 
 
 if [[ $(uname -o) = Android ]]; then
@@ -140,6 +140,7 @@ check_if_managed $MAC_ADDRESSES
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_1"
 
+[[ -f /etc/environment ]] && source /etc/environment
 if [[ -n $ZSH_VERSION ]]; then
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
@@ -172,15 +173,17 @@ fi
 source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_3"
+
 [[ $OS_NAME = Linux ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
+
 [[ $OS_NAME = Darwin ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
-[[ -n $IS_MANAGED_OSX ]] && unset -f port
+[[ $(uname -o) = Darwin ]] && unset -f port
 
 [[ -n $DEBUG_SHELL ]] && printf "\n\tPATH:\t%s\n\n" $PATH
 [[ -n $DEBUG_SHELL ]] && echo "_local_5"

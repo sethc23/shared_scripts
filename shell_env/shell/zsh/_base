@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_1 - $(readlink -f $0)"
+[[ -n $DEBUG_SHELL ]] && echo "zsh/_base_1 - $(realfullpath "$0")"
 
 PROFILE_STARTUP=false
 if [[ "$PROFILE_STARTUP" == true ]]; then

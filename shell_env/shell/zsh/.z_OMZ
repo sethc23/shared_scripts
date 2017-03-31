@@ -29,7 +29,7 @@ HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy
 #plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
 
 [[ -z $ZSH_PLUGINS ]] && export ZSH_PLUGINS=(zsh-completions autojump last-working-dir git python systemd)
-[[ -n $IS_MANAGED_OSX ]] && ZSH_PLUGINS+=(osx)
+[[ $(uname -o) = Darwin ]] && ZSH_PLUGINS+=(osx)
 plugins=$ZSH_PLUGINS
 
 export ZSH_THEME="candy"

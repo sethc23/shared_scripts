@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# sudo /usr/bin/lsof -n -i -P | grep LISTEN
+
 [[ -z $1 ]] \
     && sudo $(which lsof) -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN' \
     && exit 99

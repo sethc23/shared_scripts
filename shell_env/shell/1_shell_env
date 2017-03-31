@@ -19,9 +19,9 @@ export HISTSIZE=1000000
 export HISTFILESIZE=10000000
 #export PROMPT_COMMAND="echo \[\$(date +%H:%M:%S)\]\ "
 #export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
-export EDITOR=`which emacs`
+export EDITOR=$(which emacs)
 export LESS='-R'
-export LESSOPEN='$HOME_ENV/.lessfilter'
+export LESSOPEN="$HOME_ENV/.lessfilter"
 export S_PATH="$HOME_ENV/.config/me"
 
 if [[ -n "$BASH_VERSION" ]]; then
