@@ -3,8 +3,8 @@
 [[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_START - $(realfullpath $0)"
 
 if [[
-        ($OS_NAME != Android) \
-    ||  ($OS_NAME != Cygwin) \
+        (! $OS_NAME = Android)      \
+    &&  (! $OS_NAME = Cygwin)       \
     ]]; then
     [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
     [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)

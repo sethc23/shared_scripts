@@ -24,6 +24,10 @@ else
         [[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
     fi
     [[ -z "$HOME_ENV" ]] && export HOME_ENV="$(eval echo ~$USER)"
+    if [[ "${HOME_ENV:0:1}" != "/" ]]; then
+        echo "Possible issue w/ HOME_ENV @  _base:28 "
+        HOME_ENV=$HOME
+    fi
 
 fi
 
