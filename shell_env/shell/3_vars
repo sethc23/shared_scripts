@@ -2,8 +2,13 @@
 
 [[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_START - $(realfullpath $0)"
 
-[[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
-[[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
+if [[
+        ($OS_NAME != Android) \
+    ||  ($OS_NAME != Cygwin) \
+    ]]; then
+    [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
+    [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
+fi
 
 export SERVER="$(hostname | sed -r 's/\.local$//')"
 export SERVER_ID="$(echo $SERVER | sed -r 's/SERVER//g')"

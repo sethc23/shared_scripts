@@ -105,19 +105,19 @@ OS_NAME=$(uname -o)
 
 if [[ -n $(cat /proc/cmdline 2>/dev/null | grep android) ]]; then
     _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
-    _android_serial=$(echo "$android_info" | grep serialno | cut -d '=' -f2)
+    _android_serial=$(echo "$_android_info" | grep serialno | cut -d '=' -f2)
     [[ $_android_serial = 5VT5T16219000835 ]]               \
         && MACHINE_DISPLAY_NAME=5T21
     [[ $_android_serial = 5VT7N16909000324 ]]               \
         && MACHINE_DISPLAY_NAME=7N90
-    _android_wifi_mac=$(echo "$android_info" | grep wifimacaddr | cut -d '=' -f2)
-    _android_bt_mac=$(echo "$android_info" | grep btmacaddr | cut -d '=' -f2)
+    _android_wifi_mac=$(echo "$_android_info" | grep wifimacaddr | cut -d '=' -f2)
+    _android_bt_mac=$(echo "$_android_info" | grep btmacaddr | cut -d '=' -f2)
 fi
 
 
 if [[ $(uname -o) = Android ]]; then
-    MAC_ADDRESSES+=( $(echo "$android_info" | grep wifimacaddr | cut -d '=' -f2) )
-    MAC_ADDRESSES+=( $(echo "$android_info" | grep btmacaddr | cut -d '=' -f2) )
+    MAC_ADDRESSES+=( $(echo "$_android_info" | grep wifimacaddr | cut -d '=' -f2) )
+    MAC_ADDRESSES+=( $(echo "$_android_info" | grep btmacaddr | cut -d '=' -f2) )
     [[ -n $(echo $HOME_ENV|grep termux) ]]  \
         && MACHINE_DISPLAY_NAME="termux-$MACHINE_DISPLAY_NAME"
 
