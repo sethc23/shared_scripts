@@ -1,8 +1,4 @@
-#!/bin/bash
-
-# print version: cat /etc/issue
-# copy resolv.conf (see linuxdeploy)
-# umount based on /proc/mounts | grep $(pwd)
+#!/data/data/com.termux/files/usr/bin/bash -l
 
 if [ $1 = "-h" ] || [ $1 = "--help" ]; then
     echo ""
@@ -28,20 +24,76 @@ if [ $1 = "-h" ] || [ $1 = "--help" ]; then
     exit 0
 fi
 
-MNT=$(echo "$1")
+ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; cat /proc/mounts|cut -d ' ' -f1,2|awk '{ printf("%-31s %s\n", $1, $2); }'; }
+ls-mounted() { ls-mounts|tail -n +2|sed -r 's/(\s\s)+/ /g'|sed 's/  / /g'|cut -d ' ' -f2; }
 
-if [[ $2 = "m" ]]; then
-	mount -t proc none $MNT/proc
-	mount -t sysfs none $MNT/sys
-	mount -t devpts none $MNT/dev/pts
-	mount -o bind /dev $MNT/dev
-	LANG= chroot $MNT /bin/bash
-elif [[ $2 = "u" ]]; then
-	cd /
-	for i in $MNT/proc $MNT/sys $MNT/dev/pts $MNT/dev $MNT
-	do
-		umount $i
-	done
+chk() { \
+    #escaped_var=$(echo $1|sed 's/\//\\\//g');
+    #res=$(ls-mounted|sed -r 's/'$escaped_var'//'|grep "$1"$|head -n 1);
+    mounts=$(mount|sed -r 's/[^ ]* on ([^ ]*) .*/\1/')
+    res=$(echo "$mounts"|grep "$1"$);
+    [[ -n "$res" ]] && echo "$res";
+}
+
+MNT=$1
+DEBUG=
+#ENV="/bin/bash -c 'source /root/.bashenv; exec bash -l'"
+ENV="/bin/su root"
+[[ -n "$2" ]] && [[ "$2" != "m" ]] && ENV="${@:2}"
+
+## MOUNT
+if [[ "$2" != "u" ]]; then
+
+    if [[ -n "$DEBUG" ]]; then
+        echo "$1"_"$(chk $MNT)"
+        echo "$1/proc"_"$(chk $MNT/proc)"
+        echo "$1/sys"_"$(chk $MNT/sys)"
+        echo "$1/dev"_"$(chk $MNT/dev)"
+        echo "$1/dev/pts"_"$(chk $MNT/dev/pts)"
+        echo "$1/termux"_"$(chk $MNT/termux)"
+    fi
+    
+    [[ -z "$(chk $MNT)" ]] && mount -o suid,exec,dev,atime $MNT $MNT
+    mount -o suid,exec,dev,atime,remount $MNT
+    cp /etc/resolv.conf $MNT/etc/
+    [[ -z "$(chk $MNT/proc)" ]] && mount -t proc proc $MNT/proc
+    [[ -z "$(chk $MNT/sys)" ]] && \
+        mount -t sysfs sys $MNT/sys && \
+        mount -t selinuxfs selinuxfs $MNT/sys/fs/selinux && \
+        mount -o bind,ro,remount $MNT/sys/fs/selinux
+    [[ -z "$(chk $MNT/dev)" ]] && mount -o bind /dev $MNT/dev && mount -o suid,remount /dev
+    [[ -z "$(chk $MNT/dev/pts)" ]] && mount -o "mode=0620,gid=5" -t devpts devpts $MNT/dev/pts
+    if [[ "$MNT" = "/data/local/kali" ]]; then
+        if [[ -z "$(chk $MNT/sdcard)" ]]; then
+           mount -o bind /sdcard $MNT/sdcard
+        fi
+        ## BELOW CAUSES SUBSEQUENT ERROR RE: "Transport endpoint is not connected"
+        ## mount -o suid,exec,dev,atime,remount $MNT/sdcard
+        if [[ -z "$(chk $MNT/termux)" ]]; then
+            mount -o bind,suid,exec,atime /data/data/com.termux/files $MNT/termux
+        fi
+        mount -o suid,exec,dev,atime,remount $MNT/termux
+    fi
+
+    # for i in \
+    #     /storage/emulated; do
+    #     mount -o suid,exec,atime,relatime,remount $i
+    # done
+    # mount -o atime,suid,dev,exec,relatime,remount /mnt/runtime/default/emulated
+    # mount -o atime,suid,dev,exec,relatime,remount /mnt/runtime/default/emulated
+    # mount -o atime,relatime,suid,exec,remount /storage/emulated
+    # mount -o dev,exec,atime,relatime,suid,remount /mnt/runtime/read/emulated
+    
+    LANG= chroot $MNT $ENV
 fi
 
-
+## UN-MOUNT
+if [[ "$2" = "u" ]]; then
+    for i in \
+        sdcard termux \
+        dev/pts dev sys/fs/selinux sys proc
+    do
+        for k in $(chk $MNT/$i); do umount -lf $MNT/$i > /dev/null 2>&1; done
+    done
+    umount -lf $MNT > /dev/null 2>&1
+fi

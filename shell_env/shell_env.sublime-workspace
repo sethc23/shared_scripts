@@ -160,10 +160,34 @@
 	"buffers":
 	[
 		{
-			"file": "/tmp/subl stdin pNi1SX.txt",
+			"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/shared/2_iterm2",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 1223,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/.z_OMZ",
+			"settings":
+			{
+				"buffer_size": 1889,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/_local",
+			"settings":
+			{
+				"buffer_size": 5777,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/android/1_general_functions_aliases",
+			"settings":
+			{
+				"buffer_size": 356,
 				"line_ending": "Unix"
 			}
 		}
@@ -261,81 +285,113 @@
 	},
 	"expanded_folders":
 	[
-		"/Volumes/ub2/home/ub2/.scripts/toolbox"
+		"/Volumes/ub2/home/ub2/.scripts/shell_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/completions/zsh-completions",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/custom_plugins/zsh-completions",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/custom_plugins/zsh-completions/src",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/cloudapp",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/coffee",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/dotenv",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/fastfile",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/scd",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/wd"
 	],
 	"file_history":
 	[
-		"/Users/admin/.openvpn/wrt6_vpn.conf",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/1_shell_env",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/2_functions_aliases",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/1_linux_vars",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/1_general_functions_aliases",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/.z_OMZ",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/3_vars",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/1_shell_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/_local",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/_env",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/completions/zsh-completions/src/_virtualbox",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/custom_plugins/zsh-completions/src/_virtualbox",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/fastfile/fastfile.plugin.zsh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/_base",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/2_colors",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/postfix",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/networking",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/aws",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/android",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/2_iterm2",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/settings",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/services",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/macports",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/autojump",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/2_functions_aliases",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/1_osx_vars",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/systemd",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/supervisor",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/serv",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/realms",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/rabbitmq",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/pgsql",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/nginx",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/mitmproxy",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/kibana",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/ipy_jupyter",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/filesystem",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/elasticsearch",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/apt",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/aprinto",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/git",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/.z_pre_OMZ",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/cloudapp/cloudapp.plugin.zsh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/coffee/coffee.plugin.zsh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/dotenv/dotenv.plugin.zsh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/scd/scd",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/wd/wd.plugin.zsh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/plugins/wd/wd.sh",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/tools/theme_chooser.sh",
+		"/Volumes/ub2/home/ub2/.scripts/toolbox/gn",
+		"/Volumes/ub2/home/ub2/.scripts/toolbox/mdscan_manage",
+		"/Volumes/ub2/home/ub2/.scripts/toolbox/remote_bcomp",
+		"/Volumes/ub2/home/ub2/.scripts/toolbox/tika_meta",
+		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/emacs",
+		"/tmp/subl stdin pNi1SX.txt",
+		"/Users/admin/.openvpn/wrt6_vpn.conf",
 		"/Users/admin/SERVER3/dns/dnsmasq/manage",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/dnsmasq",
 		"/Users/admin/SERVER3/dns/dnsmasq/static_dns-cogswell_vpn_4.conf",
 		"/Users/admin/SERVER3/dns/dnsmasq/static_dns-cogswell_vpn.conf",
 		"/Users/admin/tmp",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/_base",
 		"/Volumes/admin/Volumes/gnr/data/data/com.termux/files/home/android",
 		"/Volumes/admin/Volumes/gnr/data/data/com.termux/files/home",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/networking",
 		"/Users/admin/.openvpn/mbp2.ovpn",
 		"/Volumes/admin/Users/admin/SERVER3/dns/manage",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/bash/_base",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/bindings/tmux",
 		"/Users/admin/init.el",
 		"/Users/admin/.emacs.d/init.el",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/2_functions_aliases",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/1_osx_vars",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/_env",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/3_vars",
 		"/Volumes/ub2/home/ub2/.scripts/toolbox/emacs",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/.z_OMZ",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/OMZ/oh-my-zsh.sh",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/_local",
 		"/Volumes/ub2/home/ub2/SERVER2/nginx/config.sh",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/ipy_jupyter",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/2_functions_aliases",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/syslog_rsyslog",
 		"/Volumes/ub2/.tmux/.tmux.conf",
 		"/Users/admin/SERVER3/local_config/.irssi/config",
 		"/Users/admin/.ssh/config",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/2_colors",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/pgsql",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/android/1_general_functions_aliases",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/android",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/autojump",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/syslog",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/systemd",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/iptables",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/git",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/mitmproxy",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/apt",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/__syslog_rsyslog_more_zsh_functions",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/shell/bash/_env",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/syslog_rsyslog_more_zsh_functions",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/nginx",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/file_server",
 		"/Volumes/ub2/home/ub2/.scripts/system_settings.py",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/osx_settings",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/2_iterm2",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/postfix",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/shared/services/aws",
 		"/Users/admin/GIT_REPOS/cups-pdf-for-mac-os-x/cups-pdf/src/cups-pdf.c",
 		"/Volumes/ub2/home/ub2/u_tmp",
 		"/Users/admin/SERVER3/local_config/shell/iterm2/DynamicProfiles/ub1",
 		"/Volumes/ub2/home/ub2/SERVER2/local_config/shell/.shell_local",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/1_linux_vars",
 		"/Users/admin/SERVER3/local_config/shell/iterm2/DynamicProfiles/ub2",
 		"/Users/admin/SERVER3/local_config/shell/iterm2/CurrentProfiles/ub2",
 		"/Users/admin/.scripts/.gitmodules",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/aprinto",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/rabbitmq",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/serv",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/supervisor",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/elasticsearch",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/kibana",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/linux/services/realms",
-		"/Volumes/ub2/home/ub2/.scripts/shell_env/osx/services/macports",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/_script",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/zsh/.z_OMZ",
 		"/Volumes/ub2/home/ub2/.scripts/shell_env/zsh/_base",
@@ -372,27 +428,7 @@
 		"/Users/admin/SERVER3/local_config/.profile",
 		"/Users/admin/crontab",
 		"/Volumes/ub2/home/ub2/.scripts/bash_env/_linux_vars",
-		"/Volumes/ub2/home/ub2/.scripts/bash_env/_shared_vars",
-		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/install_fresh",
-		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter-notebook.service",
-		"/Volumes/ub2/home/ub2/.scripts/bash_env/_base",
-		"/Volumes/ub2/home/ub2/BUILD/install_SERVER.bash",
-		"/Volumes/ub2/home/ub2/BUILD/install_ipy.sh",
-		"/Volumes/ub2/home/ub2/.scripts/bash_env/_bash",
-		"/Volumes/ub2/home/ub2/.scripts/bash_env/_completers/pip-completion.bash",
-		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter/jupyter/notebook/static/index.js",
-		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter/config/jupyter_notebook_config.py",
-		"/Volumes/ub2/home/ub2/SERVER2/ipy_jupyter/jupyter/config/jupyter_nbconvert_config.py",
-		"/Volumes/ub2/etc/init/realms-wiki.conf",
-		"/Volumes/ub2/home/ub2/SERVER2/nginx/nginx.service",
-		"/Volumes/ub2/home/ub2/SERVER2/realms-wiki/realms-wiki.service",
-		"/Users/admin/.scripts/bash_env/_colors",
-		"/Users/admin/.scripts/bash_env/_bash",
-		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/Gemfile",
-		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/.git/modules/sethc23.github.io.wiki/config",
-		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/.git/modules/_wiki/t",
-		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/py_scripts/wiki_data_file_generator.py",
-		"/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/wiki/index.html"
+		"/Volumes/ub2/home/ub2/.scripts/bash_env/_shared_vars"
 	],
 	"find":
 	{
@@ -421,9 +457,18 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"readlink -f",
+			"readlink",
+			"IS_MANAGED_LINUX",
+			"MANAGED_LINUX_IDS",
+			"export PATH",
+			"sourcin",
+			"start",
+			"#!/bin/zsh",
+			"ec2-api",
 			"$OVPN_HOME",
 			"/Users/admin/",
 			"/Users/admin/.openvpn",
@@ -542,16 +587,7 @@
 			" (aria-label=\"Anchor link for: ).*?(\" data-anchorjs-icon=\"\" style=\"font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;\")",
 			" class=\"anchorjs-link \" href=\"#Android_Android.md\" aria-label=\"Anchor link for: Android_Android.md\" data-anchorjs-icon=\"\" style=\"font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; position: absolute; margin-left: -1em; padding-right: 0.5em;\"",
 			"(?s)<div class=\"ref-content_md\">.*?</div>",
-			"^[[:space:]]?\\n",
-			"^[\\s]+$",
-			"translations",
-			"create_markdown_from_path",
-			"[]\n",
-			"iterm",
-			"bh.comp",
-			"git submodule status",
-			"from_page",
-			"self._widget"
+			"^[[:space:]]?\\n"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -559,6 +595,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"realfullpath",
+			"#!env zsh",
 			"/tmp/root/.openvpn",
 			"/tmp/root/",
 			"$OVPN_HOME",
@@ -649,16 +687,112 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/tmp/subl stdin pNi1SX.txt",
+					"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/shared/2_iterm2",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 1223,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								777,
+								777
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_3p7o5q",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_5wqxp4",
+							"git_gutter_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/shell/zsh/.z_OMZ",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1889,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1846,
+								1846
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_ao_qz3",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_7h379a",
+							"git_gutter_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/_local",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5777,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2526,
+								2526
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_543v5s",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_nyr3f9",
+							"git_gutter_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 843.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Volumes/ub2/home/ub2/.scripts/shell_env/android/1_general_functions_aliases",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 356,
 						"regions":
 						{
 						},
@@ -671,7 +805,11 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_0sqvke",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations__ane6c",
+							"git_gutter_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,

@@ -35,8 +35,8 @@ ITERM2=
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-[[ -n "$DEBUG_SHELL" ]]                 \
-    && echo "_local_START - $(realfullpath $0)"
+[[ -n $DEBUG_SHELL ]]                 \
+    && echo "_local_START - $(realfullpath "$0")"
 
 source_sub_dir() {
     for d in $(env find $1/ -mindepth 1 -maxdepth 2 -type d | sort); do

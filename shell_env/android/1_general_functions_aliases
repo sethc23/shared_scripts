@@ -1,10 +1,151 @@
-#!/data/data/com.termux/files/usr/bin/zsh
+#!env zsh
+################################
+#
+#   CLEAN INITIAL ENVIRONMENT
+#
+################################
+export PATH=$(python -c "b,a=[],\"$PATH\"; c=[b.append(it) for it in a.split(\":\") if not b.count(it)];print(\":\".join(b))")
+unalias_cmds=(ps grep cmd)
+for i in "${unalias_cmds[@]}"
+do
+    [[ -n "$(type $i|grep alias)" ]] && unalias $i
+done
+################################
+#
+#   SHELL VARIABLES & ENV
+#
+################################
+export DROID=/Users/admin/GIT_REPOS/Devices/Android/NEXUS-6P/droid
+export MEDIA=/system/media
+if [[ -n "$ZSH_VERSION" ]]; then
+    p_color="green"
+    [[ "$USER" = "root" ]] && p_color="white"
+    export PROMPT=$(printf '%s\n%s' "%{$fg_bold[$p_color]%}"$USER"@%m%{$fg[blue]%}%D{[%X]}%{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%}$(git_prompt_info)%{$fg[blue]%}" "->%{$fg_bold[blue]%}%#%{$reset_color%} ")
+elif [[ -n "$BASH_VERSION" ]]; then
+    export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    [[ (-n "$(which lsb_release)") && ("$(lsb_release -i -s)" = "Kali") ]] && \
+        export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+fi
+#					# if [[ "$(whoami)" = "root" ]]; then
+#					     		    #     ssh_opts='-o "KexAlgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1" -F ~/.ssh/config_root'
+#							    	  	       		      							      #     alias ssh="ssh $ssh_opts"
+#																						#     alias scp="scp $ssh_opts"
+#																									# fi
+################################
+#
+#   GENERAL SHELL FUNCTIONS AND ALIASES
+#
+################################
+edit(){ F=$(python -c "import os;print(os.path.abspath('$1'));"); su-juice "am start -a android.intent.action.VIEW -d file://$F -t text/plain" > /dev/null 2&>1; }
+alias emacs='resize > /dev/null; emacs'
+alias grep='grep -i'
+#alias kc="chroot $K /bin/bash -ic 'source /root/.bashenv; exec bash'"
+alias kc="chroot_upon /data/local/kali m"  # /usr/bin/env -i /bin/bash"
+last-ui() { TMP=$(env ls -1tr $HOME/|env grep 'UI'|tail -n 1); [ -z "$TMP" ] && echo "no UI in $HOME"; [ -n "$TMP" ] && cat $TMP && [ "$1" = "del" ] && rm $TMP; }
+last-an() { TMP=$(env ls -1tr $HOME/|env grep 'AN'|tail -n 1); [ -z "$TMP" ] && echo "no AN in $HOME"; [ -n "$TMP" ] && cat $TMP && [ "$1" = "del" ] && rm $TMP; }
+ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
+ls-mounted() { ls-mounts|tail -n +2|sed -r 's/(\s\s)+/ /g'|sed 's/  / /g'|cut -d ' ' -f2; }
+alias m-list-blocks="df -h|grep '/dev/block'|sed -r 's/[ ]+/|/g'|cut -d '|' -f1,6|sed 's/|/ /'"
+alias su-root="su --preserve-environment -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
+alias su-user="su --login u0_a97 -c \"export HOME=$HOME; source ~/.bashrc; exec /data/data/com.termux/files/usr/bin/zsh\""
+su-juice() { \
+    [[ -z "$1" ]] && env -i /data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash -c "$(
+cat <<'EOF'
+export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin
+for i in $(cat /data/data/com.termux/files/envs/juice_env|grep -v LD_LIBRARY_PATH); do export $i; done
+export ANDROID_DATA=/data
+export HOME=/data/data/com.termux/files/home
+export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;33m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] "
+exec bash -l
+EOF
+    )";
+    [[ -n "$1" ]] && env -i /data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash -c "\
+       export ANDROID_ASSETS=/system/app;
+       export ANDROID_BOOTLOGO=1;
+       export ANDROID_DATA=/data;
+       export ANDROID_ROOT=/system;
+       export ANDROID_SOCKET_zygote_secondary=9;
+       export ANDROID_STORAGE=/storage;
+       export ANDROID_VERSION=N;
+       export ASEC_MOUNTPOINT=/mnt/asec;
+       export BOOTCLASSPATH=/system/framework/core-oj.jar:/system/framework/core-libart.jar:/system/framework/conscrypt.jar:/system/framework/okhttp.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/apache-xml.jar:/system/framework/org.apache.http.legacy.boot.jar;
+       export EXTERNAL_STORAGE=/sdcard;
+       export HOME=/data/data/com.termux/files/home;
+       export JUICESSH_BIN_DIR=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie;
+       export JUICESSH_VERSION=2.1.2;
+       export PATH=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie:/su/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/su/xbin:/system/xbin;
+       export SHELL=/data/user/0/com.sonelli.juicessh/files/bin/arm/pie/bash;
+       export SYSTEMSERVERCLASSPATH=/system/framework/services.jar:/system/framework/ethernet-service.jar:/system/framework/wifi-service.jar;
+       export TERM=linux;
+       bash -lc \"$1\";
+       ";
+}
+alias updatedb='updatedb --database-root /data/data/com.termux'
 
-export HOME_ENV=$HOME
-export TERM="xterm-color"
 
-alias wifi-cmd='wpa_cli -p /data/misc/wifi/sockets/ -i wlan0'
-wifi_net_bssid(){ wifi-cmd bssid $1 $2; }
-alias wifi-cmd-help='echo "\
-    wifi-cmd [blacklist,bss,disassociate,disconnect,dump,\
-    list_networks,reassociate,status,scan,scan_results,select_network]"'
+################################
+#
+#   ANDROID SYSTEM COMMANDS
+#
+################################
+am() { R=$(echo "'$@'"); su-juice "am $R"; }
+alias clip-g='su-juice "/data/data/com.termux/files/usr/libexec/termux-api Clipboard"'
+clip-s(){ su-juice "echo $@|/data/data/com.termux/files/usr/libexec/termux-api Clipboard -e api_version 2 --ez set true"; }
+# alias cmd='env -i /system/bin/cmd'
+dumpsys() { R=$(echo "'$@'"); su-juice "dumpsys $R"; }
+#        # input(){ \
+#        #     [[ "$1" = "text" ]] && bash -c "unset LD_LIBRARY_PATH; input text \"$2\";";
+#        #     [[ ! "$1" = "text" ]] && bash -c "unset LD_LIBRARY_PATH; input $1 \"$2\";";
+#        #     }
+input() { R=$(echo "'$@'"); su-juice "input $R"; }
+alias loc-get='su-juice "/data/data/com.termux/files/usr/libexec/termux-api Location"'
+pm(){ X="$(echo $(echo $@|sed 's/\n/ /g'))"; su-juice "pm $X"; }
+#alias pm='env -i /system/bin/cmd package'
+alias pm-list='pm list packages|sed "s/package://"'
+pm-name() { pm list packages|grep -i $1|sed 's/^package://'|sort; }
+pm-path() { pm list packages -f |grep -i $1|sed 's/^package://'|sed 's/=.*//'|sort; }
+pm-pkg() { pm list packages|sed 's/package://'|env grep -i $1; }
+pm-activities() { pm-path $(pm-pkg $1)|xargs -I '{}' aapt l -a {}|env grep -i activi|env grep -v 'E: activity ('; }
+pm-activities-launchable() { \
+    for i in $(pm list packages -f |grep -i $1|sed 's/^package://'|sed 's/=.*//'|sort); do
+        echo "PACKAGE: $i"
+        for k in $(aapt dump badging $i|grep 'launchable-activity'|sed "s/launchable-activity: name='//"|sed "s/'.*//"|sort); do
+            echo '\t'$k
+        done
+    done; }
+pm-start() { su-juice "am start -n $1/$2";}
+
+
+################################
+#
+#   ANDROID SYSTEM INFORMATION
+#
+################################
+alias c-permissions-all="cmd package list permissions|sort|sed -r 's/([\.a-z])*:([a-z.]*)/\1/g'|sed 's/^n//'|sort|uniq"
+alias g-display='su-juice "dumpsys window|grep -A 1 Display|grep -B 1 init"'
+
+
+################################
+#
+#   ANDROID SYSTEM SETTINGS
+#
+################################
+localize_ssh(){ \
+    for i in ssh_config sshd_config; do
+        rm /data/data/com.termux/files/usr/etc/ssh/$i
+    ln -nfs /data/data/com.termux/files/home/android/config/etc/ssh/$i /data/data/com.termux/files/usr/etc/ssh/
+    done; }
+    
+########
+#  MERGING REMAINDER
+########
+#export HOME_ENV=$HOME
+#export TERM="xterm-color"
+
+#alias wifi-cmd='wpa_cli -p /data/misc/wifi/sockets/ -i wlan0'
+#wifi_net_bssid(){ wifi-cmd bssid $1 $2; }
+#alias wifi-cmd-help='echo "\
+#    wifi-cmd [blacklist,bss,disassociate,disconnect,dump,\
+#    list_networks,reassociate,status,scan,scan_results,select_network]"'
+
+

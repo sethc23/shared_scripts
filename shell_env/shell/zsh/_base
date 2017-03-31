@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_1 - $(realfullpath $0)"
+[[ -n $DEBUG_SHELL ]] && echo "zsh/_base_1 - $(realfullpath "$0")"
 
 PROFILE_STARTUP=false
 if [[ "$PROFILE_STARTUP" == true ]]; then
@@ -47,7 +47,7 @@ setopt LIST_PACKED              # use different column lengths to occupy less li
 setopt LOGIN                    # (I/NI) establish login shell
 setopt LONG_LIST_JOBS           # list jobs in the long format by default
 setopt MARK_DIRS                # append a trailing `/' to all directory names resulting from globbing
-#Esetopt MONITOR                  # (I/NI) allow job control --> causes syslog: "can't change option.."
+#setopt MONITOR                  # (I/NI) allow job control --> causes syslog: "can't change option.."
 setopt NOTIFY                   # report the status of background jobs immediately
 setopt PATH_DIRS                # if `/usr/local/bin' is in the user's path, and he or she types `X11/xinit', the command `/usr/local/bin/X11/xinit' will be executed
 # setopt PRINT_EXIT_VALUE         # print the exit value of programs with non-zero exit status
