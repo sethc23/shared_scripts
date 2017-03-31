@@ -133,7 +133,8 @@ elif [[ -n $(echo $OS_NAME|grep Linux) ]]; then
         _distributor="$(lsb_release -is|sed 's/[^a-z]/_/ig')"
         _release="$(lsb_release -rs|sed 's/[^a-z0-9.]/_/ig')"
         _os_build="$_distributor--$_release"
-        MACHINE_DISPLAY_NAME="$_distributor-$MACHINE_DISPLAY_NAME"
+        [[ -n $MACHINE_DISPLAY_NAME ]] \
+            && MACHINE_DISPLAY_NAME="$_distributor-$MACHINE_DISPLAY_NAME"
     fi
 
 elif [[ -n $(echo $OS_NAME|grep CYGWIN) ]]; then

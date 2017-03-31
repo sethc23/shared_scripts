@@ -1,13 +1,32 @@
 #!env zsh
 
+if [[ -n $SSH_CONNECTION ]]; then
+    CLIENT_IP=$(                    \
+        echo "$SSH_CONNECTION"      \
+        | cut -d ' ' -f1            \
+        )
+    SERVER_IP=$(                    \
+        echo "$SSH_CONNECTION"      \
+        | cut -d ' ' -f2            \
+        | cut -d ' ' -f3            \
+        )
+    SERVER_PORT=$(                  \
+        echo "$SSH_CONNECTION"      \
+        | cut -d ' ' -f3            \
+        )
+else
+fi
 
-if [[ $CLIENT_HOST = "SERVER3" ]] || [[ $ITERM_SHELL = true ]]; then
+if [[   ($CLIENT_HOST = SERVER3)
+    ||  ($CLIENT_IP = 10.0.0.53)
+    ||  ($MACHINE_IP_INT = 10.0.0.53)
+    ||  ($ITERM_SHELL = true)
+    ]]; then
 
     [[ -n "$DEBUG_SHELL" ]] && echo "\n\tshared/2_iterm2 - sourcing\n"
 
     [[ -n "$BASH_VERSION" ]] && test -e "${HOME_ENV}/.iterm2_shell_integration.bash" && source "${HOME_ENV}/.iterm2_shell_integration.bash"
     [[ -n "$ZSH_VERSION" ]] && [[ -f "${HOME_ENV}/.iterm2_shell_integration.zsh" ]] && source "${HOME_ENV}/.iterm2_shell_integration.zsh"
-
 
     iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
     export iterm2_hostname="$USER"
@@ -21,7 +40,7 @@ if [[ $CLIENT_HOST = "SERVER3" ]] || [[ $ITERM_SHELL = true ]]; then
             || _host="$USER"
         iterm2_set_user_var iterm2_host $_host;
 
-        iterm2_set_user_var iterm2_addr $(get-my-ip-int);
+        iterm2_set_user_var iterm2_addr $MACHINE_IP_INT;
 
     }
     alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
