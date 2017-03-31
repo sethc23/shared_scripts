@@ -1,5 +1,5 @@
 #!env zsh
-DEBUG_SHELL=true
+
 [[ -n $DEBUG_SHELL ]] && echo "START-shell_env_base"
 
 if [[ -n $HOME_ENV ]]; then
