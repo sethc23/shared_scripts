@@ -1,10 +1,10 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_env_START - $(readlink -f $0)"
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_env_START - $(realfullpath $0)"
 
 [[ -f /opt/local/libexec/gnubin/readlink ]] \
-    && THIS_DIR=$(/opt/local/libexec/gnubin/readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
-    || THIS_DIR=$(readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
+    && THIS_DIR=$(/opt/local/libexec/gnubin/realfullpath $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
+    || THIS_DIR=$(realfullpath $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
 source $THIS_DIR/.z_pre_OMZ
 
 export ZSH=$THIS_DIR/OMZ
@@ -29,7 +29,7 @@ HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy
 #plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
 
 [[ -z $ZSH_PLUGINS ]] && export ZSH_PLUGINS=(zsh-completions autojump last-working-dir git python systemd)
-[[ -n $IS_MANAGED_OSX ]] && ZSH_PLUGINS+=(osx)
+[[ $(uname -o) = Darwin ]] && ZSH_PLUGINS+=(osx)
 plugins=$ZSH_PLUGINS
 
 export ZSH_THEME="candy"

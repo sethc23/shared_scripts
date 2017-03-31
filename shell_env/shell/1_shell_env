@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell/1_shell_env_START - $(readlink -f $0)"
+[[ -n "$DEBUG_SHELL" ]] && echo "shell/1_shell_env_START - $(realfullpath $0)"
 
 tabs -4
 #export TERM=screen-256color

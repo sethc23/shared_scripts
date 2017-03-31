@@ -6,7 +6,7 @@ aporo_ib() {               aporo; ipython; }
 ib_konnect() {             sudo $IPY/ENV/bin/ipython console --existing \
     $HOME/.ipython/profile_default/security/kernel-$1.json; kill $1;
     }
-path_of_pid_f() { readlink -f /proc/$1/exe; }
+path_of_pid_f() { realfullpath /proc/$1/exe; }
 newalias_linux() {         echo "alias "$1 >> $HOME/.alias_linux; source_bash; push_linux_aliases; }
 
 # f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }

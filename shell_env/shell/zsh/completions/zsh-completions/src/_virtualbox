@@ -94,7 +94,7 @@ _vboxmediums() {
 	_files -g '*.{iso,vmdk,vdi}'
 
 	for CD in /dev/cd/*; do
-		readlink -f $CD
+		realfullpath $CD
 	done | uniq | while read CD; do
 		_wanted "host drives" expl "host drives" compadd -- "host:$CD"
 	done

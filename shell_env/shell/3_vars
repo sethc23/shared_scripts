@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_START - $(readlink -f $0)"
+[[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_START - $(realfullpath $0)"
 
 [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
 [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
