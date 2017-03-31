@@ -1,18 +1,18 @@
 #!env zsh
+DEBUG_SHELL=true
+[[ -n $DEBUG_SHELL ]] && echo "START-shell_env_base"
 
-[[ -n "$DEBUG_SHELL" ]] && echo "START-shell_env_base"
-
-if [[ -n "$HOME_ENV" ]]; then
+if [[ -n $HOME_ENV ]]; then
     BASE_DIR="$HOME_ENV/.scripts/shell_env"
 else
 
-    [[ -n "$SUDO_USER" ]] && export DISABLE_AUTO_UPDATE=true && export HOME_ENV="$(eval echo ~$SUDO_USER)"
+    [[ -n $SUDO_USER ]] && export DISABLE_AUTO_UPDATE=true && export HOME_ENV="$(eval echo ~$SUDO_USER)"
     [[ -z "$SUDO_USER" ]] && export HOME_ENV="$(eval echo ~$USER)"
 
-    if [[ -n "$HOME_ENV" ]]; then
+    if [[ -n $HOME_ENV ]]; then
         BASE_DIR="$HOME_ENV/.scripts/shell_env"
     else
-        if [[ -n "$BASH_VERSION" ]]; then
+        if [[ -n $BASH_VERSION ]]; then
             SOURCE="${BASH_SOURCE[0]}"
             while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
                 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -21,10 +21,11 @@ else
             done
             BASE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
         fi
-        [[ -n "$ZSH_VERSION" ]] && BASE_DIR=${0:a:h}
+        [[ -n $ZSH_VERSION ]] && BASE_DIR=${0:a:h}
     fi
     [[ -z "$HOME_ENV" ]] && export HOME_ENV="$(eval echo ~$USER)"
-    if [[ "${HOME_ENV:0:1}" != "/" ]]; then
+
+    if [[ ! "$( echo "${HOME_ENV:0:1}" )" = "/" ]]; then
         echo "Possible issue w/ HOME_ENV @  _base:28 "
         HOME_ENV=$HOME
     fi
@@ -33,24 +34,24 @@ fi
 
 BASE_DIR_base=$BASE_DIR
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"2
+[[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"2
 
-if [[ -n "$BASH_VERSION" ]]; then
+if [[ -n $BASH_VERSION ]]; then
     source $BASE_DIR_base/shell/bash/_base
-    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3b1
+    [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"3b1
     test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
-    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3b2
-elif [[ -n "$ZSH_VERSION" ]]; then
+    [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"3b2
+elif [[ -n $ZSH_VERSION ]]; then
     source $BASE_DIR_base/shell/zsh/_base
-    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3z1
+    [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"3z1
     source $BASE_DIR_base/bindings/zsh
-    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3z2
+    [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"3z2
     test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-    [[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"3z3
+    [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"3z3
 fi
 
-[[ -n "$TMUX" ]] && source $BASE_DIR_base/bindings/tmux
-[[ -n "$DEBUG_SHELL" ]] && echo "shell_env_base_"4
+[[ -n $TMUX ]] && source $BASE_DIR_base/bindings/tmux
+[[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"4
 
 
-[[ -n "$DEBUG_SHELL" ]] && echo "END-shell_env_base"
+[[ -n $DEBUG_SHELL ]] && echo "END-shell_env_base"

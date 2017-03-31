@@ -15,7 +15,7 @@ ap-clean() { \
     }
 ap-debug_install() { ap-install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
 ap-remove-broken() {
-    [[ -n "$(sudo -n true 2>&1)" ]] && sudo --validate
+    [[ -n "(sudo -n true 2>&1)" ]] && sudo --validate
     printf "\n\tLIST 1 of 2:\n\n"
     sudo dpkg -l | grep "^iU"
     printf "\n\tLIST 2 of 2:\n\n"
@@ -28,7 +28,7 @@ ap-remove-broken() {
     }
 
 ap-remove-residual() {
-    [[ -n "$(sudo -n true 2>&1)" ]] && sudo --validate
+    [[ -n "(sudo -n true 2>&1)" ]] && sudo --validate
     printf "\n\tLIST 1 of 1:\n\n"
     sudo dpkg -l | grep "^rc"
     printf "\n\n\tContinue with removing residual packages? [y/n]\t"

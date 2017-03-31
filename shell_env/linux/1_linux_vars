@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "linux/linux_vars"
+[[ -n $DEBUG_SHELL ]] && echo "linux/linux_vars"
 
 export ROOT_GRP=root
 export SSHFS=/usr/bin/sshfs

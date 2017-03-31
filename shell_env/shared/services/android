@@ -41,7 +41,7 @@ gn-backup() { \
     echo 'OK';
     }
 gn-ssh-remote() { \
-    if [[ -n "$(adb devices|grep 5VT5T16219000835)" ]]; then
+    if [[ -n "(adb devices|grep 5VT5T16219000835)" ]]; then
         adb shell
     else
         assign () { eval "$1=\$(cat; echo .); $1=\${$1%.}"; };

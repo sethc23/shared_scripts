@@ -152,7 +152,7 @@ check_if_managed $MAC_ADDRESSES
 
 if [[ -n $ZSH_VERSION ]]; then
 
-    [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
+    [[ -n $DEBUG_SHELL ]] && echo "_local_z_1"
     source $HOME_ENV/.scripts/shell_env/shell/zsh/_env
     #[[ -n $ITERM2 ]] && \
     #   bindkey '\e[A' history-substring-search-up && \
@@ -160,7 +160,7 @@ if [[ -n $ZSH_VERSION ]]; then
 
     for i in $(env find $HOME_ENV/.scripts/shell_env/shell/zsh/completers -maxdepth 1 -type f); do source $i; done
 
-# elif [[ -n "$BASH_VERSION" ]]; then
+# elif [[ -n $BASH_VERSION ]]; then
 
 fi
 
@@ -213,4 +213,4 @@ if [[ "$PROFILE_STARTUP" == true ]]; then
 fi
 #[[ $START_TMUX = true ]] && tmux attach -t base || tmux new -s base
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_END"
+[[ -n $DEBUG_SHELL ]] && echo "_local_END"

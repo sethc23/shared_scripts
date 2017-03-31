@@ -23,10 +23,10 @@ if [[   ($CLIENT_HOST = SERVER3)
     ||  ($ITERM_SHELL = true)
     ]]; then
 
-    [[ -n "$DEBUG_SHELL" ]] && echo "\n\tshared/2_iterm2 - sourcing\n"
+    [[ -n $DEBUG_SHELL ]] && echo "\n\tshared/2_iterm2 - sourcing\n"
 
-    [[ -n "$BASH_VERSION" ]] && test -e "${HOME_ENV}/.iterm2_shell_integration.bash" && source "${HOME_ENV}/.iterm2_shell_integration.bash"
-    [[ -n "$ZSH_VERSION" ]] && [[ -f "${HOME_ENV}/.iterm2_shell_integration.zsh" ]] && source "${HOME_ENV}/.iterm2_shell_integration.zsh"
+    [[ -n $BASH_VERSION ]] && test -e "${HOME_ENV}/.iterm2_shell_integration.bash" && source "${HOME_ENV}/.iterm2_shell_integration.bash"
+    [[ -n $ZSH_VERSION ]] && [[ -f "${HOME_ENV}/.iterm2_shell_integration.zsh" ]] && source "${HOME_ENV}/.iterm2_shell_integration.zsh"
 
     iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
     export iterm2_hostname="$USER"
@@ -46,7 +46,7 @@ if [[   ($CLIENT_HOST = SERVER3)
     alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
 
 else
-    [[ -n "$DEBUG_SHELL" ]] && echo "\n\tshared/2_iterm2 - NOT sourcing\n"
+    [[ -n $DEBUG_SHELL ]] && echo "\n\tshared/2_iterm2 - NOT sourcing\n"
     return
 fi
 

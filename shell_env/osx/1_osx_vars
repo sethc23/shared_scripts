@@ -50,7 +50,7 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/local/lib:/usr/lib64/openmpi/lib/
 [[ -z "$(echo $PATH|grep term|grep cmd)" ]] \
     && export PATH=/Users/admin/.emacs.d/term-cmd:$PATH
 
-if [[ -n "$BASH_VERSION" ]]; then
+if [[ -n $BASH_VERSION ]]; then
     if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
         source /opt/local/etc/profile.d/bash_completion.sh
     fi

@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell/1_shell_env_START - $(realfullpath $0)"
+[[ -n $DEBUG_SHELL ]] && echo "shell/1_shell_env_START - $(realfullpath $0)"
 
 tabs -4
 #export TERM=screen-256color
@@ -24,7 +24,7 @@ export LESS='-R'
 export LESSOPEN="$HOME_ENV/.lessfilter"
 export S_PATH="$HOME_ENV/.config/me"
 
-if [[ -n "$BASH_VERSION" ]]; then
+if [[ -n $BASH_VERSION ]]; then
 
    shopt -s histappend
 
@@ -63,5 +63,5 @@ fi
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell/1_shell_env_END"
+[[ -n $DEBUG_SHELL ]] && echo "shell/1_shell_env_END"
 

@@ -1,13 +1,14 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_START - $(realfullpath $0)"
+[[ -n $DEBUG_SHELL ]] && echo "shell/3_vars_START - $(realfullpath $0)"
 
-if [[
-        (! $OS_NAME = Android)      \
-    &&  (! $OS_NAME = Cygwin)       \
+if [[                                                       \
+        (! $OS_NAME = Android)                              \
+    &&  (! $OS_NAME = Cygwin)                               \
     ]]; then
-    [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
-    [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
+    [[ -n $SUDO_USER ]]                                     \
+        && export HOME_ENV=$(eval echo ~$SUDO_USER)         \
+        || export HOME_ENV=$(eval echo ~$USER)
 fi
 
 export SERVER="$(hostname | sed -r 's/\.local$//')"
@@ -54,11 +55,14 @@ for n in 1 2 4 5; do
         eval $y
     fi
 done
-if [[ $SERVER_ID != 3 ]]; then
+if [[ "$SERVER_ID" != "3" ]]; then
     export SHARE3=/Volumes/admin/Users/admin
     export SHARE3_SERVER=SERVER3
 fi
 
-[[ -n "$(which luarocks 2>&1 | grep -v 'not found' | grep -v 'no luarocks')" ]] && eval $(luarocks path --bin)
+if [[ -n $(which luarocks|grep -v 'not found') ]]; then
+    [[ -n "(which luarocks 2>&1 | grep -v 'not found' | grep -v 'no luarocks')" ]]  \
+        && eval $(luarocks path --bin)
+fi
 
-[[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_END"
+[[ -n $DEBUG_SHELL ]] && echo "shell/3_vars_END"

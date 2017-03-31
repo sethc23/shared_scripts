@@ -1,6 +1,6 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_shared_"
+[[ -n $DEBUG_SHELL ]] && echo "_shared_"
 
 assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 build_script_env() {
@@ -125,8 +125,8 @@ retar() { tar -zcvf $1 $2; }
 sencha-build() { cd $APORO/static/sencha; sudo sencha app build production; }
 shell_opts() {
     if [[ "$1" = "show" ]]; then
-        [[ -n "$BASH_VERSION" ]] && shopt -p
-        [[ -n "$ZSH_VERSION" ]] && setopt
+        [[ -n $BASH_VERSION ]] && shopt -p
+        [[ -n $ZSH_VERSION ]] && setopt
     fi
     }
 source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }

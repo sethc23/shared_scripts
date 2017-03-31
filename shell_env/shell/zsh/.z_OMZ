@@ -6,11 +6,10 @@
 #     && THIS_DIR=$(/opt/local/libexec/gnubin/readlink $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
 #     || THIS_DIR=$(realfullpath "$0"|sed -r 's/^(.*)\/([^/]+)$/\1/')
 
-THIS_FPATH="${a:h}"
+THIS_FPATH=$0:A
 THIS_DIR=$(dirname $THIS_FPATH)
-THIS_DIR=$(readlink -f $THIS_DIR)
 
-export ZSH=$THIS_DIR/OMZ
+export ZSH="$THIS_DIR/OMZ"
 source $THIS_DIR/.z_pre_OMZ
 
 

@@ -61,17 +61,17 @@ setopt SHWORDSPLIT
 
 
 # source $HOME_ENV/.profile
-# [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"2$CLIENT_HOST
+# [[ -n $DEBUG_SHELL ]] && echo "zsh/_base_"2$CLIENT_HOST
 
 # source $HOME_ENV/.scripts/shell_env/_base
-# [[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_"3$CLIENT_HOST
+# [[ -n $DEBUG_SHELL ]] && echo "zsh/_base_"3$CLIENT_HOST
 
 case $- in
     *i*) ;;             # NOT interactive
       *) return;;       # interactive
 esac
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_2"
+[[ -n $DEBUG_SHELL ]] && echo "zsh/_base_2"
 source $HOME_ENV/.scripts/shell_env/_local
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_base_END"
+[[ -n $DEBUG_SHELL ]] && echo "zsh/_base_END"
