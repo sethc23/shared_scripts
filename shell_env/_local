@@ -13,16 +13,16 @@ ms1=(00-FF-B6-74-19-D5)
 gnr=(DC:09:4C:15:C1:63)
 ngn=(A4:71:74:F0:2A:0F)
 
-MANAGED_ANDROID_IDS=($gnr $ngn)
-MANAGED_LINUX_IDS=($ub1 $ub2)
-MANAGED_OSX_IDS=($admin)
-MANAGED_WINDOWS_IDS=($ms1)
+MANAGED_ANDROID_MACS=($gnr $ngn)
+MANAGED_LINUX_MACS=($ub1 $ub2)
+MANAGED_OSX_MACS=($admin)
+MANAGED_WINDOWS_MACS=($ms1)
 
-MANAGED_IDS=(               \
-    $MANAGED_ANDROID_IDS    \
-    $MANAGED_LINUX_IDS      \
-    $MANAGED_OSX_IDS        \
-    $MANAGED_WINDOWS_IDS    \
+MANAGED_MACS=(               \
+    $MANAGED_ANDROID_MACS    \
+    $MANAGED_LINUX_MACS      \
+    $MANAGED_OSX_MACS        \
+    $MANAGED_WINDOWS_MACS    \
     )
 
 # Boolean for iTerm2
@@ -53,7 +53,6 @@ source_files_and_sub_dirs() {
     source_sub_dir "$1"
     }
 
-
 path-uniq(){
     python -c "$(
 cat <<EOF
@@ -82,18 +81,16 @@ EOF
     )"
     }
 
+
+
 check_if_managed(){
-    IS_MANAGED_OSX=
-    IS_MANAGED_LINUX=
-    END_LOOP=
+    MACHINE_MAC=
+    IS_MANAGED=
     for i in $MAC_ADDRESSES; do
         for j in $1; do
             if [[ $i = $j ]]; then
-                MACHINE_ID=$i
+                MACHINE_MAC=$i
                 IS_MANAGED=true
-                # [[ $OS_NAME = Darwin ]] && IS_MANAGED_OSX=true
-                # [[ $OS_NAME = Linux ]]  && IS_MANAGED_LINUX=true
-                END_LOOP=true
                 break
             fi
         done
@@ -102,25 +99,27 @@ check_if_managed(){
 
 export PATH="$(path-regex-rm virtualenv)"
 
-OS_NAME=$(uname -o)
 MAC_ADDRESSES=()
-MACHINE_ID=
-MACHINE_LABEL_NAME=
-MACHINE_LABEL_ADDR=
+MACHINE_DISPLAY_NAME=
+OS_NAME=$(uname -o)
 
 if [[ -n $(cat /proc/cmdline 2>/dev/null | grep android) ]]; then
     _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
     _android_serial=$(echo "$android_info" | grep serialno | cut -d '=' -f2)
     [[ $_android_serial = 5VT5T16219000835 ]]               \
-        && MACHINE_LABEL_NAME=5T21
+        && MACHINE_DISPLAY_NAME=5T21
     [[ $_android_serial = 5VT7N16909000324 ]]               \
-        && MACHINE_LABEL_NAME=7N90
+        && MACHINE_DISPLAY_NAME=7N90
+    _android_wifi_mac=$(echo "$android_info" | grep wifimacaddr | cut -d '=' -f2)
+    _android_bt_mac=$(echo "$android_info" | grep btmacaddr | cut -d '=' -f2)
 fi
 
 
 if [[ $(uname -o) = Android ]]; then
     MAC_ADDRESSES+=( $(echo "$android_info" | grep wifimacaddr | cut -d '=' -f2) )
     MAC_ADDRESSES+=( $(echo "$android_info" | grep btmacaddr | cut -d '=' -f2) )
+    [[ -n $(echo $HOME_ENV|grep termux) ]]  \
+        && MACHINE_DISPLAY_NAME="termux-$MACHINE_DISPLAY_NAME"
 
 elif [[ $OS_NAME = Darwin ]]; then
     MAC_ADDRESSES+=($(networksetup -getmacaddress Ethernet \
@@ -130,16 +129,26 @@ elif [[ -n $(echo $OS_NAME|grep Linux) ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
 
+    if [[ -n $(which lsb_release|grep -v 'not found') ]]; then
+        _distributor="$(lsb_release -is|sed 's/[^a-z]/_/ig')"
+        _release="$(lsb_release -rs|sed 's/[^a-z0-9.]/_/ig')"
+        _os_build="$_distributor--$_release"
+        MACHINE_DISPLAY_NAME="$_distributor-$MACHINE_DISPLAY_NAME"
+    fi
+
 elif [[ -n $(echo $OS_NAME|grep CYGWIN) ]]; then
     MAC_ADDRESSES+=($(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //'))
 
 fi
+
+MACHINE_DISPLAY_NAME=$(echo $MACHINE_DISPLAY_NAME|sed 's/[-]*$//')
 
 check_if_managed $MAC_ADDRESSES
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_1"
 
 [[ -f /etc/environment ]] && source /etc/environment
+
 if [[ -n $ZSH_VERSION ]]; then
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
@@ -171,13 +180,14 @@ fi
 [[ -n $DEBUG_SHELL ]] && echo "_local_2"
 source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
-[[ -n $DEBUG_SHELL ]] && echo "_local_3"
 
+[[ -n $DEBUG_SHELL ]] && echo "_local_3"
 [[ $OS_NAME = Linux ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
-
 [[ $OS_NAME = Darwin ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
+
+MACHINE_IP_INT=$(get-my-ip-int)
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
@@ -188,12 +198,12 @@ source_files "$HOME_ENV/.scripts/shell_env/shell"
 [[ -n $DEBUG_SHELL ]] && echo "_local_5"
 
 if [[ -z $IS_MANAGED ]]; then
-    unset MANAGED_IDS
-    unset MANAGED_ANDROID_IDS
-    unset MANAGED_LINUX_IDS
-    unset MANAGED_OSX_IDS
-    unset MANAGED_WINDOWS_IDS
-    printf "\n\n%s\n\n" "NO MATCH TO MACHINE_ID"
+    unset MANAGED_MACS
+    unset MANAGED_ANDROID_MACS
+    unset MANAGED_LINUX_MACS
+    unset MANAGED_OSX_MACS
+    unset MANAGED_WINDOWS_MACS
+    printf "\n\n%s\n\n" "NO MATCH TO MACHINE'S MAC ADDRESS"
 fi
 
 if [[ "$PROFILE_STARTUP" == true ]]; then

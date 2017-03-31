@@ -1,10 +1,12 @@
 #!env zsh
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_env_START - $(realfullpath $0)"
+[[ -n $DEBUG_SHELL ]] && echo "zsh/_env_START - $(realfullpath "$0")"
 
-[[ -f /opt/local/libexec/gnubin/readlink ]] \
-    && THIS_DIR=$(/opt/local/libexec/gnubin/realfullpath $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
-    || THIS_DIR=$(realfullpath $0|sed -r 's/^(.*)\/([^/]+)$/\1/')
+# [[ -f /opt/local/libexec/gnubin/readlink ]] \
+#     && THIS_DIR=$(/opt/local/libexec/gnubin/readlink $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
+#     || THIS_DIR=$(realfullpath "$0"|sed -r 's/^(.*)\/([^/]+)$/\1/')
+
+THIS_DIR=$(realfullpath "$0"|sed -r 's/^(.*)\/([^/]+)$/\1/')
 source $THIS_DIR/.z_pre_OMZ
 
 export ZSH=$THIS_DIR/OMZ
@@ -44,4 +46,4 @@ autoload -U bashcompinit && bashcompinit
 # ------------------------
 # ------------------------
 
-[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_env_END"
+[[ -n $DEBUG_SHELL ]] && echo "zsh/_env_END"

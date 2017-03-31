@@ -30,8 +30,6 @@ print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
     }
 
 
-alias adb='~/Android/platform-tools/adb'
-alias fastboot='~/Android/platform-tools/fastboot'
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
 alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'

@@ -15,6 +15,14 @@ if [[ $CLIENT_HOST = "SERVER3" ]] || [[ $ITERM_SHELL = true ]]; then
         iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
         iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-);
         iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
+
+        [[ -n $MACHINE_DISPLAY_NAME ]]            \
+            && _host="$MACHINE_DISPLAY_NAME"      \
+            || _host="$USER"
+        iterm2_set_user_var iterm2_host $_host;
+
+        iterm2_set_user_var iterm2_addr $(get-my-ip-int);
+
     }
     alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
 
