@@ -25,7 +25,7 @@ if [[   ($CLIENT_HOST = SERVER3)
     ||  ($ITERM_SHELL = true)
     ]]; then
 
-    [[ -n $DEBUG_SHELL ]] && echo "\n\tshell/4_iterm2 - sourcing\n"
+    [[ -n $DEBUG_SHELL ]] && echo "shell/4_iterm2 - sourcing"
 
     [[ -n $BASH_VERSION ]]                                                      \
         && test -e "${HOME_ENV}/.iterm2_shell_integration.bash"                 \
@@ -39,22 +39,22 @@ if [[   ($CLIENT_HOST = SERVER3)
     iterm_growl() { echo -e $'\e]9;'${1}'\007' ; return ; }
     export iterm2_hostname="$USER"
     iterm2_print_user_vars() {
-        iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`);
-        iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-);
-        iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags);
+        iterm2_set_user_var gitRepo $([[ -d .git ]] && basename `git rev-parse --show-toplevel`)
+        iterm2_set_user_var gitBranch $([[ -d .git ]] && (git branch 2> /dev/null) | grep \* | cut -c3-)
+        iterm2_set_user_var gitBranchTag $([[ -d .git ]] && [[ -n $(git tag) ]] && git describe --abbrev=0 --tags)
 
         [[ -n $MACHINE_DISPLAY_NAME ]]            \
             && _host="$MACHINE_DISPLAY_NAME"      \
             || _host="$USER"
-        iterm2_set_user_var iterm2_host $_host;
+        iterm2_set_user_var iterm2_host $_host
 
-        iterm2_set_user_var iterm2_addr $MACHINE_IP_INT;
+        iterm2_set_user_var iterm2_addr $MACHINE_IP_INT
 
     }
     alias it_user_profile="printf '\e]50;SetProfile=%s\007' $USER"
 
 else
-    [[ -n $DEBUG_SHELL ]] && echo "\n\tshared/2_iterm2 - NOT sourcing\n"
+    [[ -n $DEBUG_SHELL ]] && echo "shared/2_iterm2 - NOT sourcing"
     return
 fi
 
