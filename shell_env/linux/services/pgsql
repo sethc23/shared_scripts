@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 alias svc_pgsql_push_config='sudo $SERV_HOME/pgsql/run_pgsql push_config'
 alias svc_pgsql_disable='sudo systemctl disable postgresql9.5.service'

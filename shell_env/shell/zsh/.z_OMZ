@@ -1,4 +1,6 @@
-#!/bin/zsh
+#!env zsh
+
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_env_START - $(readlink -f $0)"
 
 [[ -f /opt/local/libexec/gnubin/readlink ]] \
     && THIS_DIR=$(/opt/local/libexec/gnubin/readlink -f $0|sed -r 's/^(.*)\/([^/]+)$/\1/') \
@@ -42,3 +44,4 @@ autoload -U bashcompinit && bashcompinit
 # ------------------------
 # ------------------------
 
+[[ -n "$DEBUG_SHELL" ]] && echo "zsh/_env_END"

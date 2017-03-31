@@ -1,4 +1,6 @@
-#!/bin/zsh
+#!env zsh
+
+[[ -n "$DEBUG_SHELL" ]] && echo "shell/1_shell_env_START - $(readlink -f $0)"
 
 tabs -4
 #export TERM=screen-256color
@@ -61,5 +63,5 @@ fi
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 
-
+[[ -n "$DEBUG_SHELL" ]] && echo "shell/1_shell_env_END"
 

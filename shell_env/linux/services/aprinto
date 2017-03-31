@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 function aprinto() {                cd $APRINTO; source $APRINTO/ENV/bin/activate; }
 function aprinto_test() {           aprinto; behave tests/features/ > /dev/null 2>&1; }

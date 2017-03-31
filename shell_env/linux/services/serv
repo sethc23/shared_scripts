@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 function serv() {                   cd $GIT_SERV_HOME/celery; source ENV/bin/activate; }
 function serv_test_debug() {        serv; cd git_serv; behave tests/features/ --stop --tags=debug; }

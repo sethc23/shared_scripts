@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 
 # Set Workspace
@@ -34,7 +34,7 @@ get_scan_info(){
         SCAN_DATE=20$(echo ${SCAN_DATE:${#SCAN_DATE}-8:#SCAN_DATE})       # Get last 8 characters
         SCAN_TIME_TITLE=$(echo $SCAN_NAME | cut -d ' ' -f2)
         SCAN_TIME=$(echo $SCAN_TIME_TITLE | cut -d '-' -f1)
-        SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-) 
+        SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-)
         [[ $SCAN_TIME = $SCAN_TITLE ]] && SCAN_TITLE=
         SCAN_DATETIME="$(date --date="$SCAN_DATE $SCAN_TIME" +'%Y.%m.%d_%H.%M.%S')"
         SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_GROUP_DIR $SCAN_TITLE)
@@ -70,7 +70,7 @@ process_page_dir(){
     cd $PAGE_DIR
 
     get_scan_info
-    
+
     [[ -n "$EXTRACT_PROCESSED" ]] && build_processed_pdf
     [[ -n "$EXTRACT_ORIGS" ]]     && build_orig_pdf
 
@@ -83,7 +83,7 @@ process_scan_group_dir(){
     remove_spaces_in_pwd_files_dirs
 
     if [[ $BUILD_METHOD = normal ]]; then
-        for SCAN_DIR in Scan*; do 
+        for SCAN_DIR in Scan*; do
             process_page_dir $SCAN_DIR
             [[ -n "$SINGLE_DIR" ]] && return
         done
@@ -94,7 +94,7 @@ process_scan_group_dir(){
             for SCAN_DIR in Scan*; do
                 cd $SCAN_DIR
                 [[ -n "$VERBOSE" ]] && echo "Page Dir: "$SCAN_DIR
-                
+
                 [[ -z "$DRY_RUN" ]] && extract_images && cd $TMP_IMAGE_DIR && CLEANUP+="$(pwd)"
                 for f in $(find . -type f | grep -E 'jpg'$ | sort); do
                     REL_FPATH=$(python -c "z='$f'; print(z.lstrip('./'))")
@@ -143,7 +143,7 @@ package_images(){
     # Process Files
     printf "\n%s\n\n" "EXCLUDE DIRECTORIES: $EXCLUDE_FOLDERS"
     for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///' | sort); do
-        
+
         SKIP=
         for j in $EXCLUDE_FOLDERS; do
             if [[ $i = $j ]]; then
@@ -151,9 +151,9 @@ package_images(){
                 break
             fi
         done
-        
+
         if [[ -z "$SKIP"  ]]; then
-            
+
             remove_spaces_in_pwd_files_dirs
 
             if [[ -z "$(test -d $i || echo 'not exist')" ]]; then
@@ -194,7 +194,7 @@ extract_images(){
     _image_name="page"
     [[ -n "$EXTRACT_PROCESSED" ]]   && _image_name="page"
     [[ -n "$EXTRACT_ORIGS" ]]       && _image_name="shot"
-    
+
     [[ -z "$TMP_IMAGE_DIR" ]]       && TMP_IMAGE_DIR="_images"
     mkdir -p $TMP_IMAGE_DIR
 
@@ -213,17 +213,17 @@ extract_images(){
 compare_packaged_with_completed(){
 
     remove_spaces_in_pwd_files_dirs
-    
+
     BASE_DIR="/home/ub2/ARCHIVE/MDSCAN"
     _from_dir="$BASE_DIR/packaged"
     _to_dir="$BASE_DIR/completed"
-    
+
     for i in $(find $_from_dir/ -type f -printf "\"%p\"\n"|xargs -I '{}' echo {}|sort); do
         FNAME=$(python -c "z='$i'; print(z[z.rfind('/')+1:])")
         FNAME_BASE=$(python -c "z='$FNAME'; print(z[:z.rfind('.')])")
         CHK_FNAME=$FNAME_BASE"_ocr.pdf"
         if [[ -n $(env ls $_to_dir|grep $CHK_FNAME) ]]; then
-            
+
             # _from=$(md5sum $_from_dir/$i|cut -d ' ' -f1)
             # _to=$(md5sum $_to_dir/$i|cut -d ' ' -f1)
             # if [[ $_from = $_to ]]; then
@@ -241,7 +241,7 @@ compare_packaged_with_completed(){
 
         fi
         # echo $i $CHK_FNAME && return
-        
+
     done
     }
 

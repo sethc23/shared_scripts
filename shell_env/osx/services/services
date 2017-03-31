@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 function svc_softwareupdate_load() { \
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.softwareupdated.plist;\

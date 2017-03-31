@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 # TO ADD/EXPLORE
 #   arp -- address resolution protocol

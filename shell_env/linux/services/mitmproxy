@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 function m_proxy_eth() { \
     ipt-flush; \

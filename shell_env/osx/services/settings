@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 # <<< --- SETTINGS/OPTIONS --- >>>
 alias opt_hidden_disable='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'

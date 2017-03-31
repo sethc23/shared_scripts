@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 assign () { eval "$1=\$(cat; echo .); $1=\${$1%.}"; };
 

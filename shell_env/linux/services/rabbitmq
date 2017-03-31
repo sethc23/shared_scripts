@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 
 alias rq_status='sudo rabbitmqctl status'

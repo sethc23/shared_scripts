@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -10,24 +10,37 @@ admin=(c8:2a:14:41:bf:23)
 ub1=(00:1b:63:bb:88:0b)
 ub2=(60:33:4b:97:84:a2 60:33:4b:1e:68:1b)
 ms1=(00-FF-B6-74-19-D5)
+gnr=(DC:09:4C:15:C1:63)
+ngn=(A4:71:74:F0:2A:0F)
 
-MANAGED_OSX_IDS=($admin)
+MANAGED_ANDROID_IDS=($gnr $ngn)
 MANAGED_LINUX_IDS=($ub1 $ub2)
+MANAGED_OSX_IDS=($admin)
+MANAGED_WINDOWS_IDS=($ms1)
+
+MANAGED_IDS=(               \
+    $MANAGED_ANDROID_IDS    \
+    $MANAGED_LINUX_IDS      \
+    $MANAGED_OSX_IDS        \
+    $MANAGED_WINDOWS_IDS    \
+    )
 
 # Boolean for iTerm2
 ITERM2=
-[[ "$TERM_PROGRAM" = "iTerm.app" ]] || \
-    [[ "$CLIENT_HOST" = "SERVER3" ]] && \
-    ITERM2=true
+[[ "$TERM_PROGRAM" = "iTerm.app" ]]     \
+    || [[ "$CLIENT_HOST" = "SERVER3" ]] \
+    && ITERM2=true
+    # || [[ "$CLIENT_HOST" = "SERVER3" ]] \
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_START - $(readlink -f $0)"
+[[ -n "$DEBUG_SHELL" ]]                 \
+    && echo "_local_START - $(readlink -f $0)"
 
 source_sub_dir() {
-    for d in `env find $1/ -mindepth 1 -maxdepth 2 -type d | sort`; do
-        for j in `env find $d -maxdepth 1 -type f | sort`; do
+    for d in $(env find $1/ -mindepth 1 -maxdepth 2 -type d | sort); do
+        for j in $(env find $d -maxdepth 1 -type f | sort); do
             source $j
         done
     done
@@ -43,7 +56,7 @@ source_files_and_sub_dirs() {
 
 path-uniq(){
     python -c "$(
-cat <<-EOF
+cat <<EOF
 _path = "$PATH".split(':')
 checked = []
 for it in _path:
@@ -77,8 +90,9 @@ check_if_managed(){
         for j in $1; do
             if [[ $i = $j ]]; then
                 MACHINE_ID=$i
-                [[ "$OS_NAME" = "Darwin" ]] && IS_MANAGED_OSX=true
-                [[ "$OS_NAME" = "Linux" ]] && IS_MANAGED_LINUX=true
+                IS_MANAGED=true
+                # [[ $OS_NAME = Darwin ]] && IS_MANAGED_OSX=true
+                # [[ $OS_NAME = Linux ]]  && IS_MANAGED_LINUX=true
                 END_LOOP=true
                 break
             fi
@@ -88,25 +102,45 @@ check_if_managed(){
 
 export PATH="$(path-regex-rm virtualenv)"
 
-OS_NAME=$(uname -a | cut -d ' ' -f1)
+OS_NAME=$(uname -o)
 MAC_ADDRESSES=()
 MACHINE_ID=
+MACHINE_LABEL_NAME=
+MACHINE_LABEL_ADDR=
 
-if [[ "$OS_NAME" = "Darwin" ]]; then
-    MAC_ADDRESSES+=($(networksetup -getmacaddress Ethernet | \
-        env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'))
-elif [[ "$OS_NAME" = "Linux" ]]; then
+
+# if [[ -n $(cat /proc/cmdline|grep android) ]]; then
+#     _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
+#     _android_serial=$(echo "$android_info" | grep serialno | cut -d '=' -f2)
+#     [[ $_android_serial = 5VT5T16219000835 ]]               \
+#         && MACHINE_LABEL_NAME=5T21
+#     [[ $_android_serial = 5VT7N16909000324 ]]               \
+#         && MACHINE_LABEL_NAME=7N90
+# fi
+
+
+if [[ $(uname -o) = Android ]]; then
+    MAC_ADDRESSES+=( $(echo "$android_info" | grep wifimacaddr | cut -d '=' -f2) )
+    MAC_ADDRESSES+=( $(echo "$android_info" | grep btmacaddr | cut -d '=' -f2) )
+
+elif [[ $OS_NAME = Darwin ]]; then
+    MAC_ADDRESSES+=($(networksetup -getmacaddress Ethernet \
+        | env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'))
+
+elif [[ -n $(echo $OS_NAME|grep Linux) ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
-elif [[ "$OS_NAME" = "CYGWIN" ]]; then
+
+elif [[ -n $(echo $OS_NAME|grep CYGWIN) ]]; then
     MAC_ADDRESSES+=($(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //'))
+
 fi
 
 check_if_managed $MAC_ADDRESSES
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_1"
+[[ -n $DEBUG_SHELL ]] && echo "_local_1"
 
-if [[ -n "$ZSH_VERSION" ]]; then
+if [[ -n $ZSH_VERSION ]]; then
 
     [[ -n "$DEBUG_SHELL" ]] && echo "_local_z_1"
     source $HOME_ENV/.scripts/shell_env/shell/zsh/_env
@@ -120,39 +154,43 @@ if [[ -n "$ZSH_VERSION" ]]; then
 
 fi
 
-if [[ -n $IS_MANAGED_LINUX ]]; then
+# if [[ -n $IS_MANAGED_LINUX ]]; then
 
-    export LOCAL_PORT=9092
-    # export LOCAL_GIT_SYNC='[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
-    export LOCAL_GIT_SYNC='[{\"/home/ub2/.scripts\":\"git@github.com:sethc23/shared_scripts.git\"}]'
+#     export LOCAL_PORT=9092
+#     # export LOCAL_GIT_SYNC='[{"/home/ub2/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
+#     export LOCAL_GIT_SYNC='[{\"/home/ub2/.scripts\":\"git@github.com:sethc23/shared_scripts.git\"}]'
 
-elif [[ -n $IS_MANAGED_OSX ]]; then
+# elif [[ -n $IS_MANAGED_OSX ]]; then
 
-    export LOCAL_PORT=9093
-    # export LOCAL_GIT_SYNC=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
-    export LOCAL_GIT_SYNC='[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
+#     export LOCAL_PORT=9093
+#     # export LOCAL_GIT_SYNC=[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]
+#     export LOCAL_GIT_SYNC='[{"/Users/admin/.scripts":"git@github.com:sethc23/shared_scripts.git"}]'
 
-fi
+# fi
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_2"
+[[ -n $DEBUG_SHELL ]] && echo "_local_2"
 source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_3"
-[[ "$OS_NAME" = "Linux" ]] && \
+[[ -n $DEBUG_SHELL ]] && echo "_local_3"
+[[ $OS_NAME = Linux ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
-[[ "$OS_NAME" = "Darwin" ]] && \
+[[ $OS_NAME = Darwin ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
 
-[[ -n "$DEBUG_SHELL" ]] && echo "_local_4"
+[[ -n $DEBUG_SHELL ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
 [[ -n $IS_MANAGED_OSX ]] && unset -f port
 
-[[ -n "$DEBUG_SHELL" ]] && echo $PATH
+[[ -n $DEBUG_SHELL ]] && printf "\n\tPATH:\t%s\n\n" $PATH
+[[ -n $DEBUG_SHELL ]] && echo "_local_5"
 
-if [[ -z $IS_MANAGED_LINUX ]] && [[ -z $IS_MANAGED_OSX ]]; then
-    unset MANAGED_OSX_IDS
+if [[ -z $IS_MANAGED ]]; then
+    unset MANAGED_IDS
+    unset MANAGED_ANDROID_IDS
     unset MANAGED_LINUX_IDS
+    unset MANAGED_OSX_IDS
+    unset MANAGED_WINDOWS_IDS
     printf "\n\n%s\n\n" "NO MATCH TO MACHINE_ID"
 fi
 

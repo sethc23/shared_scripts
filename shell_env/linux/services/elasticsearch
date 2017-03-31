@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 alias svc_es_enable='sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/elasticsearch/RUN/elasticsearch.service 2> /dev/null'
 alias svc_es_disable='sudo systemctl disable $SERV_HOME/elasticsearch/RUN/elasticsearch.service; sudo systemctl daemon-reload'

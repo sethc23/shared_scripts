@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 
 # f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }

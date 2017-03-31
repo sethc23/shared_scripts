@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 ib_e() { cd $IPY; source ENV/bin/activate; }
 ib_qt_ub2() { sudo $IPY/ENV/bin/ipython qtconsole --existing /Volumes/ub2/home/ub2/.ipython/profile_default/security/kernel-$1.json;}

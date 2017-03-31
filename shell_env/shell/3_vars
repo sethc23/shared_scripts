@@ -1,4 +1,6 @@
-#!/bin/zsh
+#!env zsh
+
+[[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_START - $(readlink -f $0)"
 
 [[ -n "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$SUDO_USER)
 [[ -z "$SUDO_USER" ]] && export HOME_ENV=$(eval echo ~$USER)
@@ -9,7 +11,7 @@ export ALIAS='.alias_s'$SERVER_ID
 export SHELL_CONFIG=.zshrc
 export ROOT=root
 
-if [[ -z "uname -a | env grep Darwin" ]]; then
+if [[ $(uname -o) = Darwin ]]; then
     non_root_user=$(getent passwd | grep "^ub" | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g')
     export SERV_HOME=/home/$non_root_user/$SERVER
 else
@@ -52,6 +54,6 @@ if [[ $SERVER_ID != 3 ]]; then
     export SHARE3_SERVER=SERVER3
 fi
 
-
-
 [[ -n "$(which luarocks 2>&1 | grep -v 'not found' | grep -v 'no luarocks')" ]] && eval $(luarocks path --bin)
+
+[[ -n "$DEBUG_SHELL" ]] && echo "shell/3_vars_END"

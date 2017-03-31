@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 aporo_env() {              source $APORO/ENV/bin/activate; }
 aporo() {                  cd $APORO; aporo_env; }

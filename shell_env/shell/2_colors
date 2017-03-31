@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 alias c_f_red='echo -n $(tput setaf 1)'
 alias c_f_green='echo -n $(tput setaf 2)'

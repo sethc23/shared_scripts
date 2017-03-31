@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!env zsh
 
 [[ -n "$DEBUG_SHELL" ]] && echo "linux/linux_vars"
 
@@ -32,10 +32,10 @@ export AWS_CONFIG_FILE=$AWS_HOME/.aws/config
 
 # ---------------------------------------
 # RabbitMQ
-export RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.config
-export RABBITMQ_PID_FILE=$SERV_HOME/run/pids/sv_rabbitmq.pid
-export RABBITMQ_NODENAME="$USER@$HOST"
-export RABBITMQ_SERVER_START_ARGS="--port=15672 --username=ub2 --password=mq_money --format=pretty_json"
+#export RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.config
+#export RABBITMQ_PID_FILE=$SERV_HOME/run/pids/sv_rabbitmq.pid
+#export RABBITMQ_NODENAME="$USER@$HOST"
+#export RABBITMQ_SERVER_START_ARGS="--port=15672 --username=ub2 --password=mq_money --format=pretty_json"
 
 # ---------------------------------------
 # RVM
