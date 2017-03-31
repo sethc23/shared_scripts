@@ -1,17 +1,17 @@
 #!/bin/bash
 
-[[ -n "$DEBUG_SHELL" ]] \
+[[ -n $DEBUG_SHELL ]] 				\
     && echo "bash/_base_START"
     # && env|sort
 
 
-[[ -n "$SUDO_USER" ]] \
+[[ -n $SUDO_USER ]] 				\
     && export HOME_ENV=$(eval echo ~$SUDO_USER) \
     || export HOME_ENV=$(eval echo ~$USER)
-[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"2
+[[ -n $DEBUG_SHELL ]] && echo "bash/_base_"2
 
 source $HOME_ENV/.scripts/shell_env/shell/bash/_env
-[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"3
+[[ -n $DEBUG_SHELL ]] && echo "bash/_base_"3
 
 case $- in
     *i*) ;;
@@ -19,7 +19,7 @@ case $- in
 esac
 
 
-[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_"4
+[[ -n $DEBUG_SHELL ]] && echo "bash/_base_"4
 source $HOME_ENV/.scripts/shell_env/_local
 
 
@@ -28,4 +28,4 @@ DIR="$BASE_DIR/shell/bash/completers"
 for i in $(env find $DIR -maxdepth 1 -type f); do source $i; done
 
 
-[[ -n "$DEBUG_SHELL" ]] && echo "bash/_base_END"
+[[ -n $DEBUG_SHELL ]] && echo "bash/_base_END"
