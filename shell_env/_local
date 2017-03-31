@@ -108,8 +108,7 @@ MACHINE_ID=
 MACHINE_LABEL_NAME=
 MACHINE_LABEL_ADDR=
 
-
-if [[ -n $(cat /proc/cmdline|grep android) ]]; then
+if [[ -n $(cat /proc/cmdline 2>/dev/null | grep android) ]]; then
     _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
     _android_serial=$(echo "$android_info" | grep serialno | cut -d '=' -f2)
     [[ $_android_serial = 5VT5T16219000835 ]]               \
