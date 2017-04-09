@@ -4,5 +4,9 @@
 THIS_FPATH=$0:A
 THIS_DIR=$(dirname $THIS_FPATH)
 
-[[ -n $(echo $(uname -o)|grep Linux) ]] \
-    && $THIS_DIR/_resources/ngrok-linux ${@:1}
+if [[ -n $(uname -o|grep Linux) ]]; then
+    [[ -n $(uname -m|grep aarch64) ]]   \
+        && $THIS_DIR/_resources/ngrok-arm ${@:1}
+    [[ -n $(uname -m|grep x86_64) ]]   \
+        && $THIS_DIR/_resources/ngrok-linux ${@:1}
+fi
