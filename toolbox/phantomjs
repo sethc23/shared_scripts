@@ -1,1 +1,14 @@
-_resources/phantomjs-2.1.1-linux
+#!/usr/bin/env zsh
+
+# THIS_DIR=${0:a:h}
+THIS_FPATH=$0:A
+THIS_DIR=$(dirname $THIS_FPATH)
+cd $THIS_DIR/_resources
+
+OS_NAME="$(uname -o)"
+[[ -n $(echo $OS_NAME|grep Linux) ]] \
+    && _exec=$(env ls -1|grep phantom|grep linux|sort|tail -n 1)
+[[ -n $(echo $OS_NAME|grep Darwin) ]] \
+    && _exec=$(env ls -1|grep macosx|grep linux|sort|tail -n 1)
+
+$_exec ${@:1}

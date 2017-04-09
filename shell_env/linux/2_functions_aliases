@@ -9,6 +9,37 @@ ib_konnect() {             sudo $IPY/ENV/bin/ipython console --existing \
 path_of_pid_f() { realfullpath /proc/$1/exe; }
 newalias_linux() {         echo "alias "$1 >> $HOME/.alias_linux; source_bash; push_linux_aliases; }
 
+
+_mkvirtualenv_version(){
+    _version=$1
+    _env=$2
+    DEST_PYTHON=$(sudo update-alternatives --query python \
+        | sed -r 's/^([^:]+): //' \
+        | grep python$_version | uniq | sort | tail -n 1)
+    CURRENT_PYTHON=$(sudo update-alternatives --query python|grep value|sed 's/^Value: //')
+    DEST_VENVW=$(sudo update-alternatives --query virtualenvwrapper \
+        | sed -r 's/^([^:]+): //' \
+        | grep python$_version | uniq | sort | tail -n 1)
+    CURRENT_VENVW=$(sudo update-alternatives --query virtualenvwrapper|grep value|sed 's/^Value: //')
+
+    [[ ! $DEST_PYTHON = $CURRENT_PYTHON ]]      \
+        && sudo update-alternatives --set python $DEST_PYTHON
+    [[ ! $DEST_VENVW = $CURRENT_VENVW ]]        \
+        && sudo update-alternatives --set virtualenvwrapper $DEST_VENVW
+
+    mkvirtualenv $_env
+
+    [[ ! $DEST_PYTHON = $CURRENT_PYTHON ]]      \
+        && sudo update-alternatives --set python $CURRENT_PYTHON
+
+    [[ ! $DEST_VENVW = $CURRENT_VENVW ]]        \
+        && sudo update-alternatives --set virtualenvwrapper $CURRENT_VENVW
+
+    }
+mkvirtualenv3(){ _mkvirtualenv_version 3 $1; }
+mkvirtualenv2(){ _mkvirtualenv_version 2 $1; }
+
+
 # f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
 # alias kill_by='f_kill_by'
 
@@ -42,13 +73,18 @@ alias scr_env='source $HOME/.scripts/ENV/bin/activate'
 alias semacs='sudo emacs -nw'
 alias show_temp='sensors'
 alias topcpu='env ps -wx -o pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
-update-alts-list='alias env ls -1 /var/lib/dpkg/alternatives'
+# update-alts-list='alias env ls -1 /var/lib/dpkg/alternatives'
+update-alts-list='sudo update-alternatives --get-selections'
 update-alts-help(){
     echo ""
     echo "sudo update-alternatives --install <target link> <config name> <target path> <alternative index number>"
     echo "\te.g., sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 0"
     echo ""
     echo "sudo update-alternatives --config <config name>"
+    echo "\te.g., sudo update-alternatives --config python"
+    echo ""
+    echo ""
+    echo "sudo update-alternatives --set <config name> <path>"
     echo "\te.g., sudo update-alternatives --config python"
     echo ""
     }
