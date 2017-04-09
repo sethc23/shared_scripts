@@ -42,6 +42,16 @@ alias scr_env='source $HOME/.scripts/ENV/bin/activate'
 alias semacs='sudo emacs -nw'
 alias show_temp='sensors'
 alias topcpu='env ps -wx -o pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
+update-alts-list='alias env ls -1 /var/lib/dpkg/alternatives'
+update-alts-help(){
+    echo ""
+    echo "sudo update-alternatives --install <target link> <config name> <target path> <alternative index number>"
+    echo "\te.g., sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 0"
+    echo ""
+    echo "sudo update-alternatives --config <config name>"
+    echo "\te.g., sudo update-alternatives --config python"
+    echo ""
+    }
 alias uuid=uuid_random
 alias uuid_random='uuidgen -r'
 alias uuid_time='uuidgen -t'
