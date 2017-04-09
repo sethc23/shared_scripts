@@ -1,46 +1,156 @@
 #!env zsh
 
+PT=0
 
 # Set Workspace
 BASE_DIR=$(pwd)
-INPUT_DIR=
-UUID_AS_FNAME=true
+INPUT_DIR=.Projects
+UUID_AS_FNAME=
 OUTPUT_DIR_NAME=
-EXCLUDE_FOLDERS=(Home Office Trip .Projects)
+# EXCLUDE_FOLDERS=(Home Office Trip)
+EXCLUDE_FOLDERS=()
+EXCLUDE_GRP_NAMES=(Common Home)
 TMP_IMAGE_DIR=_images
-EXTRACT_PROCESSED=true
-EXTRACT_ORIGS=
+EXTRACT_PROCESSED=
+EXTRACT_ORIGS=true
 ROTATION=
-# BUILD_METHOD=normal
-BUILD_METHOD=image_extraction
-DRY_RUN=
+BUILD_METHOD=normal
+# BUILD_METHOD=image_extraction
+DRY_RUN=true
 SINGLE_DIR=
 VERBOSE=true
 DEBUG=
 
 # Functions
 
-remove_spaces_in_pwd_files_dirs(){
-    try=$(for i in *\ *; do mv "$i" "${i// /}"; done > /dev/null 2>&1)
+#
+# for i in $(find . -mindepth 2 -maxdepth 2 -type d); do [[ $(echo "${#i}") != 17 ]] && echo $i; done
+# remove_spaces_in_pwd_scan_group_dir; for _dir in $(find . -type d -name "Scan*"|sort); do cd $_dir; remove_spaces_in_pwd_scan_group_dir; cd ..; done
+#
+remove_spaces_in_pwd_scan_group_dir(){
+    _cnt=$(find "$(pwd)" -maxdepth 1 -type d -name "Page*" | wc -l)
+    _range=$(python2.7 -c "print( ' '.join([str(it) for it in range($_cnt)]) )")
+    for i in $(echo $_range); do
+        num=$(python -c "print(\"%03d\" % $i)")
+        if [[ -d "./Page $i" ]]; then
+            mv "./Page $i" "./Page$num"
+        elif [[ -d "./Page$i" ]]; then
+            mv "./Page$i" "./Page$num"
+        fi
+    done
+    }
+remove_spaces_in_pwd_scan_group_dirs(){
+    _base_dir="$(pwd)"
+    _cnt=$(find "$(pwd)" -maxdepth 1 -type d -name "Scan*" | wc -l)
+    _range=$(python2.7 -c "print( ' '.join([str(it) for it in range($_cnt)]) )")
+    for i in $(echo $_range); do
+        num=$(python -c "print(\"%03d\" % $i)")
+        _dir="./Scan$num"
+        if [[ -d "./Scan $i" ]]; then
+            mv "./Scan $i" $_dir
+        elif [[ -d "./Scan$i" ]]; then
+            mv "./Scan$i" $_dir
+        else
+            _dir=
+        fi
+        if [[ -n $_dir ]]; then
+            cd "$_dir"
+            remove_spaces_in_pwd_scan_group_dir
+            cd "$_base_dir"
+        fi
+    done
     }
 get_scan_info(){
-    if [[ (-z "$UUID_AS_FNAME") && (-f "document.dat") ]]; then
-        SCAN_NAME="$(cat document.dat | tr -d '\200-\377' \
-                    | sed -r 's/[^[:print:]]//g' \
-                    | sed -r 's/^([^[:digit:]]*)(.*)(Page0)(.*)$/\2/' \
-                    | sed -r 's/[^[:alnum:]:\.\ -]//g')"
+    set_scan_name_date_from_last_file_stats(){
+        last_dir=$(find . -type d -name "Page*"|sort|tail -n 1)
+        SCAN_DATE=$(stat -c '%y' "$last_dir/page.jpg"|cut -d ' ' -f-2)
+        SCAN_NAME=$SCAN_DATE
+        SCAN_DATE=$(echo $SCAN_DATE | cut -d ' ' -f1)
+        }
+    unset SCAN_FNAME
+    if [[ -n $UUID_AS_FNAME ]]; then
+        SCAN_FNAME="$(uuidgen -t|cut -d '-' -f1)"
 
-        SCAN_DATE=$(echo $SCAN_NAME | cut -d ' ' -f1 | sed 's/\./\//g')
+    elif [[ -f document.dat ]]; then
+
+        # SCAN_NAME="$(cat document.dat | tr -d '\200-\377' \
+        #             | sed -r 's/[^[:print:]]//g' \
+        #             | sed -r 's/^([^[:digit:]]*)(.*)(Page0)(.*)$/\2/' \
+        #             | sed -r 's/[^[:alnum:]:\.\ -]//g')"
+
+        SCAN_NAME="$(python2.7 -c "$(cat <<EOF
+import re
+with open('document.dat','rb') as f: res = f.read()
+res = re.sub(r'(?i)[^0-9a-z.:\s-]+','', res)
+res = re.sub(r'[^\x00-\x7F]+','', res)
+res = res.split('Page')[0]
+res = re.sub(r'(?i)^[^0-9]+','', res)
+res = re.sub(r'^(.*)(\d\d[.]\d\d[.]\d\d[ ]\d\d[:]\d\d[:]\d\d)[-]?(.*)$',r'\2-\3',res)
+print(res.strip(' _-:'))
+EOF
+        )"
+        )"
+        SCAN_DATE=$(echo "$SCAN_NAME" | cut -d ' ' -f1 | sed 's/\./\//g')
         SCAN_DATE=20$(echo ${SCAN_DATE:${#SCAN_DATE}-8:#SCAN_DATE})       # Get last 8 characters
+        _chk=$(date --date="$SCAN_DATE" 2>&1 | grep 'invalid date')
+        _len=$(echo "${#SCAN_DATE}")
+        if [[ (-n $_chk) || (! $_len = 10) ]]; then
+            set_scan_name_date_from_last_file_stats
+        fi
+    else
+        set_scan_name_date_from_last_file_stats
+    fi
+    # echo "SCAN_FNAME: $SCAN_FNAME"
+    if [[ -z $SCAN_FNAME ]]; then
         SCAN_TIME_TITLE=$(echo $SCAN_NAME | cut -d ' ' -f2)
         SCAN_TIME=$(echo $SCAN_TIME_TITLE | cut -d '-' -f1)
         SCAN_TITLE=$(echo $SCAN_TIME_TITLE | cut -d '-' -f2-)
         [[ $SCAN_TIME = $SCAN_TITLE ]] && SCAN_TITLE=
+        SCAN_GRP_NAME="$SCAN_GROUP_DIR"
+        # echo "SCAN_GRP_NAME 1: $SCAN_GRP_NAME"
+        for _grp_name in $EXCLUDE_GRP_NAMES; do
+            if [[ $_grp_name = $SCAN_GRP_NAME ]]; then
+                SCAN_GRP_NAME=
+                break
+            fi
+        done
+        # echo "SCAN_GRP_NAME 2: $SCAN_GRP_NAME"
         SCAN_DATETIME="$(date --date="$SCAN_DATE $SCAN_TIME" +'%Y.%m.%d_%H.%M.%S')"
-        SCAN_FNAME=$(printf '%s_%s_%s' $SCAN_DATETIME $SCAN_GROUP_DIR $SCAN_TITLE)
-    else
-        SCAN_FNAME="$(uuidgen -t|cut -d '-' -f1)"
+        [[ (-n $SCAN_TITLE) && (-n $SCAN_GRP_NAME) ]]                                      \
+            && SCAN_FNAME=$(printf "%s-%s-%s" $SCAN_DATETIME $SCAN_GRP_NAME $SCAN_TITLE)
+        [[ (-z $SCAN_TITLE) && (-n $SCAN_GRP_NAME) ]]                                      \
+            && SCAN_FNAME=$(printf "%s-%s" $SCAN_DATETIME $SCAN_GRP_NAME)
+        [[ (-n $SCAN_TITLE) && (-z $SCAN_GRP_NAME) ]]                                      \
+            && SCAN_FNAME=$(printf "%s-%s" $SCAN_DATETIME $SCAN_TITLE)
+        [[ -z $SCAN_FNAME ]]                                                                \
+            && SCAN_FNAME=$(printf "%s" $SCAN_DATETIME)
+        # echo "SCAN_DATETIME: $SCAN_DATETIME"
+        # echo "SCAN_FNAME: $SCAN_FNAME"
     fi
+
+    SCAN_FNAME=$(python2.7 -c "$(cat <<EOF
+import re
+res = """$SCAN_FNAME"""
+res = re.sub(r'[^\x00-\x7F]+','', res)
+res = re.sub(r'^[^0-9]+','', res)
+res = re.sub(r'(?i)[^0-9a-z]+$','', res)
+print(res.strip(' -._\t\n\r'));
+EOF
+        )")
+    }
+append-uuid(){
+    fname="$1"
+    echo $(python2.7 -c "$(cat <<EOF
+from uuid import uuid4
+fname = "$fname"
+D = {
+    'f_base'        : fname[:fname.rfind('.')]
+    ,'f_ext'        : fname[fname.rfind('.')+1:]
+    ,'uuid'         : uuid4().hex[:7]
+    }
+print("%(f_base)s_%(uuid)s.%(f_ext)s" % D)
+EOF
+    )")
     }
 build_pdf(){
 
@@ -60,7 +170,6 @@ build_pdf(){
         [[ -z "$DRY_RUN" ]] && convert *.jpg $ROTATION -page Letter "$OUTPUT_FPATH"
         [[ -n "$DRY_RUN" ]] && echo "$(pwd)/"$OUTPUT_FPATH
     fi
-
     OUTPUT_FILES+="$(pwd)/"$OUTPUT_FPATH
     }
 build_processed_pdf(){ build_pdf page}
@@ -71,22 +180,27 @@ process_page_dir(){
 
     get_scan_info
 
-    [[ -n "$EXTRACT_PROCESSED" ]] && build_processed_pdf
-    [[ -n "$EXTRACT_ORIGS" ]]     && build_orig_pdf
+    [[ -n "$EXTRACT_PROCESSED" ]]   \
+        && build_processed_pdf      \
+        && IMAGE_NAME="page.jpg"
+    [[ -n "$EXTRACT_ORIGS" ]]       \
+        && build_orig_pdf           \
+        && IMAGE_NAME="shot.jpg"
 
     cd ..
     }
 process_scan_group_dir(){
     SCAN_GROUP_DIR=$1
-    cd $SCAN_GROUP_DIR
+    cd $SCAN_GROUP_DIR                  # i.e., 'Common', 'Home', 'Trip', etc...
 
-    remove_spaces_in_pwd_files_dirs
+    remove_spaces_in_pwd_scan_group_dirs
 
     if [[ $BUILD_METHOD = normal ]]; then
         for SCAN_DIR in Scan*; do
             process_page_dir $SCAN_DIR
             [[ -n "$SINGLE_DIR" ]] && return
         done
+
     elif [[ $BUILD_METHOD = image_extraction ]]; then
 
         if [[ -z "$(bash -c 'for s in Scan*; do break; done' 2>&1)" ]]; then
@@ -121,6 +235,7 @@ package_images(){
     [[ -n "$DEBUG" ]] && set -xv
 
     # Setup Defaults
+
     [[ -n "$ROTATION" ]] && ROTATION="-rotate $ROTATION"
     #   Create Output Dir if not Exist
     [[ -z "$OUTPUT_DIR_NAME" ]] && OUTPUT_DIR_NAME=MDSCAN_OUTPUT_"${$(uuidgen):0:8}"
@@ -135,7 +250,7 @@ package_images(){
     cd $BASE_DIR/$INPUT_DIR
 
     # Remove Spaces
-    remove_spaces_in_pwd_files_dirs
+    remove_spaces_in_pwd_scan_group_dirs
 
     # Rename Generic Directories
     try=$(for i in Custom*; do mv $i $(cat $i/folder.dat); done > /dev/null 2>&1)
@@ -143,7 +258,7 @@ package_images(){
     # Process Files
     printf "\n%s\n\n" "EXCLUDE DIRECTORIES: $EXCLUDE_FOLDERS"
     for i in $(find . -maxdepth 1 -type d -regex '.*[A-Za-z0-9]+.*' | sed 's/^\.\///' | sort); do
-
+        echo $i
         SKIP=
         for j in $EXCLUDE_FOLDERS; do
             if [[ $i = $j ]]; then
@@ -154,7 +269,7 @@ package_images(){
 
         if [[ -z "$SKIP"  ]]; then
 
-            remove_spaces_in_pwd_files_dirs
+            remove_spaces_in_pwd_scan_group_dirs
 
             if [[ -z "$(test -d $i || echo 'not exist')" ]]; then
 
@@ -168,19 +283,58 @@ package_images(){
     done
 
     # Return to base dir
-    if [[ -z "$DRY_RUN" ]]; then
-        if [[ $BUILD_METHOD = normal ]]; then
-            cd $OUTPUT_DIR
-            for i in $OUTPUT_FILES; do
-                mv $i ./
+    # if [[ -z "$DRY_RUN" ]]; then
+    if [[ $BUILD_METHOD = normal ]]; then
+        [[ -z $DRY_RUN ]] && cd $OUTPUT_DIR
+        FINAL_OUTPUT_FILES=()
+        for f_new in $OUTPUT_FILES; do
+
+            # chk=$OUTPUT_FPATH
+            # # echo "chk_1: $chk"
+            # for f in $OUTPUT_FILES; do
+            #     f="$(echo $f|sed 's/\//\n/g')"
+            #     # echo "f| grep \$chk: $(echo $f | grep $chk)"
+            #     if [[ -n $(echo $f | grep $chk) ]]; then
+            #         chk=$(append-uuid $chk)
+            #         break
+            #     fi
+            # done
+            # echo "chk_2: $chk"
+            new_fname=$(echo $f_new|sed 's/\//\n/g'|tail -n 1)
+            for f_out in $FINAL_OUTPUT_FILES; do
+                f_out=$(echo $f_out|sed 's/\//\n/g'|tail -n 1)
+                if [[ $f_out = $new_fname ]]; then
+                    new_fname=$(append-uuid $new_fname)
+                    break
+                fi
             done
-        fi
+
+            # [[ -n $new_fname ]] \
+            #     && f_out=new
+
+            #     echo "$i changed to $new_fname"
+            #     mv $new_fname ./
+            #     FINAL_OUTPUT_FILES+=($new_fname)
+            # else
+            #     mv $i ./
+
+            if [[ -z $DRY_RUN ]]; then
+                if [[ (-f $f_new) && (! -f ./$new_fname) ]]; then
+                    mv $f_new ./$new_fname
+                    FINAL_OUTPUT_FILES+=($f_new)
+                else
+                    echo "ISSUES WITH CMD: 'mv $f_new ./$new_fname'"
+                fi
+            fi
+
+        done
     fi
+    # fi
 
     for i in $CLEANUP; do rm -fr $i; done
 
-    MSG="\n\n$OUTPUT_FILES\n\nAbove file list saved to directory: $OUTPUT_DIR\n\n"
-    [[ -n "$VERBOSE" ]] && printf "$MSG"
+    MSG="\n\n$FINAL_OUTPUT_FILES\n\nAbove file list saved to directory: $OUTPUT_DIR\n\n"
+    [[ -n "$VERBOSE" ]] && printf "%s" $MSG
 
 
     # Destroy Debug Env
@@ -189,7 +343,7 @@ package_images(){
 
 extract_images(){
 
-    remove_spaces_in_pwd_files_dirs
+    remove_spaces_in_pwd_scan_group_dirs
 
     _image_name="page"
     [[ -n "$EXTRACT_PROCESSED" ]]   && _image_name="page"
@@ -212,7 +366,7 @@ extract_images(){
     }
 compare_packaged_with_completed(){
 
-    remove_spaces_in_pwd_files_dirs
+    remove_spaces_in_pwd_scan_group_dirs
 
     BASE_DIR="/home/ub2/ARCHIVE/MDSCAN"
     _from_dir="$BASE_DIR/packaged"
@@ -245,7 +399,7 @@ compare_packaged_with_completed(){
     done
     }
 
-# remove_spaces_in_pwd_files_dirs
+# remove_spaces_in_pwd_scan_group_dirs
 # extract_images
 # compare_packaged_with_completed
 
