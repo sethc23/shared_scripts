@@ -1,4 +1,21 @@
 #!env zsh
+
+droid-info(){
+    _android_info="$(ssh root@localhost -p 9102 'cat /proc/cmdline|sed "s/ /\n/g"|sort')"
+    _android_serial=$(echo "$_android_info" | grep serialno | cut -d '=' -f2)
+    [[ $_android_serial = 5VT5T16219000835 ]]               \
+        && MACHINE_DISPLAY_NAME=5T21
+    [[ $_android_serial = 5VT7N16909000324 ]]               \
+        && MACHINE_DISPLAY_NAME=7N90
+    _android_wifi_mac=$(echo "$_android_info" | grep wifimacaddr | cut -d '=' -f2)
+    _android_bt_mac=$(echo "$_android_info" | grep btmacaddr | cut -d '=' -f2)
+    echo ""
+    printf "serial:\t\t%s\n" $_android_serial
+    printf "wifi_mac:\t%s\n" $_android_wifi_mac
+    printf "bt_mac:\t\t%s\n" $_android_bt_mac
+    echo ""
+    }
+
 #
 # ### REGISTER
 #
