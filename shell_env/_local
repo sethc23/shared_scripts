@@ -193,7 +193,7 @@ source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_3"
-[[ $OS_NAME = Linux ]] && \
+[[ ($OS_NAME = Linux) || ($OS_NAME = Linux-arm) ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/linux"
 [[ $OS_NAME = Darwin ]] && \
     source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/osx"
