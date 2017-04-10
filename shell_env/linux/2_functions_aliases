@@ -74,7 +74,7 @@ alias semacs='sudo emacs -nw'
 alias show_temp='sensors'
 alias topcpu='env ps -wx -o pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
 # update-alts-list='alias env ls -1 /var/lib/dpkg/alternatives'
-update-alts-list='sudo update-alternatives --get-selections'
+alias update-alts-list='sudo update-alternatives --get-selections'
 update-alts-help(){
     echo ""
     echo "sudo update-alternatives --install <target link> <config name> <target path> <alternative index number>"
