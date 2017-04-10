@@ -103,6 +103,13 @@ MAC_ADDRESSES=()
 MACHINE_DISPLAY_NAME=
 OS_NAME=$(uname -o)
 
+[[ ($OS_NAME = GNU/Linux) && ($(uname --machine) = x86_64) ]]   \
+    && OS_NAME=Linux
+[[ ($OS_NAME = GNU/Linux) && ($(uname --machine) = aarch64) ]]  \
+    && OS_NAME=Linux-arm
+[[ -n $(echo $OS_NAME|grep CYGWIN) ]]                           \
+    && OS_NAME=CYGWIN
+
 if [[ -n $(cat /proc/cmdline 2>/dev/null | grep android) ]]; then
     _android_info="$(cat /proc/cmdline|sed 's/ /\n/g'|sort)"
     _android_serial=$(echo "$_android_info" | grep serialno | cut -d '=' -f2)
@@ -115,7 +122,7 @@ if [[ -n $(cat /proc/cmdline 2>/dev/null | grep android) ]]; then
 fi
 
 
-if [[ $(uname -o) = Android ]]; then
+if [[ $OS_NAME = Android ]]; then
     MAC_ADDRESSES+=( $(echo "$_android_info" | grep wifimacaddr | cut -d '=' -f2) )
     MAC_ADDRESSES+=( $(echo "$_android_info" | grep btmacaddr | cut -d '=' -f2) )
     [[ -n $(echo $HOME_ENV|grep termux) ]]  \
@@ -125,7 +132,7 @@ elif [[ $OS_NAME = Darwin ]]; then
     MAC_ADDRESSES+=($(networksetup -getmacaddress Ethernet \
         | env grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'))
 
-elif [[ -n $(echo $OS_NAME|grep Linux) ]]; then
+elif [[ ($OS_NAME = Linux) || ($OS_NAME = Linux-arm) ]]; then
     IFACES=$(find /sys/class/net/ -type l | sed -s 's/\/sys\/class\/net\///')
     for i in $IFACES; do MAC_ADDRESSES+=($(cat /sys/class/net/$i/address)); done
 
@@ -137,7 +144,7 @@ elif [[ -n $(echo $OS_NAME|grep Linux) ]]; then
             && MACHINE_DISPLAY_NAME="$_distributor-$MACHINE_DISPLAY_NAME"
     fi
 
-elif [[ -n $(echo $OS_NAME|grep CYGWIN) ]]; then
+elif [[ $OS_NAME = CYGWIN ]]; then
     MAC_ADDRESSES+=($(getmac.exe -V -FO LIST | grep -A 2 Ethernet | tail -n 1 | sed 's/Physical Address: //'))
 
 fi
@@ -193,7 +200,7 @@ MACHINE_IP_INT=$(get-my-ip-int)
 [[ -n $DEBUG_SHELL ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
-[[ $(uname -o) = Darwin ]] && unset -f port
+[[ $OS_NAME = Darwin ]] && unset -f port
 
 [[ -n $DEBUG_SHELL ]] && printf "\n\tPATH:\t%s\n\n" $PATH
 [[ -n $DEBUG_SHELL ]] && echo "_local_5"
