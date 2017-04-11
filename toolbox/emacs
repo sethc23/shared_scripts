@@ -1,14 +1,16 @@
-#!/usr/local/bin/zsh
+#!zsh -i
 
 [[ -z "$(echo $PATH|grep -E 'term[-]cmd')" ]] \
     && export PATH=/Users/admin/.emacs.d/term-cmd:$PATH
 
+DEBUG=
+VERBOSE=
 START_FILE="~/.emacs.org/seth.org"
 THIS_FILE="${@:0}"
 THIS_PID="$(echo $$)"
 ARGS="${@:1}"
 FPATH="${@:${#@}}"
-   
+
 if [ $FPATH = $THIS_FILE ] \
     || [ -z $(zsh -c "echo $FPATH|env grep -i -v -E ^\"[-]\"") ] \
     ; then
@@ -19,25 +21,31 @@ fi
 ENV=
 # OPTS="-f server-start --geometry=350x600"
 OPTS="-f server-start --visit $FPATH"
-EMACS_CL="$ENV /usr/local/bin/emacs-25.1-app --daemon $OPTS"
-EMACS_GUI="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args $OPTS"
+EMACS_CL="$ENV /usr/local/bin/emacs25-x --daemon $OPTS"
+EMACS_GUI="$EMACS_CL"
+# EMACS_GUI="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args $OPTS"
 
 _emacs_socket(){
-    [[ $(uname -o) == Darwin ]] \
-        && PROC_CMD="/opt/local/bin/pfind Emacs 2> /dev/null |head -n 1|tr -d ' '" \
-        && SERVER_CMD=$EMACS_GUI
 
-    [[ $(uname -o) == GNU/Linux ]] \
-        && PROC_CMD="env ps -C emacs-25.1 -o pid=|head -n 1|tr -d ' '" \
-        && SERVER_CMD=$EMACS_CL
-
+    if [[ $OS_NAME = Darwin ]]; then
+        PROC_CMD="/opt/local/bin/pfind emacs 2>/dev/null|head -n 1|tr -d ' '"
+        SERVER_CMD=$EMACS_GUI
+    elif [[ ($OS_NAME = Linux) && ($OS_NAME = Linux-arm) ]]; then
+        PROC_CMD="env ps -C emacs25-x -o pid=|head -n 1|tr -d ' '"
+        SERVER_CMD=$EMACS_CL
+    fi
+    [[ -n $DEBUG ]] && echo "ENV: $(env|sort)"
+    [[ -n $VERBOSE ]] && echo "OS_NAME: $OS_NAME"
+    [[ -n $VERBOSE ]] && echo "PROC_CMD: $PROC_CMD"
+    [[ -n $VERBOSE ]] && echo "SERVER_CMD: $SERVER_CMD"
     SERVER="$(eval $PROC_CMD)"
+    [[ -n $VERBOSE ]] && echo "SERVER: $SERVER"
     if [[ -z $SERVER ]]; then
-        echo "Starting emacs daemon...\n\n" && eval $SERVER_CMD
+        [[ -n $VERBOSE ]] && echo "Starting emacs daemon: '$SERVER_CMD'\n"
         SERVER="$(eval $PROC_CMD)"
         [[ -z $SERVER ]] && echo 'Issue starting emacs server' && exit 99
     fi
-    
+
     SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1)"
 
     echo $SOCKET
@@ -45,7 +53,7 @@ _emacs_socket(){
 _emacs_gui(){
     _emacs_socket
     if [[ -n $SOCKET ]]; then
-        echo "$ENV emacsclient -s $SOCKET -n -c $FPATH"
+        [[ -n $VERBOSE ]] && echo echo "$ENV emacsclient -s $SOCKET -n -c $FPATH"
         $ENV emacsclient -s $SOCKET -n -c $FPATH
         # eval("$ENV emacsclient -s $SOCKET -n -c $FPATH")
     else

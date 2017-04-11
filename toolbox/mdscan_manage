@@ -23,6 +23,8 @@ DEBUG=
 
 # Functions
 
+uuidgen(){ echo $(python2.7 -c 'from uuid import uuid4; print(uuid4().hex[:7])'); }
+
 #
 # for i in $(find . -mindepth 2 -maxdepth 2 -type d); do [[ $(echo "${#i}") != 17 ]] && echo $i; done
 # remove_spaces_in_pwd_scan_group_dir; for _dir in $(find . -type d -name "Scan*"|sort); do cd $_dir; remove_spaces_in_pwd_scan_group_dir; cd ..; done
@@ -69,7 +71,7 @@ get_scan_info(){
         }
     unset SCAN_FNAME
     if [[ -n $UUID_AS_FNAME ]]; then
-        SCAN_FNAME="$(uuidgen -t|cut -d '-' -f1)"
+        SCAN_FNAME="$(uuidgen)"
 
     elif [[ -f document.dat ]]; then
 
@@ -238,7 +240,7 @@ package_images(){
 
     [[ -n "$ROTATION" ]] && ROTATION="-rotate $ROTATION"
     #   Create Output Dir if not Exist
-    [[ -z "$OUTPUT_DIR_NAME" ]] && OUTPUT_DIR_NAME=MDSCAN_OUTPUT_"${$(uuidgen):0:8}"
+    [[ -z "$OUTPUT_DIR_NAME" ]] && OUTPUT_DIR_NAME=MDSCAN_OUTPUT_$(uuidgen)
     OUTPUT_DIR="$BASE_DIR/$OUTPUT_DIR_NAME"
     EXCLUDE_FOLDERS+=$OUTPUT_DIR_NAME
     OUTPUT_FILES=()
@@ -333,8 +335,8 @@ package_images(){
 
     for i in $CLEANUP; do rm -fr $i; done
 
-    MSG="\n\n$FINAL_OUTPUT_FILES\n\nAbove file list saved to directory: $OUTPUT_DIR\n\n"
-    [[ -n "$VERBOSE" ]] && printf "%s" $MSG
+    MSG="\n$FINAL_OUTPUT_FILES\nAbove file list saved to directory: $OUTPUT_DIR\n\n"
+    [[ -n "$VERBOSE" ]] && echo "$MSG"
 
 
     # Destroy Debug Env
@@ -355,7 +357,8 @@ extract_images(){
     cnt=0
     for i in $(find ./ -iname $_image_name"[.]jpg" -printf "\"%p\"\n"|xargs -I '{}' echo {}|sort); do
         CNT=$(python -c "print '%05d' % ($cnt)")
-        UUID=$(echo "${$(uuidgen -t):1:7}")
+        # UUID=$(echo "${$(uuidgen -t):1:7}")
+        UUID=$(uuidgen)
         EPOCH=$(date +%s)
         FNAME="$EPOCH"_"$CNT"_"$UUID".jpg
         FPATH="$TMP_IMAGE_DIR/$FNAME"

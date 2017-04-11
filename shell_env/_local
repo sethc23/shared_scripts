@@ -113,7 +113,7 @@ OS_NAME=$(uname -o)
 [[ -n $(echo $(which sudo) 2>&1 | grep 'not found') ]]          \
     && chk_cmd="cat /proc/cmdline"                              \
     || chk_cmd="sudo cat /proc/cmdline"
-if [[ -n $( $chk_cmd | grep android) ]]; then
+if [[ (-f /proc/cmdline) && (-n $( $chk_cmd | grep android)) ]]; then
     _android_info="$($chk_cmd|sed 's/ /\n/g'|sort)"
     _android_serial=$(echo "$_android_info" | grep serialno | cut -d '=' -f2)
     [[ $_android_serial = 5VT5T16219000835 ]]               \
