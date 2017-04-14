@@ -11,7 +11,7 @@ THIS_PID="$(echo $$)"
 ARGS="${@:1}"
 FPATH="${@:${#@}}"
 
-if [ $FPATH = $THIS_FILE ] \
+if [[ $FPATH = $THIS_FILE ]] \
     || [ -z $(zsh -c "echo $FPATH|env grep -i -v -E ^\"[-]\"") ] \
     ; then
     FPATH=$START_FILE
@@ -25,7 +25,9 @@ EMACS_CL="$ENV /usr/local/bin/emacs25-x --daemon $OPTS"
 EMACS_GUI="$EMACS_CL"
 # EMACS_GUI="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args $OPTS"
 
-_emacs_socket(){
+# SET AS:  /usr/local/bin/emacs25-x -geometry 70x30 ~/.emacs.org/seth.org > /dev/null 2>&1 &
+
+get_socket(){
 
     if [[ $OS_NAME = Darwin ]]; then
         PROC_CMD="/opt/local/bin/pfind emacs 2>/dev/null|head -n 1|tr -d ' '"
@@ -50,8 +52,8 @@ _emacs_socket(){
 
     echo $SOCKET
     }
-_emacs_gui(){
-    _emacs_socket
+get_gui(){
+    get_socket
     if [[ -n $SOCKET ]]; then
         [[ -n $VERBOSE ]] && echo echo "$ENV emacsclient -s $SOCKET -n -c $FPATH"
         $ENV emacsclient -s $SOCKET -n -c $FPATH
@@ -61,7 +63,11 @@ _emacs_gui(){
     fi
     }
 
-_emacs_gui
+if [[ $1 = socket ]]; then
+    get_socket
+else
+    get_gui
+fi
 
 # follow links
 
