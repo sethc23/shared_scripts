@@ -27,6 +27,8 @@ EMACS_GUI="$EMACS_CL"
 
 # SET AS:  /usr/local/bin/emacs25-x -geometry 70x30 ~/.emacs.org/seth.org > /dev/null 2>&1 &
 
+
+assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}"; }
 get_socket(){
 
     if [[ $OS_NAME = Darwin ]]; then
@@ -62,9 +64,55 @@ get_gui(){
         echo "No socket for emacsclient"
     fi
     }
+get_agenda(){
+        # -nw                                                 \
+assign AGENDA_CMD < <(cat <<-EOF
+    (setq org-agenda-include-diary t)
+    (sit-for 2)
+    (org-gcal-fetch)
+    (sit-for 2)
+    (org-gcal-sync)
+    (sit-for 2)
+    (setq org-agenda-files (list '~/.emacs.org/seth.org' '~/.emacs.org/seth.t.chase@gmail.com.org'))
+    (sit-for 2)
+    (org-agenda-list)
+    (sit-for 2)
+    (org-agenda-day-view)
+    (sit-for 2)
+    (org-agenda-write '~/.emacs.org/org-agenda-today.html')
+    (sit-for 2)
+EOF
+)
+emacsclient -c --eval -s /var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/emacs501/server $AGENDA_CMD
+        # ;;(kill-buffer)                                     \
+    emacs
+    emacs -q -nw -f describe-bindings -f kill-buffer-and-window --eval \(write-file /tmp/tmp_log\) -f kill-buffer
+    emacsclient \
+        -c  \
+        -s /var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/emacs501/server  \
+        --eval "\
+            (setq org-agenda-include-diary t)
+            (sit-for 2)
+            (org-gcal-fetch)
+            (sit-for 2)
+            (org-gcal-sync)
+            (sit-for 2)
+            (setq org-agenda-files (list '~/.emacs.org/seth.org' '~/.emacs.org/seth.t.chase@gmail.com.org'))
+            (sit-for 2)
+            (org-agenda-list)
+            (sit-for 2)
+            (org-agenda-day-view)
+            (sit-for 2)
+            (kill-buffer-and-window)
+            (sit-for 2)
+
+            "
+    }
 
 if [[ $1 = socket ]]; then
     get_socket
+elif [[ $1 = agenda ]]; then
+    get_agenda
 else
     get_gui
 fi
