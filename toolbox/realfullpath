@@ -1,2 +1,2 @@
-#!env bash
+
 env python2.7 $HOME/.scripts/toolbox/_resources/realfullpath.py ${@:1}
