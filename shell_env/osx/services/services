@@ -46,7 +46,7 @@ alias svc_sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
 alias svc_sv_update='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock reread && sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock update'
 alias svc_svr_ctl='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock'
 alias svc_svr_load='svc_svr_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.supervisord_root.plist'
-alias svc_svr_push_config='$SERV_HOME/supervisor_root/push_sv_config.bash'
+svc_svr_push_config(){ $SERV_HOME/supervisor_root/push_sv_config.bash; }
 alias svc_svr_reload='svc_svr_unload; svc_svr_load;'
 alias svc_svr_reset='svc_svr_push_config && svc_svr_ctl reread && svc_svr_ctl update'
 alias svc_svr_test='svc_ng_kill; svc_svr_push_config; sudo /opt/local/Library/Frameworks/Python.framework/Versions/Current/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf'
