@@ -43,7 +43,7 @@ mkvirtualenv2(){ _mkvirtualenv_version 2 $1; }
 # f_kill_by() {              sudo kill -9 `ps -ef | grep $1 | awk '{print $2}'`; }
 # alias kill_by='f_kill_by'
 
-alias blog_serv_local='github-pages check-health && bundle update && bundle exec jekyll serve --baseurl "" --port 4000'
+alias blog_serv_local='gb-serve'
 alias BT_off='sudo /etc/init.d/bluetooth stop'
 alias BT_on='sudo /etc/init.d/bluetooth start'
 alias BT_restart='sudo /etc/init.d/bluetooth restart'

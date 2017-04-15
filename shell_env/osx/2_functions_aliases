@@ -4,11 +4,12 @@
 # f_kill_by() { sudo kill -9 `env ps -awx | grep $1 | grep -v grep | cut -d \  -f1`; }
 # f_kill_by_port() { lsof -sTCP:LISTEN -T | awk '{print $2,$10}' | grep $1$ | cut -d " " -f1 | xargs -I '{}' kill -9 {} ; }
 
-unalias locate_update
+
+unalias locate_update 2> /dev/null
 locate_update(){ \
-    [[ ! -L "/usr/local/bin/updatedb" ]] &&
-        sudo ln -nfs /usr/libexec/locate.updatedb /usr/local/bin/updatedb;
-    sudo /opt/local/libexec/gnubin/updatedb; }
+    sudo ln -nfs /opt/local/bin/gupdatedb /usr/local/bin/updatedb
+    sudo updatedb --prunepaths=/Volumes
+    }
 open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 ps_cut(){ env ps -awwwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
 ssh_f(){ \
@@ -37,7 +38,8 @@ alias open_color_picker='open_color_picker_f'
 alias ps-cpu='ps -r'
 alias ps-mem='ps -m'
 alias ps-threads='pstree'
-alias ps='ps_cut ps'
+# alias ps='ps_cut ps'
+alias ps='env ps -awwwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args'
 alias pycharm='sudo /Applications/PyCharm.app/Contents/MacOS/pycharm'
 alias rm='rmtrash'
 alias rt_update_fw='cd $SERV_HOME/local_config/cisco && scp jffs/etc/config/fw.if cisco:/jffs/etc/config/ 2> /dev/null && rt_ /jffs/etc/config/fw.if 2> /dev/null'

@@ -1,17 +1,18 @@
 #!/bin/bash
 
+LSOF_EXE=$(which lsof)
 # sudo /usr/bin/lsof -n -i -P | grep LISTEN
 
 [[ -z $1 ]] \
-    && sudo $(which lsof) -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN' \
+    && sudo $LSOF_EXE -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN' \
     && exit 99
 
 
 
 if [[ $1 = clean-tcp ]]; then
     # visudo contains "ALL     ALL=(ALL) NOPASSWD: /usr/bin/lsof *"
-    in_data=$(sudo $(which lsof) -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN'|column -t | tr -s ' ')
-    /usr/local/bin/python -c "$(cat <<EOF
+    in_data=$(sudo $LSOF_EXE -nRP -w -iTCP -sTCP:LISTEN|grep -v 'UNKNOWN'|column -t | tr -s ' ')
+    python2.7 -c "$(cat <<EOF
 
 import re
 import pandas as pd
