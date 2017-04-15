@@ -11,12 +11,16 @@ OUTPUT_DIR_NAME=
 EXCLUDE_FOLDERS=()
 EXCLUDE_GRP_NAMES=(Common Home)
 TMP_IMAGE_DIR=_images
-EXTRACT_PROCESSED=
-EXTRACT_ORIGS=true
+EXTRACT_PROCESSED=true
+EXTRACT_ORIGS=
+# EXTRACT_PROCESSED=
+# EXTRACT_ORIGS=true
 ROTATION=
 BUILD_METHOD=normal
 # BUILD_METHOD=image_extraction
 DRY_RUN=true
+[[ ("$1" = "dryrun=false") || ("$1" = "dryrun=") ]] \
+    && DRY_RUN=
 SINGLE_DIR=
 VERBOSE=true
 DEBUG=
@@ -402,9 +406,14 @@ compare_packaged_with_completed(){
     done
     }
 
+[[ -n $DRY_RUN ]] \
+    && echo "\nDRY RUN\n"
+
 # remove_spaces_in_pwd_scan_group_dirs
 # extract_images
 # compare_packaged_with_completed
+
+
 
 package_images
 

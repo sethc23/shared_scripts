@@ -1,5 +1,6 @@
 #!env zsh
 
+date > /tmp/tmp_subl_open
 # (from realpath man ...)
 #
 # -e, --canonicalize-existing
@@ -18,7 +19,7 @@ FPATH=$(echo "$FPATH"|sed -r 's/[ ]/\\ /g')
 test -e "$FPATH" || (echo "Unreadable target path: '"$_target"'" && exit 99)
 
 SSH_CMD=
-CMD_BASE="open -a /Applications/Sublime\ Text.app/Contents/MacOS/Sublime\ Text"
+CMD_BASE="open -a \"Sublime Text\""
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
     SSH_CMD="ssh admin"
@@ -28,6 +29,6 @@ fi
 CMD="$(echo $SSH_CMD $CMD_BASE $FPATH)"
 [[ -n $_params ]] && CMD="$CMD --args "$_params
 
-echo $CMD
+echo "$CMD" >> /tmp/tmp_subl_open
 
 eval $CMD
