@@ -1,4 +1,4 @@
-#!/home/ub2/.virtualenvs/devenv/bin/python
+#!/home/ub2/.virtualenvs/dev/bin/python
 
 REPO_DIR='/home/ub2/BD_Scripts/sethc23.github.io'
 REPO_POST_DIR='_posts'
@@ -62,11 +62,11 @@ def update_contents_and_push(files):
                         pt += 1
 
                 p1 = p2
-            
+
             except:
                 break
         return lines
-    
+
     base_wiki_path = os.path.join(REPO_DIR,WIKI_DIR)
     base_post_path = os.path.join(REPO_DIR,REPO_POST_DIR)
 
@@ -82,7 +82,7 @@ def update_contents_and_push(files):
             new_f.write(new_doc)
 
     add_new_files = ';'.join( [ 'cd %s' % REPO_DIR,
-                                'git add -- %s/ > /dev/null 2>&1' % 
+                                'git add -- %s/ > /dev/null 2>&1' %
                                     REPO_POST_DIR] )
     run_cmd(add_new_files)
 
@@ -90,9 +90,9 @@ def main(args):
     commit,msg,files = args
     files = files.split('\n')
 
-    blog_posts = [os.path.basename(it) for it in files 
+    blog_posts = [os.path.basename(it) for it in files
                     if it.find(WIKI_POST_DIR)==0]
-    
+
     # assert blog_posts
     # assert proper_filenames(files)
 
