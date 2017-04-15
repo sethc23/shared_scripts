@@ -13,6 +13,7 @@ alias svc_ipy_load='sudo launchctl load -w /Library/LaunchDaemons/custom.ipython
 alias svc_ipy_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.ipython_launchctl.plist;'
 alias svc_locate_load='sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist'
 alias svc_locate_unload='sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.locate.plist'
+alias ng_push_config='$SERV_HOME/nginx/push_ng_config.bash'
 alias svc_ng_load='ng_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.nginx.plist'
 alias svc_ng_unload='sudo launchctl unload -w /Library/LaunchDaemons/custom.nginx.plist'
 alias svc_pf_dir='cd /opt/local/etc/postfix/'

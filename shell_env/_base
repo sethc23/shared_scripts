@@ -29,7 +29,8 @@ else
         echo "Possible issue w/ HOME_ENV @  _base:28 "
         HOME_ENV=$HOME
     fi
-
+    [[ -n $HOME_ENV ]]  \
+        && export HOME_ENV=$HOME
 fi
 
 BASE_DIR_base=$BASE_DIR
