@@ -1,5 +1,49 @@
 #!env zsh
 
+py_clean_db_script="$(cat <<EOF
+VERBOSE=False
+import pandas as pd
+import sys
+x=sys.stdin.read().split('\n')
+# with open('/tmp/tmp','r') as f: x=f.read().split('\n')
+try:
+    while not x[0].count('@'): x=x[1:]
+except:
+    pass
+try:
+    while not x[-1]: x=x[:-1]
+except:
+    pass
+_port_list=[]
+df_cols=['port','version','is_active']
+for it in x:
+    it=it.strip()
+    _port,_vers = it.split('@')
+    _port,_vers = _port.strip(' @\n\r'),_vers.strip(' @\n\r')
+    _is_active = False
+    if _vers.count('(active)'):
+        _is_active = True
+        _vers = _vers.replace(" (active)",'').strip()
+    _port_list.append( dict(zip(df_cols,[_port,_vers,_is_active])) )
+df = pd.DataFrame(_port_list).ix[:,df_cols]
+all_ports_installed=df['port'].tolist()
+df['cnt']=df['port'].map(lambda s: all_ports_installed.count(s))
+df = df[df.cnt>1].sort_values(['port','is_active','version'],ascending=[True,False,False]).reset_index(drop=True)
+if VERBOSE: out_template='%(port)s\t\t%(version)s'
+else:       out_template='%(port)s@%(version)s'
+for _name,_idx in df.groupby('port').groups.iteritems():
+    grp=df.ix[_idx,:].sort_values(['port','is_active','version'],ascending=[True,False,False]).reset_index(drop=True)
+    _first=grp.ix[0,].to_dict()
+    try:
+        assert _first['is_active'],"\nERROR: Expected '%(port)s@%(version)s' to be active (but it was not)." % _first
+    except AssertionError:
+        print(grp)
+        break
+    for i,r in grp.ix[1:,:].iterrows():
+        print(out_template%r)
+EOF
+)"
+
 link-mp-ib() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
     $IPY/ENV/lib/python2.7/site-packages/; }
 link-mp-aprinto() { ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/$1 \
@@ -9,12 +53,16 @@ link-mp-ib-confirm() { ls -la $IPY/ENV/lib/python2.7/site-packages/ | grep -i $1
 f-mp-check() { port installed "*"$1"*" ; port search "*"$1"*"; }
 f-mp-py() { sudo port select python python$1; }
 f-mp-contents-exe () { port -q contents $1 | grep -E '/s?bin/'; }
-
+mp-clean-db(){
+    # OLD/ORIG
+    #   alias mp-clean-db='port echo leaves'
+    #   alias mp-clean-db_confirmed="while sudo port uninstall leaves --follow-dependencies; do :; done"
+    rm_list=$(port installed | python2.7 -c "$py_clean_db_script")
+    for i in $rm_list; do sudo port uninstall $i; done
+    }
 
 
 alias mp-check='f-mp-check'
-alias mp-clean-db='port echo leaves'
-#alias mp-clean-db_confirmed="while sudo port uninstall leaves --follow-dependencies; do :; done"
 alias mp-clean-port-all='sudo port clean --all'
 alias mp-clean-port-safe='sudo port clean'
 alias mp-contents-exe='f-mp-contents-exe'
@@ -43,8 +91,8 @@ mp-version-all(){ port select --summary; }
 mp-version-list(){ port select --list $1; echo "\n"; port select --show $1; }
 mp-version-select(){ sudo port select $1 $2; }
 
-function mp-variant-install_f() {
-    function get_opts() {
+mp-variant-install_f() {
+    get_opts() {
         opt_grp=()
         for i in $opts; do
             read -p "Include variant: '$i'?" yn
