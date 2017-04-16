@@ -22,6 +22,12 @@
 - `kcharselect` - special character output to clipboard
 - `node-ansi` - API for writing ANSI escape codes
 
+### INPUT BINDING
+- `dumpkeys`
+- `xbindkeys` - bind keys to different key codes
+- `xmodmap`
+    - e.g., `xmodmap -e "keycode  71 = Hyper_L"`
+
 ### CHARACTER FORMATTING
 - `bindechexascii`
 
@@ -47,7 +53,6 @@
 ### OTHER TOOLS
 - `gnome-characters` - app for reviewing character map
 - python[3]-shellescape - command line tool for maintaining persistent string handling across environments
-- `xbindkeys` - bind keys to different key codes
 
 * * *
 
@@ -85,7 +90,7 @@
 | select-pane -U      |0x1b 0x6E|C-M-up       |`bind -n M-Up select-pane -U`    |
 | select-pane -D      |0x1b 0x70|C-M-down     |`bind -n M-Down select-pane -D`  |
 
-## context: 
+## context:
 | ACTION              | KEY     | BINDING              | CMD|
 |:---                 |:---:    |:---                  |:---|
 |||||
