@@ -40,12 +40,13 @@ alias svc_sshd_load='sudo launchctl load -w /Library/LaunchDaemons/org.macports.
 alias svc_sshd_restart='svc_sshd_unload && svc_sshd_load'
 alias svc_sshd_restart_force='svc_sshd_unload; kill_by "sshd"; svc_sshd_load'
 alias svc_sshd_unload='sudo launchctl unload -w /Library/LaunchDaemons/org.macports.OpenSSH.plist'
+# SV_BIN_HOME="/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"
 alias svc_sv_kill='sudo kill `cat $SERV_HOME/run/pids/sv_*.pid`'
 alias svc_sv_status='svc_sv_ctl status'
 alias svc_sv_tail='sudo tail -n 100 -f /var/log/syslogs/supervisor.log'
-alias svc_sv_update='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock reread && sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock update'
+alias svc_sv_update='sudo /opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/supervisorctl -s unix:///var/sockets/supervisor_root.sock reread && sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock update'
 svc_svr_push_config(){ /Users/admin/SERVER3/supervisor_root/push_sv_config.bash; }
-alias svc_svr_ctl='sudo supervisorctl -s unix:///var/sockets/supervisor_root.sock'
+alias svc_svr_ctl='sudo /opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/supervisorctl -s unix:///var/sockets/supervisor_root.sock'
 alias svc_svr_load='svc_svr_push_config; sudo launchctl load -w /Library/LaunchDaemons/custom.supervisord_root.plist'
 alias svc_svr_reload='svc_svr_unload; svc_svr_load;'
 alias svc_svr_reset='svc_svr_push_config && svc_svr_ctl reread && svc_svr_ctl update'
