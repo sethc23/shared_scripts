@@ -28,4 +28,36 @@ e-recompile(){
     echo '\nAUTOLOADS\n'    && make autoloads   || return _error
     echo '\nSNIPPETS\n'     && make snippets    || return _error
     _end
-}
+    }
+e-convert-md-org(){
+    split_path(){
+        if [[ $(basename "$1") = "$1" ]]; then
+            _dir=$(pwd)
+            _fname="$1"
+        else
+            _dir=$(dirname "$1")
+            _fname=$(basename "$1")
+        fi
+    }
+    [[ (-z $1) || ("$1" = "-h") || ("$1" = "--help") ]]                                     \
+        && echo ""                                                                          \
+        && echo "Usage:"                                                                    \
+        && echo "\temacs e-convert-md-org README.md"                                        \
+        && echo "\temacs e-convert-md-org /some/dir/README.md"                              \
+        && echo "\temacs e-convert-md-org /some/dir/README.md /some/other/dir/README.org"   \
+        && echo ""                                                                          \
+        && return
+
+    split_path "$1"
+    _from_dir=$_dir
+    _from_fname=$_fname
+
+    split_path "$2"
+    _to_dir=$_dir
+    _to_fname=$_fname
+
+    [[ -z $_to_fname ]]                                                                     \
+        && _to_fname=$(echo $_from|sed -r 's/^(.*)[.](md|MD|markdown)$/\1.org/')
+
+    pandoc -f markdown -t org -o "$_to_dir/$_to_fname" "$_from_dir/$_from_fname"
+    }
