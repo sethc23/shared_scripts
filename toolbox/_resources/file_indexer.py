@@ -336,6 +336,9 @@ def redo_pdf_ocr(fpath):
     run_cmd(cmd)
 
 def file_info(fpath,info_type,FROM_CMD_LINE=True):
+    """
+        .png    pngtopnm|pnmtotiff|tiff2pdf
+    """
     def pdf_to_text(cmd=''):
         print 'fname:',fname
         print 'fname_pdf:',fname_pdf
@@ -381,8 +384,6 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
         print 'len:',len(chk)
         return True if len(chk) else False
 
-
-
     fname = fpath[fpath.rfind('/')+1:]
     assert fname[0]!='.',"ERROR: file info not configured to handle files without typical 'filename.ext' format"
     fname_base = fname[:fname.rfind('.')]
@@ -423,6 +424,9 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
                 ]) + ';\n'
             cmd = pdf_to_text(cmd)
         elif f_ext=='msg':
+            #
+            # SEE $G/intarcia-contracts-cobblestone/get_content_text.py
+            #
             # converting 'msg' (where `file <filename>.msg`='Composite Document File V2 Document')
             #   --> Run: `cpan -i Email::Outlook::Message`
             #   --> Usage: msgconvert <fpath>
@@ -449,7 +453,7 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
                 print 'still no text:',fpath
                 raise SystemError
             cmd="""lynx --dump -nomargins -dont_wrap_pre \
-                    <(pdftotext -q -nopgbrk %s -)""" % fpath
+                    <(pdftotext -q -layout -nopgbrk %s -)""" % fpath
         elif MS_EXTS.count(f_ext):
             cmd = ';\n'.join([
                 "libreoffice --headless --invisible --convert-to pdf '"+fpath+"' --outdir "+fpath_dir+" >/dev/null 2>&1",
@@ -457,6 +461,60 @@ def file_info(fpath,info_type,FROM_CMD_LINE=True):
                 ]) + ';'
             cmd = mv_orig_and_rename_converted(cmd)
         else:
+            """
+
+            mv $i $(uuidgen)/
+            pdfseparate $i $_fname_base-%d.pdf
+            _cnt=$(env ls -1A | wc -l)
+            for j in $(echo $_range); do
+                num=$(python -c "print(\"%05d\" % $j)")
+                if [[ -f "./$i-$j.pdf" ]]; then
+                    mv "./$i-$j.pdf" "./$i-$num.pdf"
+                fi
+            done
+
+
+            lynx --dump -nomargins \
+                <(anytopnm $_img_fname  \
+                    | ppmquant 255          \
+                    | tesseract - - pdf     \
+                    | pdftotext -q -layout -nopgbrk - -)
+
+            if [[ $(env ls -1A Scree*pdf|wc -l) = $(env ls -1A Scree*|grep -v -E ".*[.]pdf$"|wc -l) ]]; then
+                env ls -1A Scree*png|xargs rm
+            else
+                echo "ERROR: miscount"
+            fi
+
+            convert_screenshots_to_pdf(){
+                assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
+                cd ~/ARCHIVE/DOC_IMAGES
+                assign _imgs < <( env ls -1A  \
+                        |grep -v -E ".*[.]pdf"$             \
+                        |sed -r 's/^(.*[/])?([^/]+)[.]([a-z]+)$/\2/i' )
+                img_no_pdf=()
+                for i in $(echo "$_imgs"); do
+                    [[ -z $(env ls -1A *.pdf|grep $i) ]] \
+                        && img_no_pdf+=("$i")
+                done
+
+                if [[ ! $(env ls -1A *.pdf|wc -l) = $(env ls -1A|grep -v -E ".*[.]pdf"$ |wc -l) ]]; then
+                    echo "\n\nIssue with doc count matching (<img> and pdf).\n\n"
+                    assign _full_imgs < <( env ls -1A  \
+                        |grep -v -E ".*[.]pdf"$ )
+                    # for i in $img_no_pdf; do echo "$_full_imgs"|env grep $i; done
+                    for i in $img_no_pdf; do
+                        _img_fname=$(echo "$_full_imgs"|env grep $i)
+                        anytopnm $_img_fname | ppmquant 255 | tesseract - "$i" pdf
+                    done
+                    echo ""
+                fi
+
+                for i in $(env ls -1Atr Screen*pdf); do
+                    assign _tmp < <(pdftotext -layout -nopgbrk $i -)
+                    echo ""; echo $i -- $_tmp; echo ""
+                done
+            """
             print('unknown file to be gotten')
             raise SystemError
 
