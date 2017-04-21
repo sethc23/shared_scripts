@@ -24,7 +24,7 @@ fi
 # ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
 ENV=
 # OPTS="-f server-start --geometry=350x600"
-OPTS="-f server-start --visit $FPATH"
+OPTS="-f server-start --geometry=350x600 --visit $FPATH"
 [[ -z $FPATH ]] && OPTS="-f server-start"
 
 EMACS_CL="$ENV /usr/local/bin/emacs25-x --daemon $OPTS"
@@ -97,8 +97,9 @@ assign AGENDA_CMD < <(cat <<-EOF
     (sit-for 2)
 EOF
 )
+
 # emacsclient -c --eval -s /var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/emacs501/server $AGENDA_CMD
-        # ;;(kill-buffer)                                     \
+    # ;;(kill-buffer)                                     \
     # emacs
     # emacs -q -nw -f describe-bindings -f kill-buffer-and-window --eval \(write-file /tmp/tmp_log\) -f kill-buffer
     #         (setq org-agenda-include-diary t)
