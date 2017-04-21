@@ -73,3 +73,4 @@ e-convert-md-org(){
     [[ -n $VERBOSE ]] && echo  "$_from -- $_to"
     pandoc -f markdown -t org -o "$_to" "$_from"
     }
+e-agenda-export(){ $HOME_ENV/.emacs.org/gen-org-agenda-today; }

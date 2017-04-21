@@ -23,11 +23,16 @@ fi
 
 # ENV="PATH=/Users/admin/.emacs.d/term-cmd:$PATH"
 ENV=
-# OPTS="-f server-start --geometry=350x600"
-OPTS="-f server-start --geometry=350x600 --visit $FPATH"
+# OPTS="--daemon -f server-start --geometry=350x600  --visit $FPATH"
+OPTS="--eval '(server-start)'"
 [[ -z $FPATH ]] && OPTS="-f server-start"
 
-EMACS_CL="$ENV /usr/local/bin/emacs25-x --daemon $OPTS"
+# /usr/local/bin/emacs25-x /Users/admin/.emacs.org/seth.org &
+# -f (load-file "~/.emacs.org/seth.org")
+# -f (switch-to-buffer "seth.org")
+
+# /usr/local/bin/emacs25-x -f server-start --eval '(switch-to-buffer "seth.org")' --geometry=350x600 --visit /Users/admin/.emacs.org/seth.org 2> /dev/null &
+EMACS_CL="$ENV /usr/local/bin/emacs25-x $OPTS"
 EMACS_CLIENT_CL="$ENV exec emacsclient"
 EMACS_GUI="$EMACS_CL"
 # EMACS_GUI="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args $OPTS"
@@ -61,7 +66,7 @@ get_socket(){
     fi
     echo "$SERVER" > "$PID_FILE"
 
-    SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1)"
+    SOCKET="$(lsof -p $SERVER -F tn|grep -A 1 tunix|grep server|sed 's/^n//'|cut -d ' ' -f1|uniq|head -n 1)"
     [[ -n $VERBOSE ]] && echo "SOCKET: $SERVER"
 
     echo $SOCKET
@@ -72,7 +77,7 @@ get_gui(){
     if [[ -n $SOCKET ]]; then
         [[ -n $VERBOSE ]] && echo echo "$ENV emacsclient -s $SOCKET -n -c $FPATH"
         # $ENV emacsclient -s $SOCKET -n -c $FPATH
-        $EMACS_CLIENT_CL -s $SOCKET -n -c $FPATH
+        $EMACS_CLIENT_CL -s $SOCKET -n -c $FPATH 2> /dev/null
         # eval("$ENV emacsclient -s $SOCKET -n -c $FPATH")
     else
         echo "No socket for emacsclient"
