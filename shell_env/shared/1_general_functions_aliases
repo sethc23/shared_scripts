@@ -135,6 +135,35 @@ source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
     # dbus-uuidgen
     # uuidgen -r, uuidgen -t
     # }
+to_display_by_redirect(){
+    echo $@ > /dev/pts/3
+    }
+to_display_by_pipe(){
+    to_display_by_redirect(){
+        echo $@ > /dev/pts/3
+        }
+    read -r
+    while [[ -n $REPLY ]]; do to_display_by_redirect $(printf '%s\n' "$REPLY"); read -r; done
+    }
+return_line() {
+    local lineno=$1
+    while (( lineno > 1 )); do read; (( lineno-- )); done
+    read -r && printf '%s\n' "$REPLY"
+    #
+    # TESTS:
+    #     return_line 3 <<<$'one\ntwo\nthree\nfour'
+    #     printf 'one\ntwo\nthree\nfour' | return_line 3
+    #
+    }
+return_all() {
+    read -r
+    while [[ -n $REPLY ]]; do printf '%s\n' "$REPLY"; read -r; done
+    #
+    # TESTS:
+    #     printf 'one\ntwo\nthree\nfour' | return_all 3
+    #     printf 'one\ntwo\nthree\nfour' | return_all
+    #
+    }
 zsh_retheme() {
     if [[ -n $1 ]]; then
         export ZSH_THEME=$1
