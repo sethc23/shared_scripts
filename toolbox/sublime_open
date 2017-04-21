@@ -1,6 +1,6 @@
 #!env zsh
 
-date > /tmp/tmp_subl_open
+# date > /tmp/tmp_subl_open
 # (from realpath man ...)
 #
 # -e, --canonicalize-existing
@@ -15,20 +15,19 @@ _target=$(echo "${@: -1}"|sed -r 's/[ ]/\\ /g')
 
 FPATH=$(realpath -e "$_target" 2> /dev/null)
 FPATH=$(echo "$FPATH"|sed -r 's/[ ]/\\ /g')
+FPATH=$(readlink -e $FPATH)
 
 test -e "$FPATH" || (echo "Unreadable target path: '"$_target"'" && exit 99)
 
-SSH_CMD=
 CMD_BASE="open -a \"Sublime Text\""
+CMD_PARAMS=
+[[ -n $_params ]] && CMD_PARAMS="--args \'$_params\'"
 
-if [[ "$(uname -s)" != "Darwin" ]]; then
-    SSH_CMD="ssh admin"
-    FPATH="/Volumes/$USER/$FPATH"
-fi
+CMD="$CMD_BASE $FPATH $CMD_PARAMS"
 
-CMD="$(echo $SSH_CMD $CMD_BASE $FPATH)"
-[[ -n $_params ]] && CMD="$CMD --args "$_params
+[[ ! $(uname -o) = Darwin ]]            \
+    && CMD="ssh admin '$CMD_BASE /Volumes/ub2$FPATH $CMD_PARAMS'"
 
-echo "$CMD" >> /tmp/tmp_subl_open
-
+# echo "$CMD" >> /tmp/tmp_subl_open
+# echo "$CMD"
 eval $CMD

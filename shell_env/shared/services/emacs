@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+VERBOSE=
+
 e-recompile(){
     _start(){
         CWD=$(pwd)
@@ -38,6 +40,8 @@ e-convert-md-org(){
             _dir=$(dirname "$1")
             _fname=$(basename "$1")
         fi
+        [[ -n $VERBOSE ]] && echo "_dir: $_dir"
+        [[ -n $VERBOSE ]] && echo "_fname: $_fname"
     }
     [[ (-z $1) || ("$1" = "-h") || ("$1" = "--help") ]]                                     \
         && echo ""                                                                          \
@@ -48,16 +52,24 @@ e-convert-md-org(){
         && echo ""                                                                          \
         && return
 
-    split_path "$1"
+    _from="$1"
+    _to="$2"
+
+    split_path "$_from"
     _from_dir=$_dir
     _from_fname=$_fname
 
-    split_path "$2"
+    split_path "$_to"
     _to_dir=$_dir
     _to_fname=$_fname
 
     [[ -z $_to_fname ]]                                                                     \
         && _to_fname=$(echo $_from|sed -r 's/^(.*)[.](md|MD|markdown)$/\1.org/')
 
-    pandoc -f markdown -t org -o "$_to_dir/$_to_fname" "$_from_dir/$_from_fname"
+    _from="$_from_dir/$_from_fname"
+    _to="$_to_dir/$_to_fname"
+
+    [[ -n $VERBOSE ]] && echo "pandoc -f markdown -t org -o \"$_to\" \"$_from\""
+    [[ -n $VERBOSE ]] && echo  "$_from -- $_to"
+    pandoc -f markdown -t org -o "$_to" "$_from"
     }
