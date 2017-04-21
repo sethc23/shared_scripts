@@ -1,0 +1,35 @@
+#!/usr/local/bin/zsh
+
+VERBOSE=
+
+[[ -z $(sudo launchctl list | grep atrun) ]] \
+    && sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
+
+remind(){
+    _min="$1"
+    _msg="$2"
+    _opts=$(echo "${@:3}")
+    _src_app="SHELL"
+    _title="REMINDER"
+    CMD="echo \"ssh admin '/usr/local/bin/growlnotify --sticky -n $_src_app \"$_title:  $_msg\";' \" | at NOW + $_min minute"
+    [[ -n $VERBOSE ]] && echo "$CMD"
+    res=$(eval "$CMD" 2>&1)
+    [[ -z $(echo $res|env grep -E \^"job") ]]       \
+        && echo "remind ERROR:\n\n\t$CMD"
+    }
+
+
+assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}"; }
+assign help_text < <(echo "$(cat <<EOF
+
+    Usage:
+
+        remind <mins> <message>
+
+EOF
+)")
+
+[[ -z $1 ]]                 \
+    && echo "$help_text"    \
+    || remind $@
+
