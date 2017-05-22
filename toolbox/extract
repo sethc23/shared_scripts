@@ -21,6 +21,7 @@ extract () {
                 *.tar)      tar xf $arg                     ;;
                 *.tbz2)     tar xjf $arg                    ;;
                 *.tgz)      tar xzf $arg                    ;;
+                *.crx)      unzip $arg -d $EX_DIR           ;;
                 *.zip)      unzip $arg -d $EX_DIR           ;;
                 *.Z)        uncompress $arg                 ;;
                 *.rar)      rar x $arg                      ;;  # 'rar' must to be installed

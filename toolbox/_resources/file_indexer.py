@@ -2,19 +2,16 @@
 
 """
 
-Image processing
-    Rescaling
-        convert to 300dpi
-    Binarisation
-        convert grayscale
-    Noise Removal
-    Rotation / Deskewing
-    Border Removal
-    Tools / Libraries
-    Examples
-
-
-
+    Image processing
+        Rescaling
+            convert to 300dpi
+        Binarisation
+            convert grayscale
+        Noise Removal
+        Rotation / Deskewing
+        Border Removal
+        Tools / Libraries
+        Examples
 
 """
 
@@ -39,21 +36,21 @@ from subprocess                         import PIPE as sub_PIPE
 # from psycopg2                           import connect as pg_connect
 
 # T = {'DB_NAME':'fileserver',
-#      'DB_HOST':'0.0.0.0',
-#      'DB_PORT':'8800',
-#      'DB_USER':'postgres',
-#      'DB_PW':''}
+     # 'DB_HOST':'0.0.0.0',
+     # 'DB_PORT':'8800',
+     # 'DB_USER':'postgres',
+     # 'DB_PW':''}
 
 # def _load_connectors():
-#     eng                         =   create_engine(r'postgresql://%(DB_USER)s:%(DB_PW)s@%(DB_HOST)s:%(DB_PORT)s/%(DB_NAME)s'
-#                                                   % T,
-#                                                   encoding='utf-8',
-#                                                   echo=False)
-#     conn                        =   pg_connect("""dbname='%(DB_NAME)s' host='%(DB_HOST)s' port=%(DB_PORT)s
-#                                                user='%(DB_USER)s' password='%(DB_PW)s' """
-#                                                % T);
-#     cur                         =   conn.cursor()
-#     return eng,conn,cur
+    # eng                         =   create_engine(r'postgresql://%(DB_USER)s:%(DB_PW)s@%(DB_HOST)s:%(DB_PORT)s/%(DB_NAME)s'
+    #                                               % T,
+    #                                               encoding='utf-8',
+    #                                               echo=False)
+    # conn                        =   pg_connect("""dbname='%(DB_NAME)s' host='%(DB_HOST)s' port=%(DB_PORT)s
+    #                                            user='%(DB_USER)s' password='%(DB_PW)s' """
+    #                                            % T);
+    # cur                         =   conn.cursor()
+    # return eng,conn,cur
 
 
 # try:
@@ -146,11 +143,16 @@ def get_file_idx_plus(dir_or_dir_list,**kwargs):
         dir_or_dir_list = [dir_or_dir_list]
     df = None
     for d in dir_or_dir_list:
-        if type(df)==NoneType:
-            df = get_file_list(d)
-        else:
-            nf = get_file_list(d)
-            df = df.append(nf,ignore_index=True)
+        nf = get_file_list(d)
+        if len(nf):
+            if type(df)==NoneType:
+                df = nf.copy()
+            else:
+                df = df.append(nf,ignore_index=True)
+
+    if not len(df):
+        return None
+
     if get_md5:
         df['md5'] = df.fpath.map(lambda s: md5(s) )
     if get_times:
