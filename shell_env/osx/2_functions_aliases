@@ -56,6 +56,7 @@ alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 
+alias st-workspace-list-edit="emacs -q -nw /Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env_osx.sublime-workspace"
 
 
 
