@@ -40,6 +40,31 @@ def _local(args):
         cmd = "/usr/local/bin/subl -a %s" % f
     run_cmd(cmd)
 
+def _settings(args):
+    """
+    as_base_window="$(cat <<EOF
+    tell application "iTerm2"
+        tell current session of current window
+            $CMD
+        end tell
+    end tell
+    EOF
+    )"
+
+
+
+    set colums to $COLUMNS
+
+    resize_x=
+    resize_y="$(cat <<EOF
+    tell application "iTerm2"
+        tell current session of current window
+            set rows to $ROWS
+        end tell
+    end tell
+    EOF
+    )"
+    """
 
 if __name__ == '__main__':
     from sys import argv
