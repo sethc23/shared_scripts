@@ -1,5 +1,14 @@
 #!env zsh
 
+# <<< --- BOOT / EFI --- >>>
+
+# see `diskutil list`
+
+alias efi-mount='mkdir -p /Volumes/boot; sudo mount -t msdos /dev/disk0s1 /Volumes/boot'
+alias efi-config='subl /Volumes/boot/EFI/refind/refind.conf'
+
+
+
 # <<< --- SETTINGS/OPTIONS --- >>>
 alias opt_hidden_disable='defaults write com.apple.finder AppleShowAllFiles -bool true; killall Finder'
 alias opt_hidden_enable='defaults write com.apple.finder AppleShowAllFiles -bool false; killall Finder'

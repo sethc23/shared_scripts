@@ -13,6 +13,13 @@
 - `showkey -a`
 - `tmux -C`
 
+## COMMON KEYS/REPRESENTATIONS
+| Key | Prefix-1 | Prefix-2 | Special Key Name
+| :---| --- | --- | ---: |
+| ctrl | 'C-' | '^'| |
+| alt (meta) | 'M-' | | |
+
+
 ## OTHER SPECIALIZED / ADVANCED TOOLS
 
 ### INPUT ANALYSIS (Scancodes, Keycodes & associated decimal, hex, and binary formats)

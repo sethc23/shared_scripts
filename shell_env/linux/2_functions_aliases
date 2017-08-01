@@ -49,13 +49,13 @@ alias BT_on='sudo /etc/init.d/bluetooth start'
 alias BT_restart='sudo /etc/init.d/bluetooth restart'
 alias cel_env='cd $SERV_HOME/aprinto; source ENV/bin/activate'
 alias chk_filesystem_types='sudo blkid'
-alias semacs='sudo emacs -nw'
 alias chkconfig='sudo sysv-rc-conf'
-alias disable_wifi='sudo ifconfig wlan0 down'
-alias dns_update='$SERV_HOME/dns/godaddy.py'
+alias disable-wifi='sudo ifconfig wlan0 down'
+alias dns-dyn='$SERV_HOME/dns/dyndns'
+alias dns-update='$SERV_HOME/dns/godaddy.py'
 alias email='mutt -a /tmp/backup.xml -s "tasker" -- seth.t.chase@gmail.com'
-alias locate_update='sudo /usr/bin/updatedb'
-alias mail_old='mail -f $HOME_ENV/mbox'
+alias email-old='mail -f $HOME_ENV/mbox'
+alias locate-update='sudo /usr/bin/updatedb'
 alias path_of_pid='path_of_pid_f'
 alias ps-command='ps --sort=comm'
 alias ps-cpu='ps --sort=+%cpu'
@@ -70,7 +70,6 @@ alias refind-reset='sudo efibootmgr -o 0000,0002,0003,0001,0080; refind-boot-ord
 alias S='kill_by syslog-ng; printf "" | printf "Checking processes..." | ps -A | grep syslog-ng | grep -v grep; sl_push_config; sudo syslog-ng;'
 alias scr_ed='scr_env; cd $HOME/.scripts'
 alias scr_env='source $HOME/.scripts/ENV/bin/activate'
-alias semacs='sudo emacs -nw'
 alias show_temp='sensors'
 alias topcpu='env ps -wx -o pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
 # update-alts-list='alias env ls -1 /var/lib/dpkg/alternatives'
@@ -88,7 +87,7 @@ update-alts-help(){
     echo "\te.g., sudo update-alternatives --config python"
     echo ""
     }
-alias uuid=uuid_random
-alias uuid_random='uuidgen -r'
-alias uuid_time='uuidgen -t'
+alias uuid-random='uuidgen -r'
+alias uuid-time='uuidgen -t'
+alias uuid=uuid-random
 alias vi='vim'

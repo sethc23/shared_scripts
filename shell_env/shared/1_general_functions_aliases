@@ -94,14 +94,21 @@ edit_bash_prof() { $EDITOR "$HOME_ENV/$SHELL_CONFIG"; source_bash; }
 edit_bash_share() { $EDITOR $HOME_ENV/.scripts/.alias_shared; source_bash; }
 edit_linux_share() { $EDITOR $HOME_ENV/.scripts/.alias_linux; source_bash; }
 edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
-find-file() { sudo find -H -s $1 -type f -iregex "$2"; }
-find-file_exec() { sudo find -H -s $1 -type f -iregex '$2' -exec $3 '{}' ; }
-find-folder() { sudo find -H -s $1 -type d -iregex "$2"; }
-find-files() { sudo find $1 -type f | xargs grep -iE "$2"; }
-# sudo find /Users/admin/.config/ -type f -newermt "2016-03-27 18:30" \! -newermt "2016-03-27 18:45"
-# sudo find / -type f -mmin -30
+find-dirs() { sudo find -L "$1" -mindepth 1 -type d -iregex "$2"; }
+find-file() { sudo find -L "$1" -mindepth 1-type f -iregex "$2"; }
+find-files-quoted() { sudo find -L "$1" -mindepth 1 -type f -exec ls -Q + ; }
+find-dirs-quoted() { sudo find -L "$1" -mindepth 1 -type d -exec 'ls -Q {}' \; }
+find-files-exec() { sudo find -L "$1" -mindepth 1 -type f -exec sh -c "echo -n {}; echo -n ' x '; echo {}" \; ; }
+#find-files-grep(){ sudo find -L "$1" -mindepth 1 -type f \
+    #-exec sh -lc "env -i grep -i --color=always -R -e \"$2\" -n -H -T {}" \;
+    # -exec sh -lc "printf \"<>FILE<> %s\n\" {}; env grep -i -R -e \"$2\" -n -H -T {}" \;
+    # -exec sh -lc "printf \"\n<>FILE<> %s\n\n\" {}; cat -n --squeeze-blank $(pwd)/{} | grep" \;
+    #}
+find-files-grep() { sudo find -L "$1" -mindepth 1 -type f | xargs grep -iE "$2" 2> /dev/null; }
+find-time-min-updated-ago() { sudo find -L "$1" -mindepth 1 -mmin -"$2"; }
+find-date-newer() { sudo find -L "$1" -mindepth 1 -newermt "2016-03-27 18:30" \! -newermt "2016-03-27 18:45"; }
 # Print with quotes
-# find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
+#     find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
 gdiff() { git diff $@ | cdiff -s -w 110; }
 jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
 ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
@@ -123,20 +130,24 @@ pyprofileread() { python -m line_profiler $1.lprof; }
 pyprofilewrite() { kernprof.py -l $1; }
 RD() { cd $BD/RD/src; python seamless.py; }
 RDt() { cd $BD/RD/src; python seamless_test.py; }
-retar() { tar -zcvf $1 $2; }
+tar-retar() { tar -zcvf $1 $2; }
 sencha-build() { cd $APORO/static/sencha; sudo sencha app build production; }
-shell_opts() {
+sh-opts() {
     if [[ "$1" = "show" ]]; then
         [[ -n $BASH_VERSION ]] && shopt -p
         [[ -n $ZSH_VERSION ]] && setopt
     fi
     }
-source_bash() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
+sh-source() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
 # uuid_new(){
     # python uuid.uuid4().hex[:7]
     # dbus-uuidgen
     # uuidgen -r, uuidgen -t
     # }
+ssh_f(){ \
+    [[ -n "$(ls-mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
+    mkdir -p /Volumes/$1; sshfs $1:/ /Volumes/$1 -o follow_symlinks > /dev/null 2>&1;
+    }
 to_display_by_redirect(){
     echo $@ > /dev/pts/3
     }
@@ -166,7 +177,29 @@ return_all() {
     #     printf 'one\ntwo\nthree\nfour' | return_all
     #
     }
-zsh_retheme() {
+xclip-copy(){ echo "$@" | xclip; }
+xclip-paste(){ xclip -selection clipboard -o; }
+xclip-admin(){ ssh admin "echo \"$(xclip-paste)\"|pbcopy"; }
+x11-active(){
+    [[ $OS_NAME = Linux ]] && env ls -1 /tmp/.X11-unix
+    }
+vnc-clean(){
+    _idx="$1"
+    running_pid="$(/bin/ps -awwx -o pid,ppid,comm,args      \
+        | env grep -i -E "Xtightvnc[ ][:]$_idx"             \
+        | column -t | tr -s " "                             \
+        | cut -d ' ' -f1 | tr -s " "    		    \
+        )"
+    [[ -n $running_pid ]]                                   \
+        && kill -9 $running_pid
+    sudo rm -fr "/tmp/.X$_idx-lock" "/tmp/.X11-unix/X$_idx"
+    }
+vnc-reset(){
+    _idx="$1"
+    vnc_clean $_idx
+    eval "vncserver :$_idx"
+    }
+z-retheme() {
     if [[ -n $1 ]]; then
         export ZSH_THEME=$1
         source $ZSH/oh-my-zsh.sh
@@ -192,7 +225,7 @@ alias AP_android='cd $APORO/static/sencha/phonegap/platforms/android/'
 alias AP_phonegap_build_android='AP_android; sudo phonegap build android --release;'
 alias AP_sencha='cd $APORO/static/sencha/'
 alias AP_sencha_build='AP_sencha; sudo sencha app build package;'
-alias assign_help='echo "assign some_variable < <(some code)"'
+alias assign-help='echo "assign some_variable < <(some code)"'
 alias BD_env='cd $BD; source ENV/bin/activate'
 alias cde='cde_f'
 alias chmod_num='stat -c "%a"'
@@ -202,33 +235,45 @@ alias colordiff='colordiff --minimal --strip-trailing-cr --text --ignore-blank-l
 alias columns='column -t | tr -s " "'
 alias convert_pdf='pdftohtml -i -c -xml'
 alias countF='ls | wc -l'
-alias cy_build='cd $BD/RD/src/cython_exts/; python cy-build.py build_ext -i;'
-alias cy_clean='cd $BD/RD/src/cython_exts/; sudo python cy-build.py clean;'
-alias cy_folder='cd $BD/RD/src/cython_exts/;'
-alias cy_help='cd $BD/RD/src/cython_exts/; python cy-build.py --help-commands;'
-alias dir_size='du -Lsh'
+alias cy-build='cd $BD/RD/src/cython_exts/; python cy-build.py build_ext -i;'
+alias cy-clean='cd $BD/RD/src/cython_exts/; sudo python cy-build.py clean;'
+alias cy-folder='cd $BD/RD/src/cython_exts/;'
+alias cy-help='cd $BD/RD/src/cython_exts/; python cy-build.py --help-commands;'
+alias dir-size='du -Lsh'
 alias du='du -L'
 alias ec2="ssh -i $HOME_ENV/.ssh/grp1.pem ec2-user@ec2-54-164-189-68.compute-1.amazonaws.com -p 10101"
-alias ec2_pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
-alias ec2_reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
+alias ec2-pg_tunnel='ssh ub3 -L 9088:localhost:8800 -N &'
+alias ec2-reboot='aws ec2 reboot-instances --instance-ids i-8206d068'
 alias egrep='egrep -i --color=auto'
+# NOTE:
+#
+#   find [ -P | -L | -H ] --> find [ 'never follow symlinks' | 'follow' | 'no follow except attributes when avail.' ]
+#
+#       of the above flags, the last one used governs
+#
 alias find='find -L'
+#
+#
 alias fgrep='fgrep -i --color=auto'
 alias function_names='compgen -A function | sort'
 alias get_tty='tty | sed -e "s/.*tty\(.*\)/\1/"'
 alias git_sencha='echo "admin" | sudo git clone https://github.com/sethc23/aporo.git -b sencha $HOME_ENV/django/Dropbox/aporo/static/sencha'
 alias grep='grep -i --color=auto'
-alias grep_folder='grep -r "$1" *'
-alias grok_app='ngrok -hostname app.aporodelivery.com 80'
-alias grok_mysql='ngrok -proto tcp 3306'
-alias grok_printer='ngrok -hostname printer.aporodelivery.com 80'
-alias hist_cmds="history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"
+alias grep-folder='grep -r "$1" *'
+alias grok-app='ngrok -hostname app.aporodelivery.com 80'
+alias grok-mysql='ngrok -proto tcp 3306'
+alias grok-printer='ngrok -hostname printer.aporodelivery.com 80'
+f-h-c(){ eval "history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"; }
+alias h-c='f-h-c'
+alias h-c="history | awk '{\$1=\$2=\$3=\"\";print}' | sed 's/^   //'"
+f-h-c-g(){ h-c | grep $1; }
+alias h-c-g='f-h-c-g'
 alias irssi='TERM=screen-256color irssi'
 alias killall="killall -9"
 alias l-test="printf 'package.loaded.tmp=nil\nt=require\"tmp\"\nt.test()' | luap --"
 alias locate='locate -i'
-alias locate_info='locate -S'
-alias locate_update='sudo /usr/libexec/locate.updatedb'
+alias locate-info='locate -S'
+alias locate-update='sudo /usr/libexec/locate.updatedb'
 alias ls='ls --color --almost-all --classify --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash'
 alias mnt='scr_ed; ./System_Control.py servers mnt'
 alias mnt_EXT_HD='mkdir -p /Volumes/EXT_HD; $SSHFS ub1:/Volumes/EXT_HD /Volumes/EXT_HD -o ConnectTimeout=5'
@@ -240,11 +285,11 @@ alias pip-install='pip install --upgrade --allow-all-external --allow-unverified
 alias pip-update='$HOME_ENV/.scripts/update_pip.sh'
 alias pip-upgrade-all='pip list --outdated --format=legacy | cut -d" " -f1 | xargs pip install --upgrade'
 alias pip-upgrade-pip='pip install -U pip'
-# alias ports_listen='sudo lsof -n -i -P | grep LISTEN'
-alias ports_listen_2='sudo netstat -ltnp'
-alias ports_listen_3='nettop'
-alias ports_sockets='netstat -lx'
-alias ports_ssh='lsof -i tcp | grep ^ssh'
+# alias ports-listen='sudo lsof -n -i -P | grep LISTEN'
+alias ports-listen_2='sudo netstat -ltnp'
+alias ports-listen_3='nettop'
+alias ports-sockets='netstat -lx'
+alias ports-ssh='lsof -i tcp | grep ^ssh'
 alias ps-threads-full='pstree'
 alias ps='ps -awwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args'
 alias pull_shared_scripts='pull_shared_scripts'
@@ -253,8 +298,6 @@ alias push_ssh_config='mnt; cp -R $HOME_ENV/.ssh/config /Volumes/mb/Users/admin/
 alias pydoc='python -m pydoc'
 alias pyprofileread='pyprofileread'
 alias pyprofilewrite='pyprofilewrite'
-alias RD_e='cd $BD/RD/src'
-alias RDt='RDt'
 alias redis_config='sudo emacs /opt/local/etc/redis.conf'
 alias redis_kill='pkill -f redis-server'
 alias redis_run='redis-server /opt/local/etc/redis.conf'
@@ -276,13 +319,12 @@ alias test_nginx_socket='socat - UNIX-CLIENT:/var/log/nginx.sock'
 alias to_log='syslog -s -l error -k Message'
 alias topcpu='ps -ero pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
 alias topmem='ps -emo pid=PID,%cpu=CPU,%mem=MEM,comm=CMD | head -15'
-alias tmux='tmux -2'
 alias umnt='sudo umount -f /Volumes/'
 alias untar='tar -zxvf'
 alias weechat='TERM=screen-256color weechat'
-alias z_local="emacs $SH/local_config/shell/.shell_local"
-alias z_omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
-alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
+alias z-local="emacs $SH/local_config/shell/.shell_local"
+alias z-omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
+alias z-source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
 
 
 [[ -n $DEBUG_SHELL ]] && echo "_shared_END"

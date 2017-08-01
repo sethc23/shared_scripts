@@ -1,10 +1,18 @@
+#!env zsh
+
+[[ -n $DEBUG_SHELL ]] && echo "shell/4_bindkeys_START - $(realfullpath $0)"
 
 [[ -n $BASH_VERSION ]] && BIND_CMD="bind"
 [[ -n $ZSH_VERSION ]] && BIND_CMD="bindkey"
 
+
+# iTerm2 w/ tmux integration
 if [[ -n $ZSH_VERSION ]]; then
     eval "$BIND_CMD -r '^[[A'"
     eval "$BIND_CMD -r '^[[B'"
     eval "$BIND_CMD '^[[A' history-search-backward"
     eval "$BIND_CMD '^[[B' history-search-forward"
 fi
+
+
+[[ -n $DEBUG_SHELL ]] && echo "shell/4_bindkeys_END - $(realfullpath $0)"

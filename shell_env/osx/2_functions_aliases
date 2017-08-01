@@ -12,10 +12,6 @@ locate_update(){ \
     }
 open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 ps_cut(){ env ps -awwwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
-ssh_f(){ \
-    [[ -n "$(ls-mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
-    mkdir -p /Volumes/$1; sshfs $1:/ /Volumes/$1 -o follow_symlinks > /dev/null 2>&1;
-    }
 test_acro_js() {
     js_content="\
 from appscript import app
@@ -59,4 +55,3 @@ alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text
 alias st-workspace-list-edit="emacs -q -nw /Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env_osx.sublime-workspace"
 
 
-alias e-recompile='find -L .cask/26.0/elpa -name "*elc" -delete; make clean; make; make compile; make autoloads; make snippets'

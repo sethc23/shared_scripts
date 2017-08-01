@@ -134,7 +134,6 @@ else
     get_gui
 fi
 
-get_socket
 # follow links
 
 #
