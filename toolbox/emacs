@@ -5,7 +5,7 @@
 
 DEBUG=
 VERBOSE=
-START_FILE="~/.emacs.org/seth.org"
+START_FILE="~/org/organizer.org"
 THIS_FILE="${@:0}"
 THIS_PID="$(echo $$)"
 ARGS="${@:1}"
@@ -32,7 +32,8 @@ OPTS="--eval '(server-start)'"
 # -f (switch-to-buffer "seth.org")
 
 # /usr/local/bin/emacs25-x -f server-start --eval '(switch-to-buffer "seth.org")' --geometry=350x600 --visit /Users/admin/.emacs.org/seth.org 2> /dev/null &
-EMACS_CL="$ENV /usr/local/bin/emacs25-x $OPTS"
+# EMACS_CL="$ENV /usr/local/bin/emacs25-x $OPTS"
+EMACS_CL="$ENV /Applications/Emacs.app/Contents/MacOS/Emacs $OPTS"
 EMACS_CLIENT_CL="$ENV exec emacsclient"
 EMACS_GUI="$EMACS_CL"
 # EMACS_GUI="$ENV open -a /Applications/Emacs.app/Contents/MacOS/Emacs --args $OPTS"
@@ -133,6 +134,7 @@ else
     get_gui
 fi
 
+get_socket
 # follow links
 
 #
