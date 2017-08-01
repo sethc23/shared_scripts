@@ -1,6 +1,8 @@
 #!env zsh
 
-[[ -n $DEBUG_SHELL ]] && echo "_shared_"
+[[ -n $DEBUG_SHELL ]] && echo "_shared_START"
+
+[[ -n $DEBUG_SHELL ]] && echo "_shared_fx"
 
 assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 build_script_env() {
@@ -174,6 +176,8 @@ zsh_retheme() {
     fi
     }
 
+[[ -n $DEBUG_SHELL ]] && echo "_shared_aliases"
+
 #alias ls='ls --almost-all --human-readable --ignore-backups --format=verbose --indicator-style=file-type --indicator-style=slash | LC_COLLATE=C sort -k9,9 --ignore-case'
 # adb shell input text "insert%syour%stext%shere"
 # adb shell input keyevent 82
@@ -281,6 +285,7 @@ alias z_omz="emacs $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ"
 alias z_source="source $HOME_ENV/.scripts/shell_env/zsh/.z_OMZ; source $HOME_ENV/.scripts/shell_env/_base"
 
 
+[[ -n $DEBUG_SHELL ]] && echo "_shared_END"
 
 
 # --------------------------------------------------------------------------

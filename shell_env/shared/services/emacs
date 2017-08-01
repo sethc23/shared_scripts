@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+
 
 VERBOSE=
 
@@ -31,6 +31,7 @@ e-recompile(){
     echo '\nSNIPPETS\n'     && make snippets    || return _error
     _end
     }
+return
 e-convert-md-org(){
     split_path(){
         if [[ $(basename "$1") = "$1" ]]; then
