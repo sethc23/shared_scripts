@@ -41,12 +41,16 @@ ITERM2=
 source_sub_dir() {
     for d in $(env find $1/ -mindepth 1 -maxdepth 2 -type d | sort); do
         for j in $(env find $d -maxdepth 1 -type f | sort); do
+            [[ -n $DEBUG_SHELL ]] && echo "source_sub_dir:file: $j"
             source $j
         done
     done
     }
 source_files(){
-    for i in `env find $1 -maxdepth 1 -type f | sort`; do source $i; done
+    for i in `env find $1 -maxdepth 1 -type f | sort`; do
+        [[ -n $DEBUG_SHELL ]] && echo "source_files: $i"
+        source $i
+    done
     }
 source_files_and_sub_dirs() {
     source_files "$1"
