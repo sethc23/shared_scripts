@@ -171,7 +171,47 @@
 			"file": "osx/2_functions_aliases",
 			"settings":
 			{
-				"buffer_size": 2982,
+				"buffer_size": 2782,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "shared/1_general_functions_aliases",
+			"settings":
+			{
+				"buffer_size": 15543,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "_local",
+			"settings":
+			{
+				"buffer_size": 6909,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "_base",
+			"settings":
+			{
+				"buffer_size": 2199,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "shell/4_bindkeys",
+			"settings":
+			{
+				"buffer_size": 479,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "shared/services/emacs",
+			"settings":
+			{
+				"buffer_size": 7389,
 				"line_ending": "Unix"
 			}
 		}
@@ -268,8 +308,8 @@
 	"expanded_folders":
 	[
 		"/Users/admin/.scripts/shell_env",
-		"/Users/admin/.scripts/shell_env/android",
-		"/Users/admin/.scripts/shell_env/osx"
+		"/Users/admin/.scripts/shell_env/shared/services",
+		"/Users/admin/.scripts/shell_env/shell"
 	],
 	"file_history":
 	[
@@ -404,7 +444,7 @@
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -423,6 +463,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cask",
+			"emacs",
 			"map",
 			"extens",
 			"get_page_num",
@@ -548,9 +590,7 @@
 			"scraper",
 			"align",
 			"flex",
-			"font",
-			")\n",
-			"trait_metadata"
+			"font"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -630,7 +670,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -639,15 +679,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2982,
+						"buffer_size": 2782,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2831,
-								2979
+								0,
+								0
 							]
 						],
 						"settings":
@@ -656,13 +696,179 @@
 							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_hhlinh",
 							"git_gutter_is_enabled": true,
 							"live_git_annotations": true,
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"touched": 1501612400.28
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "shared/1_general_functions_aliases",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15543,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								57,
+								57
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_j5iox0",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_kkxo0r",
+							"git_gutter_is_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"touched": 1501612400.29
+						},
+						"translation.x": 0.0,
+						"translation.y": 1656.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "_local",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6909,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1552,
+								1552
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_eapwt5",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_9pj2hz",
+							"git_gutter_is_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"touched": 1501612655.5
+						},
+						"translation.x": 0.0,
+						"translation.y": 2544.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "_base",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2199,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2098,
+								2098
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_e3s07b",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_llun4h",
+							"git_gutter_is_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"touched": 1501612760.86
+						},
+						"translation.x": 0.0,
+						"translation.y": 131.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "shell/4_bindkeys",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 479,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_ebnz8e",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_n_0dip",
+							"git_gutter_is_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"touched": 1501612742.34
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "shared/services/emacs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7389,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								610,
+								610
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_43wisv",
+							"git_annotation_temp_head": "/var/folders/mf/ctn20cl17y18z7fpcqm5gjnr0000gn/T/git_annotations_ggbdtu",
+							"git_gutter_is_enabled": true,
+							"live_git_annotations": true,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"touched": 1501612400.29
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]

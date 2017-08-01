@@ -51,8 +51,8 @@ elif [[ -n $ZSH_VERSION ]]; then
     [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"3z3
 fi
 
-[[ -n $TMUX ]] && source $BASE_DIR_base/bindings/tmux
-[[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"4
+# [[ -n $TMUX ]] && source $BASE_DIR_base/bindings/tmux
+# [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"4
 
 
 [[ -n $DEBUG_SHELL ]] && echo "END-shell_env_base"
