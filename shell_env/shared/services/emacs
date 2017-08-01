@@ -1,7 +1,65 @@
+#!/usr/bin/env zsh
 
+uuidgen(){ echo $(python2.7 -c 'from uuid import uuid4; print(uuid4().hex[:7])'); }
+x11-active () {
+    [[ $OS_NAME = Linux ]] && env ls -1 /tmp/.X11-unix
+    }
+vnc_clean () {
+    _idx="$1"
+    running_pid="$(/bin/ps -awwx -o pid,ppid,comm,args      \
+        | env grep -i -E "Xtightvnc[ ][:]$_idx"             \
+        | column -t | tr -s " "                             \
+        | cut -d ' ' -f1 | tr -s " "
+        )"
+    [[ -n $running_pid ]] && kill -9 $running_pid
+    rm -fr "/tmp/.X$_idx-lock" "/tmp/.X11-unix/X$_idx"
+    }
+vnc_reset () {
+    _idx="$1"
+    vnc_clean $_idx
+    eval "vncserver :$_idx"
+    }
 
-VERBOSE=
-
+e-custom-2 () {
+    NEW_FNAME=$(echo "$(uuidgen).org")
+    emacsclient.emacs25 --create-frame ~/.emacs.d/private/org/tocapture/$NEW_FNAME
+    }
+e-custom-1(){
+    for i in $(env ls); do
+        NEW_FNAME=$(echo "$i.org")
+        mv $i $NEW_FNAME
+        emacsclient.emacs25 --create-frame $NEW_FNAME
+    done
+    }
+e-cask-full-update(){
+    _from_dir=$(pwd)
+    cd ~/.emacs.d
+    ORIG_PATH="$(echo $PATH)"
+    export PATH=/home/ub2/.emacs.d/term-cmd:$PATH
+    cask --debug --verbose upgrade-cask
+    cask --debug --verbose upgrade
+    cask --debug --verbose update
+    cask --debug --verbose install
+    cask --debug --verbose clean-elc
+    find -L .cask/25.2/elpa -name "*elc" -delete
+    cask build
+    cd "$_from_dir"
+    unset _from_dir
+    export PATH=$ORIG_PATH
+    unset ORIG_PATH
+    }
+e-repo-pull(){
+    EMACS_DIR="~/.emacs.d"
+    for d in                              \
+        "$EMACS_DIR/private/org"          \
+        "$EMACS_DIR/private/snippets"     \
+        "$EMACS_DIR/private"              \
+        "$EMACS_DIR"                      \
+    ; do
+        cd "$d"
+        git pull
+    done
+    }
 e-recompile(){
     _start(){
         CWD=$(pwd)
@@ -9,11 +67,15 @@ e-recompile(){
         [[ $(uname -o) = Darwin ]] \
             && ln -nfs /usr/local/bin/emacs-25.1-x11 /usr/local/bin/emacs
             # && ln -nfs /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs /usr/local/bin/emacs
+        ORIG_PATH="$(echo $PATH)"
+        export PATH=/home/ub2/.emacs.d/term-cmd:$PATH
         }
     _end(){
         ln -nfs $HOME_ENV/.scripts/toolbox/emacs /usr/local/bin/emacs
         cd $CWD
         unset CWD
+        export PATH=$ORIG_PATH
+        unset ORIG_PATH
         }
     _error(){
         echo "\nERROR\n";
@@ -22,7 +84,7 @@ e-recompile(){
         }
     _start
     #find ~/.emacs.d -type f -regex ".*elc$" | xargs -I '{}' rm -fr {}
-    find ~/.emacs.d/.cask/25.1/elpa -name "*elc" -delete
+    find ~/.emacs.d/.cask/25.2/elpa -name "*elc" -delete
     # find /usr/local/share/emacs/25.1 -type f -regex ".*elc$"|xargs -I '{}' rm -fr {}
     echo '\nCLEANING'       && make clean       || return _error
     echo '\nMAKE'           && make             || return _error
@@ -31,7 +93,22 @@ e-recompile(){
     echo '\nSNIPPETS\n'     && make snippets    || return _error
     _end
     }
-return
+e-recompile-2 () {
+    _from_dir=$(pwd)
+    cd ~/.emacs.d
+    ORIG_PATH="$(echo $PATH)"
+
+    env find -L ./core -name "*elc" -delete
+    env find -L ./private -name "*elc" -delete
+    env find -L . -maxdepth 1 -name "*elc" -delete
+    make clean
+    make; make compile; make autoloads; make snippets
+
+    cd "$_from_dir"
+    unset _from_dir
+    export PATH=$ORIG_PATH
+    unset ORIG_PATH
+    }
 e-convert-md-org(){
     split_path(){
         if [[ $(basename "$1") = "$1" ]]; then
@@ -74,4 +151,76 @@ e-convert-md-org(){
     [[ -n $VERBOSE ]] && echo  "$_from -- $_to"
     pandoc -f markdown -t org -o "$_to" "$_from"
     }
-e-agenda-export(){ $HOME_ENV/.emacs.org/gen-org-agenda-today; }
+e-agenda-export(){ $HOME_ENV/org/scripts/gen-org-agenda-today; }
+
+
+_emacs_print_packages(){
+    _DISPLAY=:61
+
+    _DISPLAY_NUM=$(echo $_DISPLAY|cut -d ':' -f2|tr -d ' ')
+    vnc_reset $_DISPLAY_NUM > /dev/null 2>&1
+
+    TMP_FPATH_1="/tmp/$(uuidgen)"
+    TMP_FPATH_2="/tmp/$(uuidgen)"
+    echo "$(cat<<EOF
+(package-list-packages)
+(write-file "$TMP_FPATH_2" nil)
+(remove-window)
+EOF
+    )" > $TMP_FPATH_1
+    DISPLAY=$_DISPLAY emacsclient -c -n                     \
+        --display $_DISPLAY                                 \
+        --eval '(package-list-packages)'                    \
+        --eval '(sit-for 5)'                                \
+        --eval '(write-file "$TMP_FPATH_2" nil)'            \
+        --eval '(remove-window)'                            \
+        > /dev/null 2>&1
+
+    cat $TMP_FPATH_2
+    rm $TMP_FPATH_1 $TMP_FPATH_2
+
+    vnc_clean $_DISPLAY_NUM > /dev/null 2>&1
+    }
+_emacs_package_buffer_to_df(){
+    current_pkgs=$(_emacs_print_packages)
+    python2.7 "$(
+cat<<EOF
+    # for it in df[df.status=='installed'].name.tolist():
+    #    !echo $it >> /Volumes/ub2/home/ub2/admin_emacs_pkgs
+    with open('$PKG_LIST_FPATH') as f:
+        a = f.read().split('\n')
+    res = []
+    for l in a:
+        _all=len(l)
+        _name=l[2:20].strip(' ')
+        _version=l[21:34].strip(' ')
+        _status=l[35:45].strip(' ')
+        _src=l[46:56].strip(' ')
+        _desc=l[57:].strip(' ')
+        _dict={'name':_name
+            ,'version':_version
+            ,'status':_status
+            ,'src':_src
+            ,'description':_desc
+            }
+        res.append(_dict)
+    import pandas as pd
+    df = pd.DataFrame(res)
+    df
+EOF
+    )"
+    }
+
+export ALTERNATE_EDITOR="leafpad"
+export EDITOR="emacsclient -t"                  # $EDITOR should open in terminal
+export VISUAL="emacsclient -c -a emacs25"         # $VISUAL opens in GUI with non-daemon as alternate
+
+alias e-e-client-window='emacsclient -c -n'
+alias e-e-client-term="emacsclient -t"                      # used to be "emacs -nw"
+alias e-e-client-term-root="sudo emacsclient -t"                # used to be "sudo emacs -nw"
+alias e-e-client-test="emacsclient -c -a emacs25"           # new - opens the GUI with alternate non-daemon
+
+alias vnc-clean='vnc_clean'
+alias vnc-reset='vnc_reset'
+
+alias e-o-organizer='PATH=/home/ub2/.emacs.d/term-cmd:$PATH e-e-client-window /home/ub2/.emacs.d/private/org/organizer.org > /dev/null 2>&1 &'

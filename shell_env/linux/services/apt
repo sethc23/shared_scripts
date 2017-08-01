@@ -13,7 +13,7 @@ ap-clean() { \
     ap-remove-broken
     ap-remove-residual
     }
-ap-debug_install() { ap-install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
+ap-install-debug() { ap-install $(sudo bash /etc/apt/debug_resources/list-dbgsym-packages.sh -t -p $(pidof -s $1)); }
 ap-remove-broken() {
     [[ -n "(sudo -n true 2>&1)" ]] && sudo --validate
     printf "\n\tLIST 1 of 2:\n\n"
@@ -37,15 +37,15 @@ ap-remove-residual() {
         sudo apt-get remove --purge \
         $(sudo dpkg -l | grep '^rc' | awk '{print $2}' | tr '\n' ' ')
     }
-ap-upgrade_list() { sudo apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t | sort; }
+ap-upgrade-list() { sudo apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | column -t | sort; }
 
 
 alias ap-broken_pkgs='grep Broken /var/log/dist-upgrade/apt.log'
 alias ap-download='sudo apt-get download'
 alias ap-files='apt-file list'
 alias ap-fix_local_install='sudo apt-get -f install'
-alias ap-force_install_local='sudo gdebi'
 alias ap-holds='dpkg --get-selections | grep hold'
+alias ap-install-local_src='sudo gdebi'
 alias ap-install='sudo apt-get install -y'
 alias ap-install-reinstall='sudo apt-get install --reinstall'
 alias ap-policy='sudo apt-cache policy'

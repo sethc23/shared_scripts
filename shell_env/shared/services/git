@@ -18,17 +18,48 @@ alias g-rp-clone='git clone --recursive'
 alias g-rp-name='basename `git rev-parse --show-toplevel`'
 alias g-rp-pull='git pull --recurse-submodules'
 alias g-rp-push='git push'
-
+alias g-rp-fork-list-all='git hub forks'
 
 g-rp-init_w_descr() { \
-    git init; rm .git/config; cd .git;
-    cp $HOME_ENV/.gitconfig ./config; cd ..; emacs .git/config;
-    git-hub create --desc="$1";
-    #pwd | sed -r 's/.*\/([^\/]+)$/\1/g' | xargs -I '{}' git remote add github git@github.com:sethc23/{}.git;
-    [[ -n "echo $(git remote show) | grep origin" ]] && git remote remove origin;
-    git push github dev; git branch --set-upstream-to=github/dev;
-    git checkout -b master; git push github master; git branch --set-upstream-to=github/master;
-    git checkout -b dev;
+    "USAGE: g-rp-init_w_descr '<DESCRIPTION>' '<PUB-SRC>'"
+    "   PUB-SRC: [ lab | hub | gitlab | git-lab | github | git-hub ] (default: git-lab)"
+
+    repo-descr="$1"
+
+    pub-dest="lab"
+    [[ -n $2 ]] && pub-dest=$2
+    pub-dest=$(echo "$pub-dest"|sed -r 's/^(git[-]?)(.*)$/\2/')
+
+    # # NOTE: [ --private | --internal ]
+    # # NOTE: print "gitlab master branch protected by default (i.e., force push will fail)"
+    # cat $HOME_ENV/.gitconfig > ./.git/config
+    # e-e-client-window ./.git/config
+    # git-lab create --private --description="config for org life"
+    # git remote rename origin gitlab
+    # git push -u gitlab master
+
+
+    git init
+    rm .git/config
+    cat $HOME_ENV/.gitconfig > ./.git/config
+    emacs .git/config
+
+    CMD=$(echo "git-""$pub-dest"" create --description=\"$1\"")
+    eval $CMD;
+
+    CMD=$(echo "git remote rename origin git"$pub-dest)
+    eval $CMD;
+
+    CMD=$(echo "git push -u git""$pub-dest"" master")
+    eval $CMD;
+
+    # #pwd | sed -r 's/.*\/([^\/]+)$/\1/g' | xargs -I '{}' git remote add github git@github.com:sethc23/{}.git;
+    # [[ -n "echo $(git remote show) | grep origin" ]] && git remote remove origin;
+    # git push github dev; git branch --set-upstream-to=github/dev;
+    # git checkout -b master; git push github master; git branch --set-upstream-to=github/master;
+    # git checkout -b dev;
+
+
     git branch -avv; \
     }
 
@@ -43,14 +74,26 @@ alias g-s-p='git status --porcelain'
 alias g-s-p-STAGED='git diff --name-status --cached | more'
 alias g-s-NOT_STAGED="git diff --name-only | more"
 alias g-s-NOT_STAGED-MOD="git diff --name-status | more | grep ^M | sed 's/^M\s*//g'"
-g-S-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g';}
+g-s-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g';}
 g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*//g';}
 
 #  --  BRANCHES (g-b*)
 alias g-b='git branch -avv'
 alias g-b-DELETE='git branch -d'
-alias g-b-r-DELETE_LOCAL='git branch --remotes --delete'
-g-b-r-DELETE-REMOTE() { git push $1 --delete $2; }
+alias g-b-r-DELETE-LOCAL='git branch --remotes --delete'
+g-b-r-DELETE-REMOTE() {
+    if [[ (-z $1) && (-z $2) ]]; then
+        echo "\n\tUsage:\t g-b-r-DELETE-REMOTE <remote name> <branch name>\n"
+        return
+    elif [[ (-n $1) && (-z $2) && (-n $(echo "$2"|cut -d "/" -f1-2)) ]]; then
+        _repo=$(echo "$2"|cut -d "/" -f1)
+        _branch=$(echo "$2"|cut -d "/" -f2)
+    else
+        _repo=$1
+        _branch=$2
+    fi
+    git push $_repo --delete $_branch
+    }
 alias g-b-name='git rev-parse --abbrev-ref HEAD'
 g_b_sync(){ \
     if [[ "$1" = "push" ]]; then
@@ -64,6 +107,13 @@ g_b_sync(){ \
 alias g-b-push-other='g_b_sync push'
 alias g-b-fetch-other='g_b_sync fetch $1 $2'
 alias g-b-clean='git clean -dfx'
+g-b-tag-checkout(){
+    _tag=$1
+    [[ -n $2 ]]                         \
+        && _branch_name=$2              \
+        || _branch_name="v_$_tag"
+    git checkout tags/$_tag -b $_branch_name
+    }
 
 #  --  DEV BRANCH (g-D*):
 g_push_dev_and_master() { \
@@ -105,6 +155,31 @@ g-m() { git merge -s recursive -X ours -m "$1"; }
 
 #  --  TAGS (g-t*)
 alias g-t-last='git describe --abbrev=0 --tags'
+f-g-t-checkout(){
+	[[ -z $1 ]] 										\
+		&& _tag="$(git describe --abbrev=0 --tags)" 	\
+		|| _tag=$1
+
+	[[ -z $_tag ]] 										\
+		&& echo "Error: No tag found" 					\
+		&& return
+
+	[[ -z $2 ]] 															\
+		&& _branch="$(python -c "x='$_tag'; print(x.strip(' v'));" )" 		\
+		|| _branch=$2
+
+	[[ -z $_branch ]] 														\
+		&& echo "Error: No branch found or identified" 						\
+		&& return
+
+	[[ $_tag = $_branch ]] 														\
+		&& _branch=$(printf "v%s" "$_branch")
+		# && echo "Error: Branch \"$_branch\" should not be identical to Tag \"$_tag\"" 						\
+		# && return
+
+	eval "git checkout tags/$_tag -b $_branch"
+	}
+alias g-t-checkout='f-g-t-checkout'
 
 #  --  FILES (g-f*)
 alias g-f-latest='git diff-tree --no-commit-id --name-only -r $(g-c-latest)'
@@ -214,11 +289,11 @@ gs_recursive_pull() { \
     # git submodule foreach --recursive git checkout master master;
 
     }
-alias gs-init_all='gs_recursive_pull'
-alias gs-status='git submodule foreach --recursive git branch -avv'
-alias gs-update='git pull && git submodule init && git submodule update && git submodule status'
-alias gs-list='git config --list|env egrep \^submodule'
-alias gs-init_by_gitmodules='gs_add_from_gitmodules'
+alias g-sub-init_all='gs_recursive_pull'
+alias g-sub-status='git submodule foreach --recursive git branch -avv'
+alias g-sub-update='git pull && git submodule init && git submodule update && git submodule status'
+alias g-sub-list='git config --list|env egrep \^submodule'
+alias g-sub-init_by_gitmodules='gs_add_from_gitmodules'
 
 # new submodule example
 # git submodule add --name seamless_yelp_scraping -- git@github.com:sethc23/seamless_yelp_scrapi
@@ -228,7 +303,7 @@ alias gs-init_by_gitmodules='gs_add_from_gitmodules'
 
 
 #  --  BLOG (g-B*)
-alias gb-serve='cd $BD/sethc23.github.io && rm -fr _site && bundle install && bundle exec jekyll serve --drafts --incremental'
+alias g-blog-serve='cd $BD/sethc23.github.io && rm -fr _site && bundle install && bundle exec jekyll serve --drafts --incremental'
 
 # Exemplar Gist
 # -- Update Gist

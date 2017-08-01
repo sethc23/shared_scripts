@@ -1,0 +1,93 @@
+#!env zsh
+
+# export TMUX_ALIASES=/home/ub2/.scripts/shell_env/shared/services/tmux
+
+# Settings: 	DEFAULTS
+DEBUG=
+VERBOSE=
+DRYRUN=
+
+# Settings: 	USER CONFIGURABLE
+# DEBUG=true
+# VERBOSE=true
+# DRYRUN=true
+
+# Functions:
+chk(){
+	_msg=$(printf "%s " ${@:2})
+	if [[ ($1 = v) && (-n $VERBOSE) ]]; then
+		printf "verbose:\t>>%s<<\n" "$_msg"
+	elif [[ ($1 = d) && (-n $DEBUG) ]]; then
+		printf "debug:\t>>%s<<\n" "$_msg"
+	elif [[ (-n $DRYRUN) ]]; then
+		printf "cmd-to-exec:\t>>%s<<\n" "$_msg"
+	elif [[ (-z $VERBOSE) && (-z $DEBUG) ]]; then
+		unset _msg
+	else
+		printf "USAGE:\tchk [ v | d ] t%s\n" "$_msg"
+	fi
+	}
+f-run-cmd(){
+	chk v "$@"
+	[[ -z $DRYRUN ]] 	&& \
+		zsh -lc "$1"
+	}
+f-opt-target(){
+	_param=$1
+	_opt_1=$2
+	_opt_2=$3
+
+	if   [[ -z $_opt_1 ]]; then
+		_cmd="tmux $_param"
+	else
+		_cmd="tmux $_param -t \"$_opt_1\""
+		[[ -n $_opt_2 ]] 	&& \
+			_cmd="tmux $_param $_opt_1 \"$_opt_2\""
+	fi
+
+	f-run-cmd "$_cmd"
+	}
+
+# Bindings:
+
+# GENERAL
+alias tmux='tmux -2'
+alias t-ls='tmux ls'
+alias t-refresh-terminal='stty sane'
+f-t-upd(){
+	export TMUX_ALIASES=/home/ub2/.scripts/shell_env/shared/services/tmux
+	source $TMUX_ALIASES
+	}
+alias t-u='f-t-upd'
+# f-t-src(){ tmux source ~/.tmux.conf; }
+f-t-src(){ tmux source ~/.tmux.conf\; display "User configuration file reloaded." }
+alias t-src='f-t-src'
+
+# SESSIONS
+f-t-s-a(){ 			f-opt-target 		"attach-session" $1 $2; 	}
+alias t-s-a='f-t-s-a'					# attach
+
+f-t-s-d(){ 			f-opt-target 		"detach-client" $1 $2; 	}
+alias t-s-d='f-t-s-d'					# detach
+
+f-t-s-k(){ 			f-opt-target 		"kill-session" $1 $2;		}
+alias t-s-k='f-t-s-k'					# kill
+
+f-t-s-m(){ 			f-opt-target 		"new-session" "-s" $1;		}
+alias t-s-m='f-t-s-m'					# make new
+
+f-t-s-n(){ 			f-opt-target 		"rename-session" $1 $2;	}
+alias t-s-n='f-t-s-n'					# name/rename
+
+f-t-s-r(){ 			f-opt-target 		"refresh-client" $1 $2; 	}
+alias t-s-r='f-t-s-r'					# refresh
+
+
+# PLUGINS
+export TPM_BIN="$HOME_ENV/.tmux/plugins/tpm/bin"
+export SRC_CMD=$(printf "%s; f-t-src;" "$(eval "which f-t-src")")
+alias t-p-c="$TPM_BIN/clean_plugins; $SRC_CMD"
+alias t-p-i="$TPM_BIN/install_plugins; $SRC_CMD"
+alias t-p-u-all="$TPM_BIN/update_plugins all; $SRC_CMD"
+
+

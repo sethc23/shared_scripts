@@ -1,10 +1,64 @@
-#!/bin/bash
+#!/bin/zsh -i
+
+# `spray-mode' Minor Mode Bindings:
+    # key             binding
+    # ---             -------
+
+    # SPC             spray-start/stop
+    # f               spray-faster
+    # h               spray-backward-word
+    # l               spray-forward-word
+    # q               spray-quit
+    # s               spray-slower
+    # t               spray-time
+    # <left>          spray-backward-word
+    # <remap>         Prefix Command
+    # <return>        spray-quit
+    # <right>         spray-forward-word
+
+sample_text="$(
+cat<<'EOF'
+A countryman between 2 Lawyers, is like a fish between two cats.
+He that can take rest is greater than he that can take cities.
+The misers cheese is wholesomest.
+Felix quem, &c.
+Love & lordship hate companions.
+The nearest way to come at glory, is to do that for conscience which we do for glory.
+There is much money given to be laught at, though the purchasers don't know it; witness A's fine horse,
+& B's fine house.
+He that can compose himself, is wiser than he that composes books.
+Poor Dick, eats like a well man, and drinks like a sick.
+After crosses and losses men grow humbler & wiser.
+Love, Cough, & a Smoke, can't well be hid.
+Well done is better than well said.
+Fine linnen, girls and gold so bright,
+Chuse not to take by candle-light.
+He that can travel well afoot, keeps a good horse.
+There are no ugly Loves, nor handsome Prisons.
+No better relation than a prudent & faithful Friend.
+A Traveller should have a hog's nose, deer's legs, and an ass's back.
+At the working man's house hunger looks in but dares not enter.
+A good Lawyer a bad Neighbour.
+Certainlie these things agree,
+The Priest, the Lawyer, & Death all three:
+Death takes both the weak and the strong.
+The lawyer takes from both right and wrong,
+And the priest from living and dead has his Fee.
+The worst wheel of the cart makes the most noise.
+Don't misinform your Doctor nor your Lawyer.
+EOF
+)"
+
+[[ $OS_NAME = Darwin ]] && CLIP_CMD="pbcopy"
+[[ $OS_NAME = Linux ]] && CLIP_CMD="xclip"
 
 # /usr/local/bin/cliclick kd:cmd t:"c" ku:cmd
 # sleep 1
-[[ -n $1 ]] && /bin/sh --norc -c "echo \"$@\" | pbcopy"
-
+[[ -n $1 ]] && /bin/sh -c "echo \"$@\" | $CLIP_CMD"
+[[ -z $1 ]] && /bin/sh -c "echo \"$sample_text\" | $CLIP_CMD"
 # echo "$@" >> /dev/ttys001
+
+
 
 
 _clipboard="(yank)"
@@ -22,15 +76,17 @@ cat <<-EOF
       (defun buffer-exists (bufname) (not (eq nil (get-buffer bufname))))
       (if (buffer-exists "SPEED READER")  (kill-buffer "SPEED READER"))
 
-      (make-frame '(
-        (name . "SPEED READER")
-      ))
-      (switch-to-buffer "SPEED READER")
+      ;;(make-frame '(
+      ;;  (name . "SPEED READER")
+      ;;))
+      ;;(switch-to-buffer "SPEED READER")
+
+      ;;(switch-to-buffer-other-frame "SPEED READER")
+
       (erase-buffer)
-      (tool-bar-here-mode 0)
-      (beacon-mode 0)
+      (menu-bar-mode 0)
+      (tool-bar-mode 0)
       (blink-cursor-mode 0)
-      (doom-hide-mode-line-mode)
       (transient-mark-mode 0)
 
       (modify-frame-parameters nil '(
@@ -47,6 +103,8 @@ cat <<-EOF
 
       $_eval_input
 
+      (load-file "/home/ub2/.emacs.d/.cask/25.1/elpa/spray-20160304.1420/spray.elc")
+      (require 'spray)
       (spray-mode)
       (spray-stop)
       (beginning-of-buffer)
@@ -57,16 +115,21 @@ cat <<-EOF
 EOF
 )"
 
+# BIN=/Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient
+# BIN=/usr/bin/emacsclient.emacs25
+BIN=emacs25
 
-
-/Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient                             \
-    --frame-parameters "(left . +100)"  \
+    # --create-frame                      \
+    # --frame-parameters "(left . +100)"  \
+$BIN                                    \
+    -q                         \
     --eval "$_eval_cmd"                 \
-    --no-wait                           \
-    --quiet                             \
-    >/dev/null 2>&1
+    --title "SPEED READER"
+    # --no-wait                           \
+    # --quiet          #                   \
+    # >/dev/null 2>&1
 
-osascript -e 'tell application "Emacs.app" to activate'
+# osascript -e 'tell application "Emacs.app" to activate'
 
 
 
