@@ -96,7 +96,11 @@ edit_linux_share() { $EDITOR $HOME_ENV/.scripts/.alias_linux; source_bash; }
 edit_this_bash() { $EDITOR $SERV_HOME/$ALIAS; source_bash; }
 find-dirs() { sudo find -L "$1" -mindepth 1 -type d -iregex "$2"; }
 find-file() { sudo find -L "$1" -mindepth 1-type f -iregex "$2"; }
-find-files-quoted() { sudo find -L "$1" -mindepth 1 -type f -exec ls -Q + ; }
+# find-files-quoted() { sudo find -L "$1" -mindepth 1 -type f -exec ls -Q + ; }
+find-files-quoted() {
+    sudo env find -L $@ | xargs -I '{}' printf "'%s'\n" {} ;
+    # sudo find -L "$1" -mindepth 1 -type f -exec ls -Q + ;
+    }
 find-dirs-quoted() { sudo find -L "$1" -mindepth 1 -type d -exec 'ls -Q {}' \; }
 find-files-exec() { sudo find -L "$1" -mindepth 1 -type f -exec sh -c "echo -n {}; echo -n ' x '; echo {}" \; ; }
 #find-files-grep(){ sudo find -L "$1" -mindepth 1 -type f \

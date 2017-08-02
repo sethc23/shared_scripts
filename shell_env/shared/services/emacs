@@ -20,6 +20,21 @@ vnc_reset () {
     eval "vncserver :$_idx"
     }
 
+e-osx-app-daemon(){
+    /Applications/Emacs.app/Contents/MacOS/Emacs --daemon --eval '(server-start)' > /dev/null 2>&1 &
+    }
+e-osx-x11-daemon(){
+    /opt/local/bin/emacs --daemon --eval '(server-start)' > /dev/null 2>&1 &
+    # /opt/local/bin/emacs ~/org/organizer.org > /dev/null 2>&1 &
+    }
+
+e-get-socket(){
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|columns|cut -d ' ' -f8)
+    [[ -n $EMACS_SOCKET ]]              \
+        && echo $EMACS_SOCKET           \
+        || echo "not available"
+    }
+
 e-custom-2 () {
     NEW_FNAME=$(echo "$(uuidgen).org")
     emacsclient.emacs25 --create-frame ~/.emacs.d/private/org/tocapture/$NEW_FNAME
