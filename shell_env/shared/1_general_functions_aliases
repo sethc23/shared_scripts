@@ -8,7 +8,7 @@ assign() {  eval "$1=\$(cat; echo .); $1=\${$1%.}";}
 build_script_env() {
     FILE="$HOME_ENV/.scripts/script_env";
     env | sort | sed -r 's/^([^=]+)=(.*)$/\1="\2"/g' > $FILE;
-    alias | sed -r 's/^(.*)$/alias \1/g' >> $FILE; \
+    alias | sed -r 's/^(.*)$/alias \1/g' >> $FILE;
     }
 cde_f() {
     if [[ -z $1 ]]; then
@@ -98,10 +98,10 @@ find-dirs() { sudo find -L "$1" -mindepth 1 -type d -iregex "$2"; }
 find-file() { sudo find -L "$1" -mindepth 1-type f -iregex "$2"; }
 # find-files-quoted() { sudo find -L "$1" -mindepth 1 -type f -exec ls -Q + ; }
 find-files-quoted() {
-    sudo env find -L $@ | xargs -I '{}' printf "'%s'\n" {} ;
     # sudo find -L "$1" -mindepth 1 -type f -exec ls -Q + ;
+    sudo env find -L $@ | xargs -I '{}' printf "'%s'\n" {} ;
     }
-find-dirs-quoted() { sudo find -L "$1" -mindepth 1 -type d -exec 'ls -Q {}' \; }
+find-dirs-quoted() { sudo find -L "$1" -mindepth 1 -type d -exec 'ls -Q {}' \; ;}
 find-files-exec() { sudo find -L "$1" -mindepth 1 -type f -exec sh -c "echo -n {}; echo -n ' x '; echo {}" \; ; }
 #find-files-grep(){ sudo find -L "$1" -mindepth 1 -type f \
     #-exec sh -lc "env -i grep -i --color=always -R -e \"$2\" -n -H -T {}" \;
@@ -111,8 +111,8 @@ find-files-exec() { sudo find -L "$1" -mindepth 1 -type f -exec sh -c "echo -n {
 find-files-grep() { sudo find -L "$1" -mindepth 1 -type f | xargs grep -iE "$2" 2> /dev/null; }
 find-time-min-updated-ago() { sudo find -L "$1" -mindepth 1 -mmin -"$2"; }
 find-date-newer() { sudo find -L "$1" -mindepth 1 -newermt "2016-03-27 18:30" \! -newermt "2016-03-27 18:45"; }
-# Print with quotes
-#     find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
+### Print with quotes
+###    find ./ -mindepth 1 -maxdepth 1 -type d -exec ls -Q +
 gdiff() { git diff $@ | cdiff -s -w 110; }
 jq-merge() { jq -sRcj ' [ splits("\n")? | split(":") as $i | { ($i[0]?) : ( $i[1] | sub("^(\\s)+"; ""; "x") ) } ]' | jq -cj 'add'; }
 ls-mounts() { printf 'SOURCE:\t\t\t\tMOUNT POINT:\n'; df -h | tail -n +2 | sed -r 's/\s+/ /g' | cut -d ' ' -f1,6|awk '{ printf("%-31s %s\n", $1, $2); }'; }
@@ -130,7 +130,7 @@ man() {
 newalias_here() { echo "alias "$1 >> $SERV_HOME/$ALIAS; source_bash; }
 newalias_linux() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_linux; pull_shared_scripts; source_bash; }
 newalias_shared() { echo "alias "$1 >> $HOME_ENV/.scripts/.alias_shared; pull_shared_scripts; source_bash; }
-pyprofileread() { python -m line_profiler $1.lprof; }
+# pyprofileread() { eval("python -m line_profiler \$1.lprof;"); }
 pyprofilewrite() { kernprof.py -l $1; }
 RD() { cd $BD/RD/src; python seamless.py; }
 RDt() { cd $BD/RD/src; python seamless_test.py; }

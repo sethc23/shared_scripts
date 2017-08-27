@@ -20,20 +20,146 @@ vnc_reset () {
     eval "vncserver :$_idx"
     }
 
-e-osx-app-daemon(){
-    /Applications/Emacs.app/Contents/MacOS/Emacs --daemon --eval '(server-start)' > /dev/null 2>&1 &
-    }
-e-osx-x11-daemon(){
-    /opt/local/bin/emacs --daemon --eval '(server-start)' > /dev/null 2>&1 &
-    # /opt/local/bin/emacs ~/org/organizer.org > /dev/null 2>&1 &
-    }
-
-e-get-socket(){
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|columns|cut -d ' ' -f8)
+e-get-x11-socket(){
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
     }
+
+e-get-socket(){
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8)
+    [[ -n $EMACS_SOCKET ]]              \
+        && echo $EMACS_SOCKET           \
+        || echo "not available"
+    }
+
+e-get-socket-wait(){
+    while [[ $(e-get-socket) = "not available" ]]; do
+        echo -n "."
+        sleep 1
+    done
+    [[ ! $(e-get-socket) = "not available" ]] \
+        && echo 'READY!'
+    }
+e-get-x11-socket-wait(){
+    while [[ $(e-get-x11-socket) = "not available" ]]; do
+        echo -n "."
+        sleep 1
+    done
+    [[ ! $(e-get-x11-socket) = "not available" ]] \
+        && echo 'READY!'
+    }
+
+_ec_client(){
+
+    # DARWIN/admin ONLY
+    if [[ $1 = app ]]; then
+        export EMACSCLIENT="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+    elif [[ $1 = x11 ]]; then
+        export EMACSCLIENT="/opt/local/bin/emacsclient"
+    fi
+
+    }
+
+export EMACSCLIENTapp="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+alias ecapp="$EMACSCLIENTapp -n -c $1"
+e-osx-app-daemon(){
+    #
+    # NOT NOT NOT WORKING service.plist COMMAND:
+    #   /Applications/Emacs.app/Contents/MacOS/Emacs --daemon --eval \"(server-start)\"
+    #
+    #
+
+    open /Applications/Emacs.app --args --eval "(progn (setq custom-file \"~/.emacs.d/private/init/osx-app-custom-settings.el\") (setq user-init-file \"/Users/admin/.emacs.d/private/init/osx-app-CUSTOM_CONFIG.el\") (load user-init-file)  (load custom-file t))"
+
+    # LASRT WAS WORKING
+    #     /usr/bin/osascript -e "$(cat <<EOF
+    #     do shell script "/Applications/Emacs.app/Contents/MacOS/Emacs --eval '(progn (setq custom-file \"/Users/admin/.emacs.d/private/init/osx-app-custom-settings.el\") (setq user-init-file \"/Users/admin/.emacs.d/private/init/osx-app-CUSTOM_CONFIG.el\") (load user-init-file) (load custom-file t) )' > /dev/null 2>&1 &"
+    # EOF
+    # )"  > /dev/null 2>&1 &
+
+    # /Applications/Emacs.app/Contents/MacOS/Emacs \
+    #     --eval "(progn                                                                                      \
+    #               (setq custom-file \"/Users/admin/.emacs.d/private/init/osx-app-custom-settings.el\")      \
+    #               (setq user-init-file \"/Users/admin/.emacs.d/private/init/osx-app-CUSTOM_CONFIG.el\")     \
+    #               (load user-init-file)                                                                     \
+    #               (load custom-file t)                                                                      \
+    #               )" \
+    #     > /dev/null 2>&1 &
+
+        # --daemon                                                                                    \
+    # /Applications/Emacs.app/Contents/MacOS/Emacs                                                    \
+    #     --load /Users/admin/.emacs.d/private/init/alt_cfg/CUSTOM_CONFIG_mac-pseudo-daemon-mode.el   \
+    # > /dev/null 2>&1 &
+
+    # _ec_client app
+
+    }
+
+export EMACSCLIENTx11="/opt/local/bin/emacsclient"
+ecx11(){ $EMACSCLIENTx11 -n -c $1 -s $(e-get-x11-socket);}
+
+e-osx-x11-daemon(){
+
+
+    if [[ $1 = unload ]]; then
+
+        sudo launchctl stop gnu.emacs.daemon.plist
+        sudo launchctl unload /Library/LaunchDaemons/gnu.emacs.daemon.plist
+        SVR_CFG=$(e-get-x11-socket)
+        if [[ "$SVR_CFG" != "not available" ]]; then
+            rm "$SVR_CFG"
+        fi
+        PID=$(sudo launchctl list|grep emacs|column -t | tr -s " "|cut -d ' ' -f-1| sed -r 's/-[\s]//g')
+        [[ -n $PID ]] && sudo kill -9 $PID
+        ps | grep -E "[e]macs"
+        return
+
+    elif [[ $1 = load ]]; then
+        sudo launchctl load -w /Library/LaunchDaemons/gnu.emacs.daemon.plist
+        sudo launchctl start gnu.emacs.daemon.plist
+        e-get-x11-socket-wait
+        return
+
+    elif [[ $1 = start ]]; then
+
+        /opt/local/bin/emacs-25.2                                                                               \
+            --eval "(progn                                                                                      \
+                      (setq custom-file \"/Users/admin/.emacs.d/private/init/osx-x11-custom-settings.el\")      \
+                      (setq user-init-file \"/Users/admin/.emacs.d/private/init/osx-x11-CUSTOM_CONFIG.el\")     \
+                      (load user-init-file)                                                                     \
+                      (load custom-file t)                                                                      \
+                      )"                                                                                        \
+            --daemon                                                                                            \
+            > /dev/null 2>&1 &
+        return
+    fi
+
+    # WORKING service.plist COMMAND:
+    #   /opt/local/bin/emacs-25.2 --daemon --eval \"(server-start)\"
+
+    # /opt/local/bin/emacs --daemon --eval '(server-start)' > /dev/null 2>&1 &
+    # /opt/local/bin/emacs --daemon > /dev/null 2>&1 &
+    # /opt/local/bin/emacs ~/org/organizer.org > /dev/null 2>&1 &
+    # sudo su admin -c "/opt/local/bin/emacs --daemon --eval \"(server-start)\" > /dev/null 2>&1 &"
+
+    # /opt/local/bin/emacs-25.2 --load /Users/admin/.emacs.d/private/init/_settings/osx-x11-CUSTOM_CONFIG.el
+
+    # _ec_client x11
+
+    # ec(){
+    #     [[ -z $EMACSCLIENT ]] && _ec_client app
+    #     $EMACSCLIENT -n -c "$(realfullpath \"$@\")";
+    #     }
+
+    # export ec
+
+    }
+
+
+
+
 
 e-custom-2 () {
     NEW_FNAME=$(echo "$(uuidgen).org")
@@ -56,7 +182,7 @@ e-cask-full-update(){
     cask --debug --verbose update
     cask --debug --verbose install
     cask --debug --verbose clean-elc
-    find -L .cask/25.2/elpa -name "*elc" -delete
+    env find -L .cask/25.2/elpa -name "*elc" -delete
     cask build
     cd "$_from_dir"
     unset _from_dir

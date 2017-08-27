@@ -7,6 +7,12 @@
 # [[ (-n $SUDO_USER) && (-n $HOME_ENV) ]]             \
 #     && export HOME_ENV=$(eval echo ~$SUDO_USER)     \
 #     || export HOME_ENV=$(eval echo ~$USER)
+if [[ $(uname -o) != Android ]]; then
+    [[ -n $SUDO_USER ]]                                 \
+        && export HOME_ENV=$(eval echo ~$SUDO_USER)     \
+        || export HOME_ENV=$(eval echo ~$USER)
+fi
+
 [[ -n $DEBUG_SHELL ]] && echo "bash/_base_"2
 
 source $HOME_ENV/.scripts/shell_env/shell/bash/_env

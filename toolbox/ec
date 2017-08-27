@@ -1,5 +1,28 @@
 #!/bin/sh
 
-[[ $1 = emacs ]]                                                                                    \
-    && which osascript > /dev/null 2>&1 && osascript -e 'tell application "Emacs" to activate'      \
-    || /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c "$@"
+# [[ $1 = emacs ]]                                                                                    \
+#     && which osascript > /dev/null 2>&1 && osascript -e 'tell application "Emacs" to activate'      \
+#     || /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n -c "$@"
+
+# [[ -z $EMACSCLIENT ]]       \
+    # && _ec_client app
+
+# fpath=$(realfullpath "$@")
+
+# CMD=$(echo "$EMACSCLIENT -n -c $fpath")
+# unset fpath
+
+# echo "$CMD"
+# eval "$CMD"
+
+# /opt/local/bin/emacsclient -n -c "$@"
+
+EXEC="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+
+EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|uniq|grep x11|tail -n 1)
+EMACS_SOCKET_BAK=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|head -n 1)
+
+[[ -n $EMACS_SOCKET ]]                  \
+    && $EXEC -n -c $@ -s $EMACS_SOCKET  \
+    || emacsclient -n -c $@ -s $EMACS_SOCKET_BAK
+

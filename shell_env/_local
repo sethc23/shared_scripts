@@ -207,7 +207,7 @@ MACHINE_IP_INT=$(get-my-ip-int)
 [[ -n $DEBUG_SHELL ]] && echo "_local_4"
 source_files "$HOME_ENV/.scripts/shell_env/shell"
 
-[[ $OS_NAME = Darwin ]] && unset -f port
+# [[ $OS_NAME = Darwin ]] && unset -f port
 
 [[ -n $DEBUG_SHELL ]] && printf "\n\tPATH:\t%s\n\n" $PATH
 [[ -n $DEBUG_SHELL ]] && echo "_local_5"

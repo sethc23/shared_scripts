@@ -54,5 +54,6 @@ fi
 # [[ -n $TMUX ]] && source $BASE_DIR_base/bindings/tmux
 # [[ -n $DEBUG_SHELL ]] && echo "shell_env_base_"4
 
+[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
 [[ -n $DEBUG_SHELL ]] && echo "END-shell_env_base"

@@ -24,6 +24,10 @@ export PGDATA=/opt/local/var/db/postgresql95/defaultdb/
 export IPY=$HOME_ENV/$SERVER/ipython
 export WIKI=/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_wiki
 
+export ANDROID="/Users/admin/GIT_REPOS/Devices/Android"
+export NEXUS="$ANDROID/NEXUS-6P"
+export DROID="$ANDROID/scripts/.android"
+
 # Git
 #export GIT_CONFIG=$HOME_ENV/.git/config
 #export GIT_CONFIG=$HOME_ENV/.gitconfig

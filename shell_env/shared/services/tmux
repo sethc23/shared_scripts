@@ -30,7 +30,7 @@ chk(){
 f-run-cmd(){
 	chk v "$@"
 	[[ -z $DRYRUN ]] 	&& \
-		zsh -lc "$1"
+		zsh -lc "$1";
 	}
 f-opt-target(){
 	_param=$1
@@ -45,7 +45,7 @@ f-opt-target(){
 			_cmd="tmux $_param $_opt_1 \"$_opt_2\""
 	fi
 
-	f-run-cmd "$_cmd"
+	f-run-cmd "$_cmd";
 	}
 
 # Bindings:
@@ -55,12 +55,12 @@ alias tmux='tmux -2'
 alias t-ls='tmux ls'
 alias t-refresh-terminal='stty sane'
 f-t-upd(){
-	export TMUX_ALIASES=/home/ub2/.scripts/shell_env/shared/services/tmux
-	source $TMUX_ALIASES
+	export TMUX_ALIASES=/home/ub2/.scripts/shell_env/shared/services/tmux;
+	source $TMUX_ALIASES;
 	}
 alias t-u='f-t-upd'
 # f-t-src(){ tmux source ~/.tmux.conf; }
-f-t-src(){ tmux source ~/.tmux.conf\; display "User configuration file reloaded." }
+f-t-src(){ tmux source ~/.tmux.conf\; display "User configuration file reloaded."; }
 alias t-src='f-t-src'
 
 # SESSIONS

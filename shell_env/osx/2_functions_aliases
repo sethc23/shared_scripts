@@ -10,7 +10,7 @@ locate_update(){ \
     sudo ln -nfs /opt/local/bin/gupdatedb /usr/local/bin/updatedb
     sudo updatedb --prunepaths=/Volumes
     }
-open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
+# open_color_picker() { osascript -e 'tell application "Finder"' -e 'activate' -e 'choose color' -e 'end tell'; }
 ps_cut(){ env ps -awwwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args ${@:2} | cut -c -$(tput cols) ; }
 test_acro_js() {
     js_content="\

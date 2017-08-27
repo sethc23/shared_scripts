@@ -86,7 +86,7 @@ alias mp-upgrade='sudo port upgrade outdated'
 alias mp-upgrade-all='sudo port upgrade outdated'
 alias mp-upgrade-list='port outdated'
 alias mp-variant='port variant'
-alias mp-version-list='port select --list'
+
 mp-version-all(){ port select --summary; }
 mp-version-list(){ port select --list $1; echo "\n"; port select --show $1; }
 mp-version-select(){ sudo port select $1 $2; }

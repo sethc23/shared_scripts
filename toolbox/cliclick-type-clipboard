@@ -1,0 +1,8 @@
+#!/usr/local/bin/zsh
+
+# TYPE_STR=$(/usr/local/bin/xclip -selection clipboard -o|sed -r 's/\s/\\ /g')
+# /usr/local/bin/cliclick w:250 t:"$TYPE_STR"
+
+TYPE_STR="$(/usr/local/bin/xclip -selection clipboard -o)"
+# echo $TYPE_STR
+/usr/local/bin/cliclick w:250 t:$TYPE_STR
