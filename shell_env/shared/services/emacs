@@ -21,19 +21,31 @@ vnc_reset () {
     }
 
 e-get-x11-socket(){
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8)
+
+    if [[ $(uname -o) = Darwin ]]; then
+        cut_col=8
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+        cut_col=9
+    fi
+
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
     }
-
 e-get-socket(){
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8)
+
+    if [[ $(uname -o) = Darwin ]]; then
+        cut_col=8
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+        cut_col=9
+    fi
+
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep -v x11|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
     }
-
 e-get-socket-wait(){
     while [[ $(e-get-socket) = "not available" ]]; do
         echo -n "."
@@ -50,26 +62,62 @@ e-get-x11-socket-wait(){
     [[ ! $(e-get-x11-socket) = "not available" ]] \
         && echo 'READY!'
     }
-
 _ec_client(){
 
-    # DARWIN/admin ONLY
-    if [[ $1 = app ]]; then
-        export EMACSCLIENT="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-    elif [[ $1 = x11 ]]; then
-        export EMACSCLIENT="/opt/local/bin/emacsclient"
+    if [[ $(uname -o) = Darwin ]]; then
+
+        if [[ $1 = app ]]; then
+            echo "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+        elif [[ $1 = x11 ]]; then
+            echo "/opt/local/bin/emacsclient"
+        fi
+
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+
+        if [[ $1 = x11 ]]; then
+            echo "/usr/bin/emacsclient.emacs25"
+        fi
+
     fi
 
+    # DARWIN/admin ONLY
+
+
+    }
+ecapp(){
+    export EMACSCLIENTapp="$(_ec_client app)"
+    $EMACSCLIENTapp -n -c $1 -s $(e-get-socket);
+    }
+ecx11(){
+    export EMACSCLIENTx11="$(_ec_client x11)"
+    $EMACSCLIENTx11 -n -c $1 -s $(e-get-x11-socket);
     }
 
-export EMACSCLIENTapp="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-alias ecapp="$EMACSCLIENTapp -n -c $1"
+e-osx-toggle-org-share(){
+    ORIG_DIR="$HOME_ENV/.emacs.d/private/org"
+    TMP_DIR="$HOME_ENV/.emacs.d_private_org"
+
+    if [[ ! -d $ORIG_DIR ]]; then
+        mv ~/.emacs.d/private/org ~/.emacs.d_private_org
+        ssh_f ub2
+        ln -nfs /Volumes/ub2/home/ub2/.emacs.d/private/org $HOME_ENV/.emacs.d/private/org
+    else
+        echo "\nShould have warning here about existing open connection..."
+        unlink $HOME_ENV/.emacs.d/private/org
+        mv $HOME_ENV/.emacs.d_private_org $HOME_ENV/.emacs.d/private/org
+    fi
+    unset ORIG_DIR
+    unset TMP_DIR
+    }
 e-osx-app-daemon(){
     #
     # NOT NOT NOT WORKING service.plist COMMAND:
     #   /Applications/Emacs.app/Contents/MacOS/Emacs --daemon --eval \"(server-start)\"
     #
     #
+
+    export EMACSCLIENTapp="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+
 
     open /Applications/Emacs.app --args --eval "(progn (setq custom-file \"~/.emacs.d/private/init/osx-app-custom-settings.el\") (setq user-init-file \"/Users/admin/.emacs.d/private/init/osx-app-CUSTOM_CONFIG.el\") (load user-init-file)  (load custom-file t))"
 
@@ -96,10 +144,6 @@ e-osx-app-daemon(){
     # _ec_client app
 
     }
-
-export EMACSCLIENTx11="/opt/local/bin/emacsclient"
-ecx11(){ $EMACSCLIENTx11 -n -c $1 -s $(e-get-x11-socket);}
-
 e-osx-x11-daemon(){
 
 
@@ -156,10 +200,6 @@ e-osx-x11-daemon(){
     # export ec
 
     }
-
-
-
-
 
 e-custom-2 () {
     NEW_FNAME=$(echo "$(uuidgen).org")
@@ -352,16 +392,20 @@ EOF
     )"
     }
 
-export ALTERNATE_EDITOR="leafpad"
-export EDITOR="emacsclient -t"                  # $EDITOR should open in terminal
-export VISUAL="emacsclient -c -a emacs25"         # $VISUAL opens in GUI with non-daemon as alternate
 
-alias e-e-client-window='emacsclient -c -n'
-alias e-e-client-term="emacsclient -t"                      # used to be "emacs -nw"
-alias e-e-client-term-root="sudo emacsclient -t"                # used to be "sudo emacs -nw"
-alias e-e-client-test="emacsclient -c -a emacs25"           # new - opens the GUI with alternate non-daemon
+export ORG="$HOME_ENV/.emacs.d/private/org"
+
+export EMACSCLIENT=$(_ec_client x11)
+export ALTERNATE_EDITOR="leafpad"
+export EDITOR="$EMACSCLIENT -t"                             # $EDITOR should open in terminal
+export VISUAL="$EMACSCLIENT -c -a emacs25"                  # $VISUAL opens in GUI with non-daemon as alternate
+
+alias ec-window="$EMACSCLIENT -c -n"
+alias ec-root-window="$EMACSCLIENT -c -n"
+alias ec-term="$EMACSCLIENT -t"                             # used to be "emacs -nw"
+alias ec-root-term="sudo $EMACSCLIENT -t"                   # used to be "sudo emacs -nw"
+
+alias ec-test="$EMACSCLIENT -c -a emacs25"                  # new - opens the GUI with alternate non-daemon
 
 alias vnc-clean='vnc_clean'
 alias vnc-reset='vnc_reset'
-
-alias e-o-organizer='PATH=/home/ub2/.emacs.d/term-cmd:$PATH e-e-client-window /home/ub2/.emacs.d/private/org/organizer.org > /dev/null 2>&1 &'
