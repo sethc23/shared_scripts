@@ -66,16 +66,36 @@ g-rp-init_w_descr() { \
 
 #  --  STATUSES (g-s*)
 alias g-s='git status'
-alias g-s-STAGED='git diff --name-only --cached | more'
-alias g-s-UNSTAGED-TRACKED='git ls-files -m'
-alias g-s-UNSTAGED-ALL='git diff --stat --name-only'
-alias g-s-UNTRACKED='git status --porcelain | grep -E "\?\?" | awk '\''{print }'\'' | tr '\''??'\'' '\'' '\'''
-alias g-s-p='git status --porcelain'
-alias g-s-p-STAGED='git diff --name-status --cached | more'
-alias g-s-NOT_STAGED="git diff --name-only | more"
-alias g-s-NOT_STAGED-MOD="git diff --name-status | more | grep ^M | sed 's/^M\s*//g'"
-g-s-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed 's/^[A-Z]\s*//g';}
-g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed 's/^M\s*//g';}
+# alias g-sp='git status --porcelain'
+alias g-sp='printf "%s" "$(git diff --relative --ignore-submodules --name-status)"'
+alias g-s_CLEAN='sed -r  "s/^[ ]?([A-Z]|[?]{2})\s*//"'
+alias g-sp_CLEAN='g-s_CLEAN'
+
+#  --  -- re: all files
+alias g-sp-ADD='g-sp|env grep -E \^"\s*A\s*"'
+alias g-sp-MOD='g-sp|env grep -E \^"\s*M\s*"'
+alias g-sp-DEL='g-sp|env grep -E \^"\s*D\s*"'
+alias g-sp-UNTRACKED='g-sp|env grep "^[?][?] "'
+# alias g-s-UNTRACKED='git status --porcelain | env grep "^[?][?] " | grep -E "\?\?" | awk '\''{print }'\'' | tr '\''??'\'' '\'' '\'''
+
+#  --  -- re: stage and RELATIVE tracked files IGNORING submodules
+alias g-s-STAGED='printf "%s" "$(git diff --relative --ignore-submodules --name-status --cached)"'
+alias g-s--STAGED='printf "%s" "$(git diff --relative --ignore-submodules --name-status)"'
+alias g-s--STAGED-MOD='printf "%s" "$(git diff --relative --ignore-submodules --name-status)"|env grep -E \^"M\s+"'
+alias g-s--STAGED-DEL='printf "%s" "$(git diff --relative --ignore-submodules --name-status)"|env grep -E \^"D\s+"'
+alias g-s--TRACKED='git status --porcelain|env grep "^[?][?] "'
+
+# alias g-s-UNSTAGED-TRACKED='git ls-files -m'
+# alias g-s-UNSTAGED-ALL='git diff --stat --name-only'
+# alias g-s-p-STAGED='git diff --name-status --cached'
+# alias g-s-p-UNSTAGED='git diff --name-status|env grep -v "[?][?]"'
+# alias g-s-NOT_STAGED="git diff --name-only | more"
+
+
+
+alias g-s-NOT_STAGED-MOD="git diff --name-status | more | grep \^M | sed -r 's/^M\s*//g'"
+g-s-DIFF-ADDED_MODDED() { git diff $1 --name-status | grep -v ^D | sed -r 's/^[A-Z?]\s*//';}
+g-s-DIFF-REMOVED() { git diff $1 --name-status | grep ^D | sed -r 's/^M\s*//g';}
 
 #  --  BRANCHES (g-b*)
 alias g-b='git branch -avv'
@@ -294,6 +314,8 @@ alias g-sub-status='git submodule foreach --recursive git branch -avv'
 alias g-sub-update='git pull && git submodule init && git submodule update && git submodule status'
 alias g-sub-list='git config --list|env egrep \^submodule'
 alias g-sub-init_by_gitmodules='gs_add_from_gitmodules'
+
+# HERE=$(pwd);for i in $(env ls -1 ./); do cd $i; REMOTE=$(git remote -v|columns|cut -d ' ' -f2); cd ..; git submodule add "$REMOTE" ./$i; cd $HERE; done
 
 # new submodule example
 # git submodule add --name seamless_yelp_scraping -- git@github.com:sethc23/seamless_yelp_scrapi

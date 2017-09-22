@@ -195,6 +195,8 @@ fi
 [[ -n $DEBUG_SHELL ]] && echo "_local_2"
 source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
+[[ -n $DEBUG_SHELL ]] && echo "_local_4"
+source_files "$HOME_ENV/.scripts/shell_env/shell"
 
 [[ -n $DEBUG_SHELL ]] && echo "_local_3"
 [[ ($OS_NAME = Linux) || ($OS_NAME = Linux-arm) ]] && \
@@ -204,8 +206,7 @@ source_files_and_sub_dirs "$HOME_ENV/.scripts/shell_env/shared"
 
 MACHINE_IP_INT=$(get-my-ip-int)
 
-[[ -n $DEBUG_SHELL ]] && echo "_local_4"
-source_files "$HOME_ENV/.scripts/shell_env/shell"
+
 
 # [[ $OS_NAME = Darwin ]] && unset -f port
 

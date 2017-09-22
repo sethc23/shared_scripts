@@ -21,7 +21,8 @@ export HOME=/Users/admin
 export ROOT_GRP=wheel
 export SSHFS=/opt/local/bin/sshfs
 export PGDATA=/opt/local/var/db/postgresql95/defaultdb/
-export IPY=$HOME_ENV/$SERVER/ipython
+
+# export IPY=$HOME_ENV/$SERVER/ipython
 export WIKI=/Volumes/ub2/home/ub2/BD_Scripts/sethc23.github.io/_wiki
 
 export ANDROID="/Users/admin/GIT_REPOS/Devices/Android"

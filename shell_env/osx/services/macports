@@ -69,7 +69,11 @@ alias mp-contents-exe='f-mp-contents-exe'
 alias mp-contents-files='port contents'
 alias mp-dependents='port dependents'
 alias mp-info='port info'
-alias mp-install='sudo port install'
+mp-install(){
+    sudo port install $@;
+    printf "\n\n\t\t%s\n\n" "YOU SHOULD RESTART SYSTEM TO AVOID HEADACHES !";
+    }
+# alias mp-install='sudo port install'
 alias mp-install-force='sudo port -n upgrade --force'
 alias mp-installed='port installed'
 alias mp-livecheck='port livecheck'

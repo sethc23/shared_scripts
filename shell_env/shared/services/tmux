@@ -50,7 +50,9 @@ f-opt-target(){
 
 # Bindings:
 
+
 # GENERAL
+
 alias tmux='tmux -2'
 alias t-ls='tmux ls'
 alias t-refresh-terminal='stty sane'
@@ -62,8 +64,11 @@ alias t-u='f-t-upd'
 # f-t-src(){ tmux source ~/.tmux.conf; }
 f-t-src(){ tmux source ~/.tmux.conf\; display "User configuration file reloaded."; }
 alias t-src='f-t-src'
+alias t-iterm='[[ -n $(tmux ls | grep ub2 2> /dev/null) ]] && tmux -CC attach -t ub2 || tmux -CC new-session -s ub2'
+alias t-ub2='[[ -n $(tmux ls | grep ub2 2> /dev/null) ]] && tmux attach -t ub2 || tmux new-session -s ub2'
 
 # SESSIONS
+
 f-t-s-a(){ 			f-opt-target 		"attach-session" $1 $2; 	}
 alias t-s-a='f-t-s-a'					# attach
 

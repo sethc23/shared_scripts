@@ -20,6 +20,25 @@ vnc_reset () {
     eval "vncserver :$_idx"
     }
 
+
+alias e-src="source $HOME_ENV/.scripts/shell_env/shared/services/emacs"
+e-ps(){ ps|grep emac; }
+e-cmd (){
+    /home/ub2/SERVER2/emacs/manage $@
+    }
+e-get-protocol-socket(){
+
+    if [[ $(uname -o) = Darwin ]]; then
+        cut_col=8
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+        cut_col=9
+    fi
+
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep protocol|grep unix|uniq|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    [[ -n $EMACS_SOCKET ]]              \
+        && echo $EMACS_SOCKET           \
+        || echo "not available"
+    }
 e-get-x11-socket(){
 
     if [[ $(uname -o) = Darwin ]]; then
@@ -28,7 +47,7 @@ e-get-x11-socket(){
         cut_col=9
     fi
 
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|uniq|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
@@ -41,7 +60,7 @@ e-get-socket(){
         cut_col=9
     fi
 
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep -v x11|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|uniq|grep -v x11|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
@@ -75,6 +94,9 @@ _ec_client(){
     elif [[ $(uname -o) = GNU/Linux ]]; then
 
         if [[ $1 = x11 ]]; then
+            export ALTERNATE_EDITOR=$(_ec_client protocol)
+            echo "/usr/bin/emacsclient.emacs25"
+        elif [[ $1 = protocol ]]; then
             echo "/usr/bin/emacsclient.emacs25"
         fi
 
@@ -85,12 +107,38 @@ _ec_client(){
 
     }
 ecapp(){
+    args=$@
+    last_arg=${@:$#}
+    if [[ -f $last_arg ]]; then
+        except_last_arg=${@:1:${#}-1}
+        _fpath="$(/usr/local/bin/realfullpath "$last_arg")"
+        args="$except_last_arg $_fpath"
+    fi
     export EMACSCLIENTapp="$(_ec_client app)"
-    $EMACSCLIENTapp -n -c $1 -s $(e-get-socket);
+    $EMACSCLIENTapp -n -c $args -s $(e-get-socket);
     }
 ecx11(){
+    args=$@
+    last_arg=${@:$#}
+    if [[ -f $last_arg ]]; then
+        except_last_arg=${@:1:${#}-1}
+        _fpath="$(/usr/local/bin/realfullpath "$last_arg")"
+        args="$except_last_arg $_fpath"
+    fi
     export EMACSCLIENTx11="$(_ec_client x11)"
-    $EMACSCLIENTx11 -n -c $1 -s $(e-get-x11-socket);
+    # echo "$EMACSCLIENTx11 -n -c $args -s $(e-get-x11-socket)"
+    $EMACSCLIENTx11 -n -c $args -s $(e-get-x11-socket)
+    }
+ecxp(){
+    args=$@
+    last_arg=${@:$#}
+    if [[ -f $last_arg ]]; then
+        except_last_arg=${@:1:${#}-1}
+        _fpath="$(/usr/local/bin/realfullpath "$last_arg")"
+        args="$except_last_arg $_fpath"
+    fi
+    export EMACSCLIENTprotocol="$(_ec_client protocol)"
+    $EMACSCLIENTprotocol -n -c $args -s $(e-get-protocol-socket);
     }
 
 e-osx-toggle-org-share(){
@@ -161,6 +209,7 @@ e-osx-x11-daemon(){
         return
 
     elif [[ $1 = load ]]; then
+        # /Library/LaunchDaemons/gnu.emacs.daemon.plist: service already loaded
         sudo launchctl load -w /Library/LaunchDaemons/gnu.emacs.daemon.plist
         sudo launchctl start gnu.emacs.daemon.plist
         e-get-x11-socket-wait
@@ -335,7 +384,7 @@ e-convert-md-org(){
 e-agenda-export(){ $HOME_ENV/org/scripts/gen-org-agenda-today; }
 
 
-_emacs_print_packages(){
+e-emacs_print_packages(){
     _DISPLAY=:61
 
     _DISPLAY_NUM=$(echo $_DISPLAY|cut -d ':' -f2|tr -d ' ')
@@ -362,7 +411,7 @@ EOF
 
     vnc_clean $_DISPLAY_NUM > /dev/null 2>&1
     }
-_emacs_package_buffer_to_df(){
+e-emacs_package_buffer_to_df(){
     current_pkgs=$(_emacs_print_packages)
     python2.7 "$(
 cat<<EOF
@@ -395,8 +444,7 @@ EOF
 
 export ORG="$HOME_ENV/.emacs.d/private/org"
 
-export EMACSCLIENT=$(_ec_client x11)
-export ALTERNATE_EDITOR="leafpad"
+# export ALTERNATE_EDITOR="leafpad"
 export EDITOR="$EMACSCLIENT -t"                             # $EDITOR should open in terminal
 export VISUAL="$EMACSCLIENT -c -a emacs25"                  # $VISUAL opens in GUI with non-daemon as alternate
 
@@ -406,6 +454,33 @@ alias ec-term="$EMACSCLIENT -t"                             # used to be "emacs 
 alias ec-root-term="sudo $EMACSCLIENT -t"                   # used to be "sudo emacs -nw"
 
 alias ec-test="$EMACSCLIENT -c -a emacs25"                  # new - opens the GUI with alternate non-daemon
+
+
+# e-ec-window(){
+#     export EMACSCLIENTx11="$(_ec_client x11)";
+#     $EMACSCLIENT -c -n "$@" -s $(e-get-x11-socket);
+#     }
+# e-ec-root-window(){
+#     export EMACSCLIENTx11="$(_ec_client x11)";
+#     $EMACSCLIENT -c -n "$@" -s $(e-get-x11-socket);
+#     }
+# e-ec-term(){                                                # used to be "emacs -nw"
+#     export EMACSCLIENTx11="$(_ec_client x11)";
+#     $EMACSCLIENT -t "$@" -s $(e-get-x11-socket);
+#     }
+# e-ec-root-term(){                                           # used to be "sudo emacs -nw"
+#     export EMACSCLIENTx11="$(_ec_client x11)";
+#     sudo $EMACSCLIENT -t "$@" -s $(e-get-x11-socket);
+#     }
+
+# e-ec-test(){                                                # new - opens the GUI with alternate non-daemon
+#     export EMACSCLIENTx11="$(_ec_client x11)";
+#     $EMACSCLIENT -c -a emacs25 "$@" -s $(e-get-x11-socket);
+#     }
+
+
+
+alias semacs="sudo emacs25 -Q -nw"
 
 alias vnc-clean='vnc_clean'
 alias vnc-reset='vnc_reset'

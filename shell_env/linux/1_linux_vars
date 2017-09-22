@@ -2,11 +2,11 @@
 
 [[ -n $DEBUG_SHELL ]] && echo "linux/linux_vars"
 
+
+export SERV_HOME="$HOME_ENV/$SERVER"
+
 export ROOT_GRP=root
 export SSHFS=/usr/bin/sshfs
-
-export IPY=$SERV_HOME/ipy_jupyter/notebooks
-#export PYTHONPATH=$IPY/scripts/startup.py
 
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig/:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
