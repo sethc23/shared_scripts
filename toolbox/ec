@@ -21,6 +21,11 @@
 #
 #       ec -e '(org-open-link-from-string "[[~/.emacs.d/private/org/collections/android.org::#Org-074b9aab-d74a-472f-a14d-b96c05b05d77]]")' -e '(delete-other-windows)'
 #
+#       echo "$(cat <<-'EOF'
+#       /usr/local/bin/ec -e '(org-open-link-from-string "[[~/.emacs.d/private/org/collections/android.org::#Org-074b9aab-d74a-472f-a14d-b96c05b05d77]]")' -e '(delete-other-windows)'
+#       EOF
+#       )"| base64 | ssh admin 'source /etc/environment; cat | base64 -d > /tmp/tmp; chmod +x /tmp/tmp; DISPLAY=:0 EMACS_EXEC_TYPE=app zsh -l /tmp/tmp; rm /tmp/tmp;'
+#
 ####################
 
 
@@ -65,33 +70,50 @@ fi
 
 # return
 
-source $HOME_ENV/.scripts/shell_env/shared/services/emacs
+source $HOME/.scripts/shell_env/shared/services/emacs
 
 EMACS_DISPLAY=
+EMACS_SOCKET=$(e-get-x11-socket)
 if [[ $(uname -o) = Darwin ]]; then
-    EXEC="/opt/local/bin/emacsclient"
-    # EXEC="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-    EMACS_SOCKET=$(e-get-x11-socket)
+
+    [[ -n "$EMACS_EXEC" ]]              \
+        && EXEC="$EMACS_EXEC"           \
+        || EXEC="/opt/local/bin/emacsclient"
+
+    if [[ -n $EMACS_EXEC_TYPE ]]; then
+        if [[ $EMACS_EXEC_TYPE = app ]]; then
+            EXEC="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+            EMACS_SOCKET=$(e-get-socket)
+        elif [[ $EMACS_EXEC_TYPE = x11 ]]; then
+            EXEC="/opt/local/bin/emacsclient"
+            # EMACS_SOCKET=$(e-get-x11-socket)
+        fi
+    fi
+
+    [[ -n "$DISPLAY" ]]                 \
+        && EMACS_DISPLAY="-d :0"
+
 elif [[ $(uname -o) = GNU/Linux ]]; then
     EXEC="/usr/local/bin/emacsclient"
-    # EMACS_DISPLAY="-d :51"
+
+    [[ -n "$DISPLAY" ]]                 \
+        && EMACS_DISPLAY="-d $DISPLAY"  \
+        || EMACS_DISPLAY="-d :51"
+
+    #
     # EMACS_SOCKET=$(e-get-protocol-socket)
-    EMACS_SOCKET=$(e-get-x11-socket)
+    #
+    # EMACS_SOCKET=$(e-get-x11-socket)
     # EMACS_SOCKET="/tmp/emacs1000/ub2-x11-server"
     #
     # /usr/local/bin/emacsclient -n -c -d :51 $@ -s /tmp/emacs1000/ub2-x11-server
     #
+
 fi
 
-# e-get-socket
-# e-get-x11-socket
-# e-get-protocol-socket
-
-# EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|uniq|grep x11|tail -n 1)
-# EMACS_SOCKET_BAK=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|head -n 1)
 
 CMD="$EXEC -n -c $EMACS_DISPLAY $INPUT -s $EMACS_SOCKET"
-# echo $CMD>>/tmp/test
+
 [[ -n "$EMACS_SOCKET" ]]                        \
     && eval $CMD                                \
     || echo "emacsclient socket not found"
