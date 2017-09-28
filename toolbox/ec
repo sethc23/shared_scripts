@@ -65,7 +65,7 @@ fi
 
 # return
 
-source /home/ub2/.scripts/shell_env/shared/services/emacs
+source $HOME_ENV/.scripts/shell_env/shared/services/emacs
 
 EMACS_DISPLAY=
 if [[ $(uname -o) = Darwin ]]; then
