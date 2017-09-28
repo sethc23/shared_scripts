@@ -19,14 +19,20 @@
 
 source ~/.scripts/shell_env/shared/services/emacs
 
+DISPLAY=
 if [[ $(uname -o) = Darwin ]]; then
     EXEC="/opt/local/bin/emacsclient"
     # EXEC="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
     EMACS_SOCKET=$(e-get-x11-socket)
 elif [[ $(uname -o) = GNU/Linux ]]; then
     EXEC="/usr/local/bin/emacsclient"
+    DISPLAY="-d :51"
     # EMACS_SOCKET=$(e-get-protocol-socket)
     EMACS_SOCKET=$(e-get-x11-socket)
+    # EMACS_SOCKET="/tmp/emacs1000/ub2-x11-server"
+    #
+    # /usr/local/bin/emacsclient -n -c -d :51 $@ -s /tmp/emacs1000/ub2-x11-server
+    #
 fi
 
 # e-get-socket
@@ -37,6 +43,6 @@ fi
 # EMACS_SOCKET_BAK=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|head -n 1)
 
 [[ -n $EMACS_SOCKET ]]                  \
-    && emacsclient -n -c $@ -s $EMACS_SOCKET  \
-    || emacsclient -n -c $@ -s $EMACS_SOCKET_BAK
+    && $EXEC -n -c $DISPLAY $@ -s $EMACS_SOCKET  \
+    || echo "emacsclient socket not found"
 
