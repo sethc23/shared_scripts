@@ -22,7 +22,10 @@ vnc_reset () {
 
 
 alias e-src="source $HOME_ENV/.scripts/shell_env/shared/services/emacs"
-e-ps(){ ps|grep emac; }
+e-ps(){
+    /bin/ps -awwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args \
+    | grep -E "[e]mac";
+    }
 e-cmd (){
     /home/ub2/SERVER2/emacs/manage $@
     }
@@ -95,9 +98,9 @@ _ec_client(){
 
         if [[ $1 = x11 ]]; then
             export ALTERNATE_EDITOR=$(_ec_client protocol)
-            echo "/usr/bin/emacsclient.emacs25"
+            echo "/usr/local/bin/emacsclient"
         elif [[ $1 = protocol ]]; then
-            echo "/usr/bin/emacsclient.emacs25"
+            echo "/usr/local/bin/emacsclient"
         fi
 
     fi
@@ -217,12 +220,10 @@ e-osx-x11-daemon(){
 
     elif [[ $1 = start ]]; then
 
-        /opt/local/bin/emacs-25.2                                                                               \
+        /opt/local/bin/emacs-25.3                                                                               \
             --eval "(progn                                                                                      \
-                      (setq custom-file \"/Users/admin/.emacs.d/private/init/osx-x11-custom-settings.el\")      \
-                      (setq user-init-file \"/Users/admin/.emacs.d/private/init/osx-x11-CUSTOM_CONFIG.el\")     \
+                      (setq user-init-file \"/Users/admin/.emacs.d/private/org/config/init/CUSTOM_CONFIG.el\")  \
                       (load user-init-file)                                                                     \
-                      (load custom-file t)                                                                      \
                       )"                                                                                        \
             --daemon                                                                                            \
             > /dev/null 2>&1 &
@@ -252,13 +253,13 @@ e-osx-x11-daemon(){
 
 e-custom-2 () {
     NEW_FNAME=$(echo "$(uuidgen).org")
-    emacsclient.emacs25 --create-frame ~/.emacs.d/private/org/tocapture/$NEW_FNAME
+    emacsclient --create-frame ~/.emacs.d/private/org/tocapture/$NEW_FNAME
     }
 e-custom-1(){
     for i in $(env ls); do
         NEW_FNAME=$(echo "$i.org")
         mv $i $NEW_FNAME
-        emacsclient.emacs25 --create-frame $NEW_FNAME
+        emacsclient --create-frame $NEW_FNAME
     done
     }
 e-cask-full-update(){
@@ -271,7 +272,7 @@ e-cask-full-update(){
     cask --debug --verbose update
     cask --debug --verbose install
     cask --debug --verbose clean-elc
-    env find -L .cask/25.2/elpa -name "*elc" -delete
+    env find -L .cask/25.3/elpa -name "*elc" -delete
     cask build
     cd "$_from_dir"
     unset _from_dir
@@ -314,7 +315,7 @@ e-recompile(){
         }
     _start
     #find ~/.emacs.d -type f -regex ".*elc$" | xargs -I '{}' rm -fr {}
-    find ~/.emacs.d/.cask/25.2/elpa -name "*elc" -delete
+    find ~/.emacs.d/.cask/25.3/elpa -name "*elc" -delete
     # find /usr/local/share/emacs/25.1 -type f -regex ".*elc$"|xargs -I '{}' rm -fr {}
     echo '\nCLEANING'       && make clean       || return _error
     echo '\nMAKE'           && make             || return _error
@@ -453,7 +454,7 @@ alias ec-root-window="$EMACSCLIENT -c -n"
 alias ec-term="$EMACSCLIENT -t"                             # used to be "emacs -nw"
 alias ec-root-term="sudo $EMACSCLIENT -t"                   # used to be "sudo emacs -nw"
 
-alias ec-test="$EMACSCLIENT -c -a emacs25"                  # new - opens the GUI with alternate non-daemon
+alias ec-test="$EMACSCLIENT -c -a emacs"                  # new - opens the GUI with alternate non-daemon
 
 
 # e-ec-window(){

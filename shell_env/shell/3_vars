@@ -21,10 +21,10 @@ export SHELL_CONFIG=.zshrc
 export ROOT=root
 
 if [[ $(uname -o) = Darwin ]]; then
+    export SERV_HOME=$HOME_ENV/$SERVER
+else
     non_root_user=$(getent passwd | grep "^ub" | sed -r 's/([a-zA-Z0-9]+):(.*)$/\1/g')
     export SERV_HOME=/home/$non_root_user/$SERVER
-else
-    export SERV_HOME=$HOME_ENV/$SERVER
 fi
 
 export SH=$SERV_HOME
