@@ -455,8 +455,8 @@ EOF
 export ORG="$HOME_ENV/.emacs.d/private/org"
 
 # export ALTERNATE_EDITOR="leafpad"
-export EDITOR="$EMACSCLIENT -t"                             # $EDITOR should open in terminal
-export VISUAL="$EMACSCLIENT -c -a emacs25"                  # $VISUAL opens in GUI with non-daemon as alternate
+export EDITOR="emacs -Q -nw"                             # $EDITOR should open in terminal
+export VISUAL="emacs -Q -nw"                  # $VISUAL opens in GUI with non-daemon as alternate
 
 alias ec-window="$EMACSCLIENT -c -n"
 alias ec-root-window="$EMACSCLIENT -c -n"
