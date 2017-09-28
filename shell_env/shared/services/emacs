@@ -37,7 +37,10 @@ e-get-protocol-socket(){
         cut_col=9
     fi
 
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep protocol|grep unix|uniq|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    EMACS_SOCKET=$(sudo lsof -U | grep emacs                \
+                    | grep protocol| grep unix | uniq       \
+                    | grep '/'| column -t | tr -s " "       \
+                    | cut -d ' ' -f$cut_col | head -n 1)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
@@ -50,7 +53,10 @@ e-get-x11-socket(){
         cut_col=9
     fi
 
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|uniq|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    EMACS_SOCKET=$(sudo lsof -U | grep emacs                \
+                    | grep x11| grep unix | uniq            \
+                    | grep '/'| column -t | tr -s " "       \
+                    | cut -d ' ' -f$cut_col | head -n 1)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
@@ -63,7 +69,10 @@ e-get-socket(){
         cut_col=9
     fi
 
-    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|uniq|grep -v x11|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs                  \
+                    | grep unix | uniq | grep -v x11        \
+                    | grep '/'|column -t | tr -s " "        \
+                    | cut -d ' ' -f$cut_col | head -n 1)
     [[ -n $EMACS_SOCKET ]]              \
         && echo $EMACS_SOCKET           \
         || echo "not available"
