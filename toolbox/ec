@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # [[ $1 = emacs ]]                                                                                    \
 #     && which osascript > /dev/null 2>&1 && osascript -e 'tell application "Emacs" to activate'      \
@@ -16,11 +16,61 @@
 # eval "$CMD"
 
 # /opt/local/bin/emacsclient -n -c "$@"
+e-get-protocol-socket(){
 
-EXEC="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+    if [[ $(uname -o) = Darwin ]]; then
+        cut_col=8
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+        cut_col=9
+    fi
 
-EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|uniq|grep x11|tail -n 1)
-EMACS_SOCKET_BAK=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|head -n 1)
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep protocol|grep unix|uniq|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    [[ -n $EMACS_SOCKET ]]              \
+        && echo $EMACS_SOCKET           \
+        || echo "not available"
+    }
+e-get-x11-socket(){
+
+    if [[ $(uname -o) = Darwin ]]; then
+        cut_col=8
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+        cut_col=9
+    fi
+
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep x11|grep unix|uniq|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    [[ -n $EMACS_SOCKET ]]              \
+        && echo $EMACS_SOCKET           \
+        || echo "not available"
+    }
+e-get-socket(){
+
+    if [[ $(uname -o) = Darwin ]]; then
+        cut_col=8
+    elif [[ $(uname -o) = GNU/Linux ]]; then
+        cut_col=9
+    fi
+
+    EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|uniq|grep -v x11|grep '/'|column -t | tr -s " "|cut -d ' ' -f$cut_col)
+    [[ -n $EMACS_SOCKET ]]              \
+        && echo $EMACS_SOCKET           \
+        || echo "not available"
+    }
+
+if [[ $(uname -o) = Darwin ]]; then
+    EXEC="/opt/local/bin/emacsclient"
+    # EXEC="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+    EMACS_SOCKET=$(e-get-x11-socket)
+elif [[ $(uname -o) = GNU/Linux ]]; then
+    EXEC="/usr/local/bin/emacsclient"
+    EMACS_SOCKET=$(e-get-protocol-socket)
+fi
+
+# e-get-socket
+# e-get-x11-socket
+# e-get-protocol-socket
+
+# EMACS_SOCKET=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|uniq|grep x11|tail -n 1)
+# EMACS_SOCKET_BAK=$(sudo lsof -U|grep emacs|grep unix|grep '/'|column -t | tr -s " "|cut -d ' ' -f8|sed -r 's/\s/\n/g'|head -n 1)
 
 [[ -n $EMACS_SOCKET ]]                  \
     && $EXEC -n -c $@ -s $EMACS_SOCKET  \
