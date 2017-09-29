@@ -1,0 +1,39 @@
+#!/usr/local/bin/zsh
+
+sh_ngnr="$(cat <<-'EOF'
+
+    set timeout 3
+
+    spawn ssh ngn
+    expect_background -re .+
+
+    exp_send "\r"
+
+    expect -re ".*shell.*"
+    exp_send "source ~/.bashenv; exec zsh;\r"
+    exp_send "source ~/aliases\r"
+
+    interact
+
+EOF
+)"
+alias ssh_ngnr='/usr/bin/expect -f <(echo "$sh_ngnr")'
+
+sh_ngnkr="$(cat <<-'EOF'
+
+    set timeout 3
+
+    spawn ssh ngn
+    expect_background -re .+
+
+    exp_send "\r"
+
+    expect -re ".*shell.*"
+    exp_send "source ~/.bashenv; exec zsh;\r"
+    exp_send "source ~/aliases\r"
+
+    interact
+
+EOF
+)"
+alias ssh_ngnr='/usr/bin/expect -f <(echo "$sh_ngnr")'
