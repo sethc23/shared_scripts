@@ -28,12 +28,17 @@
 #
 ####################
 
-
-
+echo "$@" >> /tmp/capt_test
 ALL_ARGS=()
 for arg in $@; do ALL_ARGS+=($arg); done
+echo "\n\nALL_ARGS len: ${#ALL_ARGS}\n\n" >> /tmp/capt_test
 
-if [[ -z $PGSYSCONFDIR ]]; then
+if [[ ${#ALL_ARGS} = 1 ]]; then
+
+    INPUT="'"$@"'"
+
+elif [[ ( -z $(echo "$@"|grep protocol|grep capture) ) && ( -z $PGSYSCONFDIR ) ]]; then
+
     set --
     INPUT=()
     pt=1
@@ -58,6 +63,9 @@ else
     INPUT=$@
 fi
 
+
+
+
 # OUT=">>/tmp/test"
 # OUT=
 
@@ -70,7 +78,7 @@ fi
 
 # return
 
-source $HOME/.scripts/shell_env/shared/services/emacs
+source $HOME_ENV/.scripts/shell_env/shared/services/emacs
 
 EMACS_DISPLAY=
 EMACS_SOCKET=$(e-get-x11-socket)
@@ -104,7 +112,7 @@ elif [[ $(uname -o) = GNU/Linux ]]; then
     # EMACS_SOCKET=$(e-get-protocol-socket)
     #
     # EMACS_SOCKET=$(e-get-x11-socket)
-    # EMACS_SOCKET="/tmp/emacs1000/ub2-x11-server"
+    EMACS_SOCKET="/tmp/emacs1000/ub2-x11-server"
     #
     # /usr/local/bin/emacsclient -n -c -d :51 $@ -s /tmp/emacs1000/ub2-x11-server
     #
@@ -112,7 +120,8 @@ elif [[ $(uname -o) = GNU/Linux ]]; then
 fi
 
 
-CMD="$EXEC -n -c $EMACS_DISPLAY $INPUT -s $EMACS_SOCKET"
+CMD="$EXEC -n -c $INPUT $EMACS_DISPLAY -s $EMACS_SOCKET"
+echo "$CMD" >> /tmp/capt_test
 
 [[ -n "$EMACS_SOCKET" ]]                        \
     && eval $CMD                                \

@@ -255,7 +255,7 @@ alias egrep='egrep -i --color=auto'
 #
 #       of the above flags, the last one used governs
 #
-alias find='find -L'
+alias find='env find -L'
 #
 #
 alias fgrep='fgrep -i --color=auto'

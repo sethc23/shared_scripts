@@ -490,7 +490,7 @@ alias ec-test="$EMACSCLIENT -c -a emacs"                  # new - opens the GUI 
 
 
 
-alias semacs="sudo emacs25 -Q -nw"
+alias semacs="sudo emacs -Q -nw"
 
 alias vnc-clean='vnc_clean'
 alias vnc-reset='vnc_reset'
