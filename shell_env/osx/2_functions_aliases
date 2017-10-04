@@ -30,7 +30,7 @@ print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'
 alias ls_mounts='df -h | tail -n +2 | cut -d \  -f1'
-alias open_color_picker='open_color_picker_f'
+alias open_color_picker='open_color_picker'
 alias ps-cpu='ps -r|head'
 alias ps-mem='ps -m|head'
 alias ps-threads='pstree'

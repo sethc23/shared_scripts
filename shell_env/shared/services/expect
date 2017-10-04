@@ -15,9 +15,10 @@ sh_ngnr="$(cat <<-'EOF'
 
     interact
 
+    close
 EOF
 )"
-alias ssh_ngnr='/usr/bin/expect -f <(echo "$sh_ngnr")'
+alias ssh_ngnr='expect -f <(echo "$sh_ngnr")'
 
 sh_ngnkr="$(cat <<-'EOF'
 
@@ -34,6 +35,7 @@ sh_ngnkr="$(cat <<-'EOF'
 
     interact
 
+    close
 EOF
 )"
-alias ssh_ngnr='/usr/bin/expect -f <(echo "$sh_ngnr")'
+alias ssh_ngnr='expect -f <(echo "$sh_ngnr")'
