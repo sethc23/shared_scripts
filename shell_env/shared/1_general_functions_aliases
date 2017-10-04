@@ -10,6 +10,21 @@ build_script_env() {
     env | sort | sed -r 's/^([^=]+)=(.*)$/\1="\2"/g' > $FILE;
     alias | sed -r 's/^(.*)$/alias \1/g' >> $FILE;
     }
+ccat() {
+    while read -r line
+    do
+        echo "$line"
+    done <$1
+    }
+qcat() {
+    while read -r line
+    do
+        [[ $(echo $line|grep '"') ]]    \
+            && line=$(echo $line|sed -r 's/"/\\"/g')
+        echo '"'"$line"'"'
+    done <$1
+    }
+alias lcat='ccat'
 cde_f() {
     if [[ -z $1 ]]; then
         if [[ -z `env ls | env grep ENV` ]]; then
@@ -255,7 +270,7 @@ alias egrep='egrep -i --color=auto'
 #
 #       of the above flags, the last one used governs
 #
-alias find='env find -L'
+# alias find='/usr/bin/find -L'
 #
 #
 alias fgrep='fgrep -i --color=auto'
@@ -285,10 +300,12 @@ alias mysql_cmd='mysql -uroot -pDelivery100%'
 alias mysql_config1='echo "money" | sudo emacs /opt/local/etc/mysql55/macports-default.cnf'
 alias mysql_config2='echo "money" | sudo emacs /opt/local/etc/mysql55/my.cnf'
 alias pb='pastebincl -n'
-alias pip-install='pip install --upgrade --allow-all-external --allow-unverified basemap'
+alias pip-install-force='pip install --ignore-installed --force-reinstall'
+alias pip-install-external='pip install --upgrade --allow-all-external --allow-unverified basemap'
 alias pip-update='$HOME_ENV/.scripts/update_pip.sh'
 alias pip-upgrade-all='pip list --outdated --format=legacy | cut -d" " -f1 | xargs pip install --upgrade'
 alias pip-upgrade-pip='pip install -U pip'
+
 # alias ports-listen='sudo lsof -n -i -P | grep LISTEN'
 alias ports-listen_2='sudo netstat -ltnp'
 alias ports-listen_3='nettop'

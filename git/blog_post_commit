@@ -24,7 +24,7 @@ run_this(){
 
     MESSAGE="--message '$MESSAGE'"
     timeout --kill-after=5 4s \
-        ssh mbp2 -F /home/ub2/.ssh/config \
+        ssh admin -F /home/ub2/.ssh/config \
         "/usr/local/bin/growlnotify $PARAMS $MESSAGE"
 }
 

@@ -32,13 +32,16 @@ HIST_STAMPS="yyyy-mm-dd"            #   options: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy
 # ZSH_CUSTOM=/path/to/new-custom-folder
 #plugins=(python last-working-dir dirhistory) # added to $HOME_ENV/shell_env/zsh/custom_plugins/
 
-[[ -z $ZSH_PLUGINS ]] && export ZSH_PLUGINS=(zsh-completions autojump last-working-dir git python systemd)
+
+[[ -z $ZSH_PLUGINS ]] && ZSH_PLUGINS=(zsh-completions)
+[[ "$USER" != "postgres" ]] && ZSH_PLUGINS+=(autojump git last-working-dir python systemd)
 [[ $(uname -o) = Darwin ]] && ZSH_PLUGINS+=(osx)
 plugins=$ZSH_PLUGINS
 
 export ZSH_THEME="candy"
 [[ -n $ITERM2 ]] && export ZSH_THEME="cobalt2"
 [[ -f $HOME_ENV/.shell_local ]] && ZSH_THEME="$(cat $HOME_ENV/.shell_local|grep ZSH_THEME|cut -d = -f2)"
+[[ $USER = postgres ]] && export ZSH_THEME="candy"
 
 # ------------------------
 source $ZSH/oh-my-zsh.sh
