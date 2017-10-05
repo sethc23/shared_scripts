@@ -1,0 +1,34 @@
+#!/usr/bin/lua
+
+
+local function url_decode(str)
+    function decodeChar(hex)
+        return string.char(tonumber(hex,16))
+    end
+
+    function decodeString(str)
+        local output, t = string.gsub(str,"%%(%x%x)",decodeChar)
+        return output
+    end
+    return decodeString(str)
+end
+
+local function url_encode(str)
+    function encodeChar(chr)
+        return string.format("%%%X",string.byte(chr))
+    end
+
+    function encodeString(str)
+        local output, t = string.gsub(str,"[^%w]",encodeChar)
+        return output
+    end
+    return encodeString(str)
+end
+
+if arg1=="encode" then
+    print(url_encode(...))
+elseif arg1=="decode" then
+    print(url_decode(...))
+else
+    print(url_encode(...))
+end

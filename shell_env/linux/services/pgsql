@@ -1,28 +1,30 @@
 #!env zsh
 
-alias svc_pgsql_push_config='sudo $SERV_HOME/pgsql/run_pgsql push_config'
-alias svc_pgsql_disable='sudo systemctl disable postgresql9.6.service'
-alias svc_pgsql_enable='svc_pgsql_push_config; sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/pgsql/postgresql9.6.service 2> /dev/null'
-alias svc_pgsql_start='svc_pgsql_push_config; sudo systemctl start postgresql9.6.service'
-alias svc_pgsql_stop='sudo systemctl stop postgresql9.6.service'
-alias svc_pgsql_reload='svc_pgsql_push_config; sudo systemctl daemon-reload; sudo systemctl reload postgresql9.6.service'
-alias svc_pgsql_status='sudo systemctl status postgresql9.6.service'
+export PGSQL_VERSION="9.6"
 
-# alias svc_pgsql_debug='sudo /usr/local/sbin/rsyslogd -d -f /etc/rsyslog.d/debug.conf -n'
+alias svc_pgsql_push_config="sudo $SERV_HOME/pgsql/run_pgsql push_config"
+alias svc_pgsql_disable="sudo systemctl disable postgresql$PGSQL_VERSION.service"
+alias svc_pgsql_enable="svc_pgsql_push_config; sudo systemctl daemon-reload; sudo systemctl enable $SERV_HOME/pgsql/postgresql$PGSQL_VERSION.service 2> /dev/null"
+alias svc_pgsql_start="svc_pgsql_push_config; sudo systemctl start postgresql$PGSQL_VERSION.service"
+alias svc_pgsql_stop="sudo systemctl stop postgresql$PGSQL_VERSION.service"
+alias svc_pgsql_reload="svc_pgsql_push_config; sudo systemctl daemon-reload; sudo systemctl reload postgresql$PGSQL_VERSION.service"
+alias svc_pgsql_status="sudo systemctl status postgresql$PGSQL_VERSION.service"
 
-#alias pg_PUSH_CONFIG='sudo cp -R $SERV_HOME/pgsql93/postgresql93 /etc/rc.d/init.d/'
-#alias pg_RESET='sudo chkconfig postgresql93 reset'
-#alias pg_SHUTDOWN='sudo su postgres -c "pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart"'
+# alias svc_pgsql_debug="sudo /usr/local/sbin/rsyslogd -d -f /etc/rsyslog.d/debug.conf -n"
 
-alias pg_tmp_start_with_echo="sudo su postgres -c '/usr/lib/postgresql/9.6/bin/pg_ctl start -D $PG_DATA_DIR -l /tmp/pgsql -o\" -i -E\"'"
+#alias pg_PUSH_CONFIG="sudo cp -R $SERV_HOME/pgsql93/postgresql93 /etc/rc.d/init.d/"
+#alias pg_RESET="sudo chkconfig postgresql93 reset"
+#alias pg_SHUTDOWN="sudo su postgres -c \"pg_ctl stop -D /home/postgres/pgsql93/defaultdb -m smart\""
+
+alias pg_tmp_start_with_echo="sudo su postgres -c \"/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl start -D $PG_DATA_DIR -l /tmp/pgsql -o' -i -E'\""
 pg_tmp_start_with_echo_and_debug() {     \
-    sudo su postgres -c "/usr/lib/postgresql/9.6/bin/postgres -D /var/lib/postgresql/9.6/main -i -E -c log_destination='stderr' -c logging_collector='on' -c log_directory='/tmp/pgsql' -c log_statement='all' -c log_min_messages='debug' -c log_min_duration_statement=0"; }
-alias pg_tmp_start_with_echo_and_debug='pg_tmp_start_with_echo_and_debug'
-alias pg_tmp_start="sudo su postgres -c '/usr/lib/postgresql/9.6/bin/pg_ctl start -D $PG_DATA_DIR -o\" -i\"'"
-alias pg_tmp_stop="sudo su postgres -c '/usr/lib/postgresql/9.6/bin/pg_ctl stop -m fast -D $PG_DATA_DIR -o\" \"'"
+    sudo su postgres -c "/usr/lib/postgresql/$PGSQL_VERSION/bin/postgres -D /var/lib/postgresql/$PGSQL_VERSION/main -i -E -c log_destination='stderr' -c logging_collector='on' -c log_directory='/tmp/pgsql' -c log_statement='all' -c log_min_messages='debug' -c log_min_duration_statement=0"; }
+alias pg_tmp_start_with_echo_and_debug="pg_tmp_start_with_echo_and_debug"
+alias pg_tmp_start="sudo su postgres -c \"/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl start -D $PG_DATA_DIR -o' -i'\""
+alias pg_tmp_stop="sudo su postgres -c \"/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl stop -m fast -D $PG_DATA_DIR -o'  '\""
 
-alias psql96='sudo su postgres -c "psql --host=0.0.0.0 --port=8801 --username=postgres"'
-alias psql10='sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres"'
+alias psql96="sudo su postgres -c /"psql --host=0.0.0.0 --port=8801 --username=postgres/""
+alias psql10='sudo su postgres -c /"psql --host=0.0.0.0 --port=8800 --username=postgres/"'
 
 psql_c() { sudo su postgres -c "psql --host=0.0.0.0 --port=8800 --username=postgres -c '$1'"; }
 pg_load_dump_file() { \
@@ -51,30 +53,32 @@ copy_table_server_to_server(){
 EOF
     }
 
-export PG_DATA_DIR=/var/lib/postgresql/9.6/main
-alias _pg_reload='sudo su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl reload -D $PG_DATA_DIR"'
+export PG_DATA_DIR=/var/lib/postgresql/$PGSQL_VERSION/main
+alias _pg_reload='sudo su postgres -c "/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl reload -D $PG_DATA_DIR"'
 
-alias _pg_restart_smart='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bin/activate; /usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m smart"'
-alias _pg_restart_fast='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bin/activate; /usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
-alias _pg_restart_immediate='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bin/activate; /usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
+alias _pg_restart_smart='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bin/activate; /usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m smart"'
+alias _pg_restart_fast='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bin/activate; /usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
+alias _pg_restart_immediate='sudo su postgres -c "source $SERV_HOME/pgsql/ENV/bin/activate; /usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
 
-#alias _pg_restart_smart='sudo su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m smart"'
-#alias _pg_restart_fast='sudo su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
-#alias _pg_restart_fast='sudo su postgres -c "source $SERV_HOME/ipython/ENV/bin/activate; /usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
-#alias _pg_restart_immediate='sudo su postgres -c "source $SERV_HOME/ipython/ENV/bin/activate; /usr/lib/postgresql/9.6/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
-alias _pg_restart_fast_core='sudo su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl restart -c -w -D $PG_DATA_DIR -m fast"'
+#alias _pg_restart_smart='sudo su postgres -c "/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m smart"'
+#alias _pg_restart_fast='sudo su postgres -c "/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
+#alias _pg_restart_fast='sudo su postgres -c "source $SERV_HOME/ipython/ENV/bin/activate; /usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m fast"'
+#alias _pg_restart_immediate='sudo su postgres -c "source $SERV_HOME/ipython/ENV/bin/activate; /usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -w -D $PG_DATA_DIR -m immediate"'
+alias _pg_restart_fast_core='sudo su postgres -c "/usr/lib/postgresql/$PGSQL_VERSION/bin/pg_ctl restart -c -w -D $PG_DATA_DIR -m fast"'
 alias _pg_configs='psql_c "show all;"'
-alias _pg_configs_edit='semacs /etc/postgresql/9.6/main/postgresql.conf'
-#alias _pg_pid="pid=$(ps -ef | grep '/usr/lib/postgresql/9.6/bin/postgres' | grep -E '^postgres' | sed 's/^postgres //g' | sed -E 's/([^[0-9]]*)([0-9]+)(.*)/\2/')"
+alias _pg_configs_edit='semacs /etc/postgresql/$PGSQL_VERSION/main/postgresql.conf'
+#alias _pg_pid="pid=$(ps -ef | grep '/usr/lib/postgresql/$PGSQL_VERSION/bin/postgres' | grep -E '^postgres' | sed 's/^postgres //g' | sed -E 's/([^[0-9]]*)([0-9]+)(.*)/\2/')"
 
-log-pgsql(){
-    tail -n 50 -f /var/log/syslog                           \
+            # | env grep -i -E "($log_str)"                   \
+# last-log-src: source ~/.scripts/shell_env/linux/services/syslog_rsyslog
+last-log-pgsql(){
+    last-log syslog -1                                      \
         | while read line; do
             echo $line                                      \
             | env grep -i -E "postgres\[[0-9]+\][:]"        \
-            | env grep -i -E "($log_str)"                   \
             | sed -r "s/^(.*)(postgres)[@]([^ ]+)[ ](.*)$/\4/"
         done                                                \
         | sed -ur 's/^(.*)(- INFO - LOG: )(.*)$/\3/g'
     }
 
+unset PGSQL_VERSION
