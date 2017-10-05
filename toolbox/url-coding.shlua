@@ -1,4 +1,4 @@
-#!/usr/bin/lua
+#!env lua
 
 
 local function url_decode(str)
