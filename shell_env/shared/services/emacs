@@ -270,6 +270,8 @@ e-osx-x11-daemon(){
 
     }
 
+e-debug(){ emacs --debug-init; }
+
 e-custom-2 () {
     NEW_FNAME=$(echo "$(uuidgen).org")
     emacsclient --create-frame ~/.emacs.d/private/org/tocapture/$NEW_FNAME
