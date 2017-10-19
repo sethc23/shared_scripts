@@ -26,9 +26,7 @@ e-ps(){
     /bin/ps -awwx -o %cpu,%mem,start,etime,user,group,ppid,pid,tty,comm,args \
     | grep -E "[e]mac";
     }
-e-cmd (){
-    /home/ub2/SERVER2/emacs/manage $@
-    }
+alias e-cmd="$SERV_HOME/emacs/manage"
 e-get-protocol-socket(){
 
     if [[ $(uname -o) = Darwin ]]; then
@@ -79,19 +77,29 @@ e-get-socket(){
     }
 e-get-socket-wait(){
     while [[ $(e-get-socket) = "not available" ]]; do
-        echo -n "."
+        [[ ! $1 = run ]] && echo -n "."
         sleep 1
     done
-    [[ ! $(e-get-socket) = "not available" ]] \
-        && echo 'READY!'
+    if [[ $1 = run ]]; then
+        [[ ! $(e-get-socket) = "not available" ]] \
+            && e-get-socket
+    else
+        [[ ! $(e-get-socket) = "not available" ]] \
+            && echo 'READY!'
+    fi
     }
 e-get-x11-socket-wait(){
     while [[ $(e-get-x11-socket) = "not available" ]]; do
-        echo -n "."
+        [[ ! $1 = run ]] && echo -n "."
         sleep 1
     done
-    [[ ! $(e-get-x11-socket) = "not available" ]] \
-        && echo 'READY!'
+    if [[ $1 = run ]]; then
+        [[ ! $(e-get-x11-socket) = "not available" ]] \
+            && e-get-x11-socket
+    else
+        [[ ! $(e-get-x11-socket) = "not available" ]] \
+            && echo 'READY!'
+    fi
     }
 _ec_client(){
 
@@ -152,6 +160,8 @@ ecxp(){
     export EMACSCLIENTprotocol="$(_ec_client protocol)"
     $EMACSCLIENTprotocol -n -c $args -s $(e-get-protocol-socket);
     }
+
+e-capture(){ ecx11 -nce '(stc/make-capture-frame)' -s $(e-get-x11-socket); }
 
 e-osx-toggle-org-share(){
     ORIG_DIR="$HOME_ENV/.emacs.d/private/org"
@@ -273,7 +283,8 @@ e-custom-1(){
     }
 e-cask-full-update(){
     _from_dir=$(pwd)
-    cd ~/.emacs.d
+    cd $HOME_ENV/.emacs.d
+    rm init.elc
     ORIG_PATH="$(echo $PATH)"
     export PATH=/home/ub2/.emacs.d/term-cmd:$PATH
     cask --debug --verbose upgrade-cask

@@ -26,6 +26,15 @@ print app(u'Adobe Acrobat Pro').do_script(u\"\"\"";\
     #rm -fr /tmp/test_acro_js.py; \
     }
 
+f-choose(){
+    _dir=$(realfullpath $(dirname "$@"));
+    _file=$(/opt/local/libexec/gnubin/find "$@" -type f -executable \
+        | grep -v -E ".*[~]$"                                       \
+        | sed -r 's/^[.][/]//g'                                     \
+        | /usr/local/bin/choose -n 30 -f "Fira Code" -s 20);
+    eval "$_dir/$_file";
+    }
+alias choose='f-choose'
 
 alias ib_qt='$IPY/ENV/bin/ipython qtconsole --profile=nbserver --matplotlib=qt5 --pprint --autoindent --color-info --colors=linux --confirm-exit;'
 alias ib_qt_here='/Users/admin/SERVER3/ipython/ENV/bin/ipython qtconsole --profile=nbserver --existing /Users/admin/.ipython/profile_nbserver/security/kernel-'

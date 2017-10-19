@@ -1,17 +1,43 @@
 #!/usr/local/bin/zsh
 
+export TEST_VAR=one
+
+sh_test="$(cat <<-'EOF'
+
+    set timeout 3
+
+    spawn bash -i
+
+    expect_background -re .+
+
+    expect -re ".*$USER[@]$HOST.*"
+    expect {
+        send "export TEST_VAR=two;\r"
+        puts "\n\n TEST_VAR: \$TEST_VAR \n\n"
+    }
+
+    interact
+
+
+EOF
+)"
+    # log_user 0
+    # exp_send "echo $TEST_VAR;\r"
+    # exp_send "echo \$TEST_VAR;\r"
+    # puts "The output is $expect_out(buffer) "
+    # exp_send "exit;\r"
+alias expect-test='expect -f <(echo "$sh_test")'
+
 sh_ngnr="$(cat <<-'EOF'
 
     set timeout 3
 
-    spawn ssh ngn
+    spawn -noecho ssh ngn
     expect_background -re .+
-
-    exp_send "\r"
 
     expect -re ".*shell.*"
     exp_send "source ~/.bashenv; exec zsh;\r"
-    exp_send "source ~/aliases\r"
+    exp_send "source ~/aliases;\r"
 
     interact
 
@@ -24,10 +50,8 @@ sh_ngnkr="$(cat <<-'EOF'
 
     set timeout 3
 
-    spawn ssh ngn
+    spawn -noecho ssh ngn
     expect_background -re .+
-
-    exp_send "\r"
 
     expect -re ".*shell.*"
     exp_send "source ~/.bashenv; exec zsh;\r"
