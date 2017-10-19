@@ -243,11 +243,6 @@ g_add_commit_push() { \
         #git status --porcelain | grep "^ D " | sed "s/ [A-Z] //g" | xargs git rm --cached --ignore-unmatch -f -r --
     fi
     g_commit_push "$@";
-    if [[ $(uname -o) = GNU/Linux ]]; then
-        ssh admin 'cd ~/.scripts; git pull'
-    elif [[ $(uname -o) = Darwin ]]; then
-        ssh ub2 'cd ~/.scripts; git pull'
-    fi
     }
 alias g-X_='g_commit_push'
 alias g-X='g_add_commit_push'

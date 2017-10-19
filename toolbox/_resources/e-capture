@@ -1,0 +1,11 @@
+#!/opt/local/bin/bash
+
+shopt -s expand_aliases
+source $HOME_ENV/.scripts/shell_env/shared/services/emacs
+
+exec emacsclient -nce '(stc/make-capture-frame)' -e '(delete-frame (selected-frame) t)' -s $(e-get-x11-socket)
+
+# exit 1
+
+
+# /usr/bin/osascript -e "do shell script \"/opt/local/bin/bash $HOME_ENV/.scripts/toolbox/_resources/e-capture\" " > /dev/null 2>&1 &

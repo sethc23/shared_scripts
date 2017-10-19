@@ -1,0 +1,9 @@
+#!/bin/bash
+
+shopt -s expand_aliases
+source $HOME_ENV/.scripts/shell_env/shared/services/emacs
+
+emacsclient -nce '(stc/make-capture-frame)' -s $(e-get-x11-socket)
+
+
+# osascript -e "do shell script \"bash $HOME_ENV/.scripts/toolbox/_resources/e-capture\" " > /dev/null 2>&1 &
