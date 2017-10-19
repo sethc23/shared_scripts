@@ -218,6 +218,7 @@ vnc-reset(){
     vnc_clean $_idx
     eval "vncserver :$_idx"
     }
+wh(){ ls $(which "$@"); }
 z-retheme() {
     if [[ -n $1 ]]; then
         export ZSH_THEME=$1
