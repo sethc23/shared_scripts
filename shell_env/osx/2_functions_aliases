@@ -58,6 +58,8 @@ alias ssh-s6='dn_update_ip && dn_remote_tunnel open && ssh_f ub6'
 alias ssh-s7='dn_update_ip && dn_remote_tunnel open && ssh_f ub7'
 alias ssh-zero='ssh -nNR 8172:localhost:8172 ub2 &'
 
+sys-resolution(){ osascript -e 'tell application "Finder" to get bounds of window of desktop'; }
+
 alias sudo_finder='sudo /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder &'
 alias sw_shell="sublime '/Users/admin/SERVER3/local_config/.sublime/Sublime Text 3/Packages/User/shell_env.sublime-workspace'"
 

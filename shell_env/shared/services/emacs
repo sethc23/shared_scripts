@@ -161,7 +161,15 @@ ecxp(){
     $EMACSCLIENTprotocol -n -c $args -s $(e-get-protocol-socket);
     }
 
-e-capture(){ ecx11 -nce '(stc/make-capture-frame)' -s $(e-get-x11-socket); }
+# (find-file "~/.scripts/toolbox/e-capture")
+e-capture(){
+    N=$(printf "capture-%s" "$(uuidgen)");
+    /opt/local/bin/emacsclient  \
+        --no-wait \
+        --frame-parameters="((name . \"$N\")(title . \"$N\")(width . 80)(height . 30)(left . -150))" \
+        --create-frame \
+        -e '(stc/make-capture-frame)' \
+        --socket-name=$(e-get-x11-socket); }
 
 e-osx-toggle-org-share(){
     ORIG_DIR="$HOME_ENV/.emacs.d/private/org"
@@ -216,11 +224,14 @@ e-osx-app-daemon(){
     }
 e-osx-x11-daemon(){
 
+    # DBUS="gnu.emacs.daemon.plist"
+    DBUS="org.freedesktop.dbus-system.plist"
 
     if [[ $1 = unload ]]; then
 
-        sudo launchctl stop gnu.emacs.daemon.plist
-        sudo launchctl unload /Library/LaunchDaemons/gnu.emacs.daemon.plist
+        sudo launchctl stop $DBUS
+        sudo launchctl unload /Library/LaunchDaemons/$DBUS
+
         SVR_CFG=$(e-get-x11-socket)
         if [[ "$SVR_CFG" != "not available" ]]; then
             rm "$SVR_CFG"
@@ -231,9 +242,10 @@ e-osx-x11-daemon(){
         return
 
     elif [[ $1 = load ]]; then
-        # /Library/LaunchDaemons/gnu.emacs.daemon.plist: service already loaded
-        sudo launchctl load -w /Library/LaunchDaemons/gnu.emacs.daemon.plist
-        sudo launchctl start gnu.emacs.daemon.plist
+
+        sudo launchctl load -w /Library/LaunchDaemons/$DBUS
+        sudo launchctl start $DBUS
+
         e-get-x11-socket-wait
         return
 
