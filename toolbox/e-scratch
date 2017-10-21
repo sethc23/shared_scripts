@@ -1,0 +1,26 @@
+#!/bin/bash 
+
+shopt -s expand_aliases
+source $HOME_ENV/.scripts/shell_env/shared/services/emacs
+
+N=$(printf "capture-%s" "$(uuidgen)");
+S=$(e-get-x11-socket)
+exec /opt/local/bin/emacsclient \
+    --no-wait \
+    --frame-parameters="((name . \"$N\")(title . \"$N\")(top . 40)(width . 110)(height . 50)(left . 450))" \
+    --create-frame -e '(stc/doom-scratch)' --socket-name=$S \
+    > /dev/null 2>&1;
+
+
+
+
+#emacsclient -nce '(stc/make-capture-frame)' -s $(e-get-x11-socket)
+#e-capture 2> /dev/null &
+
+# osascript -e "do shell script \"bash $HOME_ENV/.scripts/toolbox/_resources/e-capture\" " > /dev/null 2>&1 &
+
+# F="$HOME_ENV/.scripts/toolbox/e-capture"; echo "#!/usr/local/bin/zsh -li\n\n">>$F; echo "$(which e-capture)">>$F
+
+
+
+
