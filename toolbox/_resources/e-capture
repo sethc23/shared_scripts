@@ -2,8 +2,8 @@
 
 shopt -s expand_aliases
 source $HOME_ENV/.scripts/shell_env/shared/services/emacs
-
-exec emacsclient -nce '(stc/make-capture-frame)' -e '(delete-frame (selected-frame) t)' -s $(e-get-x11-socket)
+unset DISPLAY
+exec emacsclient --tty -cne '(stc/make-capture-frame)' -e '(delete-frame (selected-frame) t)' -s $(e-get-x11-socket)
 
 # exit 1
 
