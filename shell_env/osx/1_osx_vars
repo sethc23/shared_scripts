@@ -22,6 +22,7 @@ export DROID="$ANDROID/scripts/.android"
 #export GIT_CONFIG=$HOME_ENV/.gitconfig
 #export GIT_TRACE=$HOME_ENV/.git/trace_log.txt
 #source $SERV_HOME/.git/git-completion.bash
+export HOMEBREW_GITHUB_API_TOKEN="49178d17dbb61624a7ccd9c542c7f258c1d4a01b"
 
 # Amazon
 #export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.2.4

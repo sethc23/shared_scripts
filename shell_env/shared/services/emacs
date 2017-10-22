@@ -103,29 +103,37 @@ e-get-x11-socket-wait(){
     }
 _ec_client(){
 
+    _build=$1
+
     if [[ $(uname -o) = Darwin ]]; then
 
-        if [[ $1 = app ]]; then
+        [[ -z $_build ]] \
+            && _build=app
+
+        if [[ $_build = app ]]; then
             echo "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-        elif [[ $1 = x11 ]]; then
+        elif [[ $_build = x11 ]]; then
             echo "/opt/local/bin/emacsclient"
         fi
 
     elif [[ $(uname -o) = GNU/Linux ]]; then
 
-        if [[ $1 = x11 ]]; then
+        [[ -z $_build ]] \
+            && _build=x11
+
+        if [[ $_build = x11 ]]; then
             export ALTERNATE_EDITOR=$(_ec_client protocol)
             echo "/usr/local/bin/emacsclient"
-        elif [[ $1 = protocol ]]; then
+        elif [[ $_build = protocol ]]; then
             echo "/usr/local/bin/emacsclient"
         fi
 
     fi
 
-    # DARWIN/admin ONLY
-
-
     }
+
+export EMACSCLIENT=$(_ec_client)
+
 ecapp(){
     args=$@
     last_arg=${@:$#}
@@ -161,15 +169,7 @@ ecxp(){
     $EMACSCLIENTprotocol -n -c $args -s $(e-get-protocol-socket);
     }
 
-# (find-file "~/.scripts/toolbox/e-capture")
-e-capture(){
-    N=$(printf "capture-%s" "$(uuidgen)");
-    /opt/local/bin/emacsclient  \
-        --no-wait \
-        --frame-parameters="((name . \"$N\")(title . \"$N\")(width . 80)(height . 30)(left . -150))" \
-        --create-frame \
-        -e '(stc/make-capture-frame)' \
-        --socket-name=$(e-get-x11-socket); }
+e-capture(){ ecx11 -nce '(stc/make-capture-frame)' -s $(e-get-x11-socket); }
 
 e-osx-toggle-org-share(){
     ORIG_DIR="$HOME_ENV/.emacs.d/private/org"
@@ -483,12 +483,12 @@ export ORG="$HOME_ENV/.emacs.d/private/org"
 export EDITOR="emacs -Q -nw"                             # $EDITOR should open in terminal
 export VISUAL="emacs -Q -nw"                  # $VISUAL opens in GUI with non-daemon as alternate
 
-alias ec-window="$EMACSCLIENT -c -n"
-alias ec-root-window="$EMACSCLIENT -c -n"
+alias ec-alt="$EMACSCLIENT -c -a emacs"                  # new - opens the GUI with alternate non-daemon
 alias ec-term="$EMACSCLIENT -t"                             # used to be "emacs -nw"
-alias ec-root-term="sudo $EMACSCLIENT -t"                   # used to be "sudo emacs -nw"
+alias ec-term-root="sudo $EMACSCLIENT -t"                   # used to be "sudo emacs -nw"
+alias ec-window="$EMACSCLIENT -c -n"
+alias ec-window-root="sudo $EMACSCLIENT -c -n"
 
-alias ec-test="$EMACSCLIENT -c -a emacs"                  # new - opens the GUI with alternate non-daemon
 
 
 # e-ec-window(){

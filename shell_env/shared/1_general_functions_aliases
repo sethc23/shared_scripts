@@ -164,6 +164,11 @@ sh-source() { _orig=`pwd`; source $HOME_ENV/$SHELL_CONFIG; cd $_orig; }
     # uuidgen -r, uuidgen -t
     # }
 ssh_f(){ \
+    [[ -n "$(ls-mounts | grep "$1" | wc -l)" ]] && return;
+    sudo umount -f /Volumes/$1 > /dev/null 2>&1;
+    mkdir -p /Volumes/$1; sshfs $1:/ /Volumes/$1 -o follow_symlinks > /dev/null 2>&1;
+    }
+ssh_ff(){ \
     [[ -n "$(ls-mounts | grep "$1" | wc -l)" ]] && sudo umount -f /Volumes/$1 > /dev/null 2>&1;
     mkdir -p /Volumes/$1; sshfs $1:/ /Volumes/$1 -o follow_symlinks > /dev/null 2>&1;
     }

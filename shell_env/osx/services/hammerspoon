@@ -1,0 +1,7 @@
+#!env zsh
+
+hc(){echo $@|hs}
+hc-print-table(){
+    cmd="for i,r in pairs($@) do print(i,r) end"
+    hc $cmd
+    }
